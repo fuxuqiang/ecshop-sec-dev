@@ -172,29 +172,29 @@ var listZone = new Object();
 /* *
  * 显示正在载入
  */
-listZone.showLoader = function()
-{
-  listZone.toggleLoader(true);
-}
+// listZone.showLoader = function()
+// {
+//   listZone.toggleLoader(true);
+// }
 
-listZone.hideLoader = function()
-{
-  listZone.toggleLoader(false);
-}
+// listZone.hideLoader = function()
+// {
+//   listZone.toggleLoader(false);
+// }
 
-listZone.toggleLoader = function(disp)
-{
-  document.getElementsByTagName('body').item(0).style.cursor = (disp) ? "wait" : 'auto';
+// listZone.toggleLoader = function(disp)
+// {
+//   document.getElementsByTagName('body').item(0).style.cursor = (disp) ? "wait" : 'auto';
 
-  try
-  {
-    var doc = top.frames['header-frame'].document;
-    var loader = doc.getElementById("load-div");
+//   try
+//   {
+//     var doc = top.frames['header-frame'].document;
+//     var loader = doc.getElementById("load-div");
 
-    if (typeof loader == 'object') loader.style.display = disp ? "block" : "none";
-  }
-  catch (ex) { }
-}
+//     if (typeof loader == 'object') loader.style.display = disp ? "block" : "none";
+//   }
+//   catch (ex) { }
+// }
 
 function $import(path,type,title){
   var s,i;

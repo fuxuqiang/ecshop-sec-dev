@@ -45,12 +45,12 @@ class cls_mysql
 
     var $mysql_disable_cache_tables = array(); // 不允许被缓存的表，遇到将不会进行缓存
 
-    function __construct($dbhost, $dbuser, $dbpw, $dbname = '', $charset = 'gbk', $pconnect = 0, $quiet = 0)
+    function __construct($dbhost, $dbuser, $dbpw, $dbname = '', $charset = 'gbk', $quiet = 0)
     {
-        $this->cls_mysql($dbhost, $dbuser, $dbpw, $dbname, $charset, $pconnect, $quiet);
+        $this->cls_mysql($dbhost, $dbuser, $dbpw, $dbname, $charset, $quiet);
     }
 
-    function cls_mysql($dbhost, $dbuser, $dbpw, $dbname = '', $charset = 'gbk', $pconnect = 0, $quiet = 0)
+    function cls_mysql($dbhost, $dbuser, $dbpw, $dbname = '', $charset = 'gbk', $quiet = 0)
     {
         if (defined('EC_CHARSET'))
         {
@@ -64,73 +64,40 @@ class cls_mysql
 
         if ($quiet)
         {
-            $this->connect($dbhost, $dbuser, $dbpw, $dbname, $charset, $pconnect, $quiet);
+            $this->connect($dbhost, $dbuser, $dbpw, $dbname, $charset, $quiet);
         }
         else
         {
             $this->settings = array(
-                                    'dbhost'   => $dbhost,
-                                    'dbuser'   => $dbuser,
-                                    'dbpw'     => $dbpw,
-                                    'dbname'   => $dbname,
-                                    'charset'  => $charset,
-                                    'pconnect' => $pconnect
-                                    );
+                'dbhost'   => $dbhost,
+                'dbuser'   => $dbuser,
+                'dbpw'     => $dbpw,
+                'dbname'   => $dbname,
+                'charset'  => $charset,
+            );
         }
     }
 
-    function connect($dbhost, $dbuser, $dbpw, $dbname = '', $charset = 'utf8', $pconnect = 0, $quiet = 0)
+    function connect($dbhost, $dbuser, $dbpw, $dbname = '', $charset = 'utf8', $quiet = 0)
     {
-        if ($pconnect)
+        $this->link_id = @mysql_connect($dbhost, $dbuser, $dbpw, true);
+            
+        if (!$this->link_id)
         {
-            if (!($this->link_id = @mysql_pconnect($dbhost, $dbuser, $dbpw)))
+            if (!$quiet)
             {
-                if (!$quiet)
-                {
-                    $this->ErrorMsg("Can't pConnect MySQL Server($dbhost)!");
-                }
+                $this->ErrorMsg("Can't Connect MySQL Server($dbhost)!");
+            }
 
-                return false;
-            }
-        }
-        else
-        {
-            if (PHP_VERSION >= '4.2')
-            {
-                $this->link_id = @mysql_connect($dbhost, $dbuser, $dbpw, true);
-            }
-            else
-            {
-                $this->link_id = @mysql_connect($dbhost, $dbuser, $dbpw);
-
-                mt_srand((double)microtime() * 1000000); // 对 PHP 4.2 以下的版本进行随机数函数的初始化工作
-            }
-            if (!$this->link_id)
-            {
-                if (!$quiet)
-                {
-                    $this->ErrorMsg("Can't Connect MySQL Server($dbhost)!");
-                }
-
-                return false;
-            }
+            return false;
         }
 
         $this->dbhash  = md5($this->root_path . $dbhost . $dbuser . $dbpw . $dbname);
         $this->version = mysql_get_server_info($this->link_id);
 
-        /* 如果mysql 版本是 4.1+ 以上，需要对字符集进行初始化 */
-        if ($this->version > '4.1')
-        {
-            if ($charset != 'latin1')
-            {
-                mysql_query("SET character_set_connection=$charset, character_set_results=$charset, character_set_client=binary", $this->link_id);
-            }
-            if ($this->version > '5.0.1')
-            {
-                mysql_query("SET sql_mode=''", $this->link_id);
-            }
-        }
+        /* 对字符集进行初始化 */
+        $this->set_mysql_charset($charset);
+        mysql_query("SET sql_mode=''", $this->link_id);
 
         $sqlcache_config_file = $this->root_path . $this->cache_data_dir . 'sqlcache_config_file_' . $this->dbhash . '.php';
 
@@ -215,17 +182,14 @@ class cls_mysql
 
     function set_mysql_charset($charset)
     {
-        /* 如果mysql 版本是 4.1+ 以上，需要对字符集进行初始化 */
-        if ($this->version > '4.1')
+        /* 对字符集进行初始化 */
+        if (in_array(strtolower($charset), array('gbk', 'big5', 'utf-8', 'utf8')))
         {
-            if (in_array(strtolower($charset), array('gbk', 'big5', 'utf-8', 'utf8')))
-            {
-                $charset = str_replace('-', '', $charset);
-            }
-            if ($charset != 'latin1')
-            {
-                mysql_query("SET character_set_connection=$charset, character_set_results=$charset, character_set_client=binary", $this->link_id);
-            }
+            $charset = str_replace('-', '', $charset);
+        }
+        if ($charset != 'latin1')
+        {
+            mysql_query("SET character_set_connection=$charset, character_set_results=$charset, character_set_client=binary", $this->link_id);
         }
     }
 
@@ -238,7 +202,7 @@ class cls_mysql
     {
         if ($this->link_id === NULL)
         {
-            $this->connect($this->settings['dbhost'], $this->settings['dbuser'], $this->settings['dbpw'], $this->settings['dbname'], $this->settings['charset'], $this->settings['pconnect']);
+            $this->connect($this->settings['dbhost'], $this->settings['dbuser'], $this->settings['dbpw'], $this->settings['dbname'], $this->settings['charset']);
             $this->settings = array();
         }
 
@@ -248,18 +212,11 @@ class cls_mysql
         }
         if ($this->queryTime == '')
         {
-            if (PHP_VERSION >= '5.0.0')
-            {
-                $this->queryTime = microtime(true);
-            }
-            else
-            {
-                $this->queryTime = microtime();
-            }
+            $this->queryTime = microtime(true);
         }
 
         /* 当当前的时间大于类初始化时间的时候，自动执行 ping 这个自动重新连接操作 */
-        if (PHP_VERSION >= '4.3' && time() > $this->starttime + 1)
+        if (time() > $this->starttime + 1)
         {
             mysql_ping($this->link_id);
         }
@@ -281,19 +238,7 @@ class cls_mysql
             $logfilename = $this->root_path . DATA_DIR . '/mysql_query_' . $this->dbhash . '_' . date('Y_m_d') . '.log';
             $str = $sql . "\n\n";
 
-            if (PHP_VERSION >= '5.0')
-            {
-                file_put_contents($logfilename, $str, FILE_APPEND);
-            }
-            else
-            {
-                $fp = @fopen($logfilename, 'ab+');
-                if ($fp)
-                {
-                    fwrite($fp, $str);
-                    fclose($fp);
-                }
-            }
+            file_put_contents($logfilename, $str, FILE_APPEND);
         }
 
         return $query;
@@ -356,26 +301,12 @@ class cls_mysql
 
     function ping()
     {
-        if (PHP_VERSION >= '4.3')
-        {
-            return mysql_ping($this->link_id);
-        }
-        else
-        {
-            return false;
-        }
+        return mysql_ping($this->link_id);
     }
 
     static function escape_string($unescaped_string)
     {
-        if (PHP_VERSION >= '4.3')
-        {
-            return mysql_real_escape_string($unescaped_string);
-        }
-        else
-        {
-            return mysql_escape_string($unescaped_string);
-        }
+        return mysql_real_escape_string($unescaped_string);
     }
 
     function close()
@@ -705,52 +636,12 @@ class cls_mysql
         }
         else
         {
-            if ($this->version() >= '4.1')
+            if (!empty($fields))
             {
-                if (!empty($fields))
+                $sql = 'INSERT INTO ' . $table . ' (' . implode(', ', $fields) . ') VALUES (' . implode(', ', $values) . ')';
+                if (!empty($sets))
                 {
-                    $sql = 'INSERT INTO ' . $table . ' (' . implode(', ', $fields) . ') VALUES (' . implode(', ', $values) . ')';
-                    if (!empty($sets))
-                    {
-                        $sql .=  'ON DUPLICATE KEY UPDATE ' . implode(', ', $sets);
-                    }
-                }
-            }
-            else
-            {
-                if (empty($where))
-                {
-                    $where = array();
-                    foreach ($primary_keys AS $value)
-                    {
-                        if (is_numeric($value))
-                        {
-                            $where[] = $value . ' = ' . $field_values[$value];
-                        }
-                        else
-                        {
-                            $where[] = $value . " = '" . $field_values[$value] . "'";
-                        }
-                    }
-                    $where = implode(' AND ', $where);
-                }
-
-                if ($where && (!empty($sets) || !empty($fields)))
-                {
-                    if (intval($this->getOne("SELECT COUNT(*) FROM $table WHERE $where")) > 0)
-                    {
-                        if (!empty($sets))
-                        {
-                            $sql = 'UPDATE ' . $table . ' SET ' . implode(', ', $sets) . ' WHERE ' . $where;
-                        }
-                    }
-                    else
-                    {
-                        if (!empty($fields))
-                        {
-                            $sql = 'REPLACE INTO ' . $table . ' (' . implode(', ', $fields) . ') VALUES (' . implode(', ', $values) . ')';
-                        }
-                    }
+                    $sql .=  'ON DUPLICATE KEY UPDATE ' . implode(', ', $sets);
                 }
             }
         }
@@ -827,7 +718,7 @@ class cls_mysql
     {
         if ($this->link_id === NULL)
         {
-            $this->connect($this->settings['dbhost'], $this->settings['dbuser'], $this->settings['dbpw'], $this->settings['dbname'], $this->settings['charset'], $this->settings['pconnect']);
+            $this->connect($this->settings['dbhost'], $this->settings['dbuser'], $this->settings['dbpw'], $this->settings['dbname'], $this->settings['charset']);
             $this->settings = array();
         }
 
