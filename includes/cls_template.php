@@ -301,7 +301,8 @@ class cls_template
         if (!function_exists('version_compare') || version_compare(phpversion(), '5.3.0', '<')) {
             return preg_replace("/{([^\}\{\n]*)}/e", "\$this->select('\\1');", $source);
         } else {
-            return include(ROOT_PATH . 'includes' . DIRECTORY_SEPARATOR . 'patch' . DIRECTORY_SEPARATOR . 'includes_cls_template_fetch_str.php');
+            $template = $this;
+            return preg_replace_callback("/{([^\}\{\n]*)}/", function($r) use(&$template){return $template->select($r[1]);}, $source);
         }
     }
 
@@ -498,7 +499,7 @@ class cls_template
                     if (!function_exists('version_compare') || version_compare(phpversion(), '5.3.0', '<')) {
                         $out = "<?php \n" . '$k = ' . preg_replace("/(\'\\$[^,]+)/e" , "stripslashes(trim('\\1','\''));", var_export($t, true)) . ";\n";
                     } else {
-                        include(ROOT_PATH . 'includes' . DIRECTORY_SEPARATOR . 'patch' . DIRECTORY_SEPARATOR . 'includes_cls_template_select.php');
+                        $out = "<?php \n" . '$k = ' . preg_replace_callback("/(\'\\$[^,]+)/", function($r){return stripcslashes(trim($r[1], '\''));}, var_export($t, true)) . ";\n";
                     }
                     $out .= 'echo $this->_echash . $k[\'name\'] . \'|\' . serialize($k) . $this->_echash;' . "\n?>";
 
@@ -561,7 +562,7 @@ class cls_template
             if (!function_exists('version_compare') || version_compare(phpversion(), '5.3.0', '<')) {
                 $val = preg_replace("/\[([^\[\]]*)\]/eis", "'.'.str_replace('$','\$','\\1')", $val);
             } else {
-                include(ROOT_PATH . 'includes' . DIRECTORY_SEPARATOR . 'patch' . DIRECTORY_SEPARATOR . 'includes_cls_template_get_val.php');
+                $val = preg_replace_callback("/\[([^\[\]]*)\]/is", function($r){return '.' . $r[1];}, $val);
             }
         }
 
@@ -1084,7 +1085,8 @@ class cls_template
                 $replacement = "'{include file='.strtolower('\\1'). '}'";
                 $source      = preg_replace($pattern, $replacement, $source);
             } else {
-                include(ROOT_PATH . 'includes' . DIRECTORY_SEPARATOR . 'patch' . DIRECTORY_SEPARATOR . 'includes_cls_template_smarty_prefilter_preCompile.php');
+                $pattern     = '/<!--\s#BeginLibraryItem\s\"\/(.*?)\"\s-->.*?<!--\s#EndLibraryItem\s-->/s';
+                $source      = preg_replace_callback($pattern, function($r){return '{include file=' . strtolower($r[1]). '}';}, $source);
             }
 
             /* 检查有无动态库文件，如果有为其赋值 */

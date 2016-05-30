@@ -580,7 +580,7 @@ if (USE_DEBUGLIB) {
         if (!function_exists('version_compare') || version_compare(phpversion(), '5.3.0', '<')) {
             $string = preg_replace('/\t+/em', "str_repeat( ' ', strlen('\\0') * $tabwidth );", $string); /* replace all tabs with spaces */
         } else {
-            include(ROOT_PATH . 'includes' . DIRECTORY_SEPARATOR . 'patch' . DIRECTORY_SEPARATOR . 'includes_lib.debug_pre.php');
+            $string = preg_replace_callback('/\t+/m', function($r) use($tabwidth){return str_repeat(' ', strlen($r[0]) * $tabwidth);}, $string); /* replace all tabs with spaces */
         }
 
         $out = '<pre>'.$string."</pre>\n";

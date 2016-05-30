@@ -770,7 +770,7 @@ if ($_REQUEST['act'] == 'restore_backup')
                 if (!function_exists('version_compare') || version_compare(phpversion(), '5.3.0', '<')) {
                     $template_content = preg_replace($pattern, "'<!-- TemplateBeginEditable name=\"\\1\" -->\r\n' . \$regions['\\1'] . '\r\n<!-- TemplateEndEditable -->';", $template_content);
                 } else {
-                    include(ROOT_PATH . 'includes' . DIRECTORY_SEPARATOR . 'patch' . DIRECTORY_SEPARATOR . 'includes_admin_template_restore_backup.php');
+                    $template_content = preg_replace_callback($pattern, function($r) use($regions){return "<!-- TemplateBeginEditable name=\"" . $r[1] . "\" -->\r\n" . $regions[$r[1]] . "\r\n<!-- TemplateEndEditable -->";}, $template_content);
                 }
                 file_put_contents($temple_file, $template_content);
             }
