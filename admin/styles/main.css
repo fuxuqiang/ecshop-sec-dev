@@ -1685,12 +1685,12 @@ h1 .btn-add-goods a:hover,h1 .btn-add-goods a:hover{
 h1 .btn-add-goods a:before{
   display:none;
 }
-h1 .btn-quick-goods a{
+/*h1 .btn-quick-goods a{
   background-position: -66px -1110px;
 }
 h1 .btn-quick-goods a:hover{
   background-position: -66px -1163px;
-}
+}*/
 #turn-page{ text-align: right;  }
 
 /*云起激活页面 --by evelyn*/
@@ -1763,7 +1763,7 @@ h1 .btn-quick-goods a:hover{
   width: 300px;
   height: 200px;
 }
-.ban-area{
+/*.ban-area{
   width: 100%;
   height: 300px;
   overflow: hidden;
@@ -1779,7 +1779,7 @@ h1 .btn-quick-goods a:hover{
 }
 .ban-area iframe.first{
   margin-right: 50px;
-}
+}*/
 /*遮罩*/
 .mask-black{
   display: none;
