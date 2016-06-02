@@ -190,7 +190,7 @@ function get_admin_logs()
     $sql  = 'SELECT al.*, u.user_name FROM ' .$GLOBALS['ecs']->table('admin_log'). ' AS al '.
             'LEFT JOIN ' .$GLOBALS['ecs']->table('admin_user'). ' AS u ON u.user_id = al.user_id '.
             $where .' ORDER by '.$filter['sort_by'].' '.$filter['sort_order'];
-    $res  = $GLOBALS['db']->selectLimit($sql, $filter['page_size'], $filter['start']);
+    $res  = $GLOBALS['db']->limit($filter['start'], $filter['page_size'])->query($sql);
 
     while ($rows = $GLOBALS['db']->fetchRow($res))
     {

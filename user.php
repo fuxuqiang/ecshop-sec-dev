@@ -1462,7 +1462,7 @@ elseif ($action == 'account_detail')
            " WHERE user_id = '$user_id'" .
            " AND $account_type <> 0 " .
            " ORDER BY log_id DESC";
-    $res = $GLOBALS['db']->selectLimit($sql, $pager['size'], $pager['start']);
+    $res = $GLOBALS['db']->limit($pager['start'], $pager['size'])->query($sql);
     while ($row = $db->fetchRow($res))
     {
         $row['change_time'] = local_date($_CFG['date_format'], $row['change_time']);
@@ -2316,7 +2316,7 @@ elseif ($action == 'affiliate')
             $page = $max_page;
         }
 
-        $res = $db->SelectLimit($sql, $size, ($page - 1) * $size);
+        $res = $db->limit(($page-1)*$size, $size)->query($sql);
         $logdb = array();
         while ($rt = $GLOBALS['db']->fetchRow($res))
         {

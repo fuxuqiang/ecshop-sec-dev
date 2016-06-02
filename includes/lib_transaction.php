@@ -290,7 +290,7 @@ function get_user_orders($user_id, $num = 10, $start = 0)
            "(goods_amount + shipping_fee + insure_fee + pay_fee + pack_fee + card_fee + tax - discount - goods_discount_fee) AS total_fee ".
            " FROM " .$GLOBALS['ecs']->table('order_info') .
            " WHERE user_id = '$user_id' ORDER BY add_time DESC";
-    $res = $GLOBALS['db']->SelectLimit($sql, $num, $start);
+    $res = $GLOBALS['db']->limit($start, $num)->query($sql);
 
     while ($row = $GLOBALS['db']->fetchRow($res))
     {
@@ -1072,7 +1072,7 @@ function get_user_bouns_list($user_id, $num = 10, $start = 0)
            " FROM " .$GLOBALS['ecs']->table('user_bonus'). " AS u ,".
            $GLOBALS['ecs']->table('bonus_type'). " AS b".
            " WHERE u.bonus_type_id = b.type_id AND u.user_id = '" .$user_id. "'";
-    $res = $GLOBALS['db']->selectLimit($sql, $num, $start);
+    $res = $GLOBALS['db']->limit($start, $num)->query($sql);
     $arr = array();
 
     $day = getdate();

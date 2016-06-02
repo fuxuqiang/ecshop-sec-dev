@@ -330,7 +330,7 @@ function group_buy_list($size, $page)
                 "LEFT JOIN " . $GLOBALS['ecs']->table('goods') . " AS g ON b.goods_id = g.goods_id " .
             "WHERE b.act_type = '" . GAT_GROUP_BUY . "' " .
             "AND b.start_time <= '$now' AND b.is_finished < 3 ORDER BY b.act_id DESC";
-    $res = $GLOBALS['db']->selectLimit($sql, $size, ($page - 1) * $size);
+    $res = $GLOBALS['db']->limit(($page-1)*$size, $size)->query($sql);
     while ($group_buy = $GLOBALS['db']->fetchRow($res))
     {
         $ext_info = unserialize($group_buy['ext_info']);

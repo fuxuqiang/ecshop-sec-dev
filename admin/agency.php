@@ -368,7 +368,7 @@ function get_agencylist()
         $sql    = $result['sql'];
         $filter = $result['filter'];
     }
-    $res = $GLOBALS['db']->selectLimit($sql, $filter['page_size'], $filter['start']);
+    $res = $GLOBALS['db']->limit($filter['start'], $filter['page_size'])->query($sql);
 
     $arr = array();
     while ($rows = $GLOBALS['db']->fetchRow($res))

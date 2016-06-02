@@ -355,7 +355,7 @@ function get_exchange_goodslist()
         $filter = $result['filter'];
     }
     $arr = array();
-    $res = $GLOBALS['db']->selectLimit($sql, $filter['page_size'], $filter['start']);
+    $res = $GLOBALS['db']->limit($filter['start'], $filter['page_size'])->query($sql);
 
     while ($rows = $GLOBALS['db']->fetchRow($res))
     {

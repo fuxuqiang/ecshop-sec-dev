@@ -56,7 +56,7 @@ function get_cat_articles($cat_id, $page = 1, $size = 20 ,$requirement='')
                ' ORDER BY article_type DESC, article_id DESC';
     }
 
-    $res = $GLOBALS['db']->selectLimit($sql, $size, ($page-1) * $size);
+    $res = $GLOBALS['db']->limit(($page-1)*$size, $size)->query($sql);
 
     $arr = array();
     if ($res)

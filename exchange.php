@@ -386,7 +386,7 @@ function exchange_get_goods($children, $min, $max, $ext, $size, $page, $sort, $o
                 'g.goods_type, g.goods_brief, g.goods_thumb , g.goods_img, eg.is_hot ' .
             'FROM ' . $GLOBALS['ecs']->table('exchange_goods') . ' AS eg, ' .$GLOBALS['ecs']->table('goods') . ' AS g ' .
             "WHERE eg.goods_id = g.goods_id AND $where $ext ORDER BY $sort $order";
-    $res = $GLOBALS['db']->selectLimit($sql, $size, ($page - 1) * $size);
+    $res = $GLOBALS['db']->limit(($page-1)*$size, $size)->query($sql);
 
     $arr = array();
     while ($row = $GLOBALS['db']->fetchRow($res))
@@ -509,7 +509,7 @@ function get_exchange_recommend_goods($type = '', $cats = '', $min =0,  $max = 0
     }
     $order_type = $GLOBALS['_CFG']['recommend_order'];
     $sql .= ($order_type == 0) ? ' ORDER BY g.sort_order, g.last_update DESC' : ' ORDER BY RAND()';
-    $res = $GLOBALS['db']->selectLimit($sql, $num);
+    $res = $GLOBALS['db']->limit($num)->query($sql);
 
     $idx = 0;
     $goods = array();

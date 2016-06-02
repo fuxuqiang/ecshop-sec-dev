@@ -452,7 +452,7 @@ function category_get_goods($children, $brand, $min, $max, $ext, $size, $page, $
             'LEFT JOIN ' . $GLOBALS['ecs']->table('member_price') . ' AS mp ' .
                 "ON mp.goods_id = g.goods_id AND mp.user_rank = '$_SESSION[user_rank]' " .
             "WHERE $where $ext ORDER BY $sort $order";
-    $res = $GLOBALS['db']->selectLimit($sql, $size, ($page - 1) * $size);
+    $res = $GLOBALS['db']->limit(($page-1)*$size, $size)->query($sql);
 
     $arr = array();
     while ($row = $GLOBALS['db']->fetchRow($res))

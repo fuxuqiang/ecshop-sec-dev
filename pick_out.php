@@ -191,7 +191,7 @@ $sql   = "SELECT g.goods_id, g.goods_name, g.market_price, g.shop_price AS org_p
             "ON mp.goods_id = g.goods_id AND mp.user_rank = '$_SESSION[user_rank]' ".
         "WHERE g.is_on_sale = 1 AND g.is_alone_sale = 1 AND g.is_delete = 0 ".$in_goods.
         "ORDER BY g.sort_order, g.last_update DESC";
-$res = $db->SelectLimit($sql, 4);
+$res = $db->limit(4)->query($sql);
 
 /* 获取品牌 */
 $sql = "SELECT b.brand_id, b.brand_name, b.brand_logo, COUNT(g.goods_id) AS goods_num ".

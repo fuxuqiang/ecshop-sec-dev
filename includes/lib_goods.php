@@ -455,7 +455,7 @@ function get_category_recommend_goods($type = '', $cats = '', $brand = 0, $min =
 
     $order_type = $GLOBALS['_CFG']['recommend_order'];
     $sql .= ($order_type == 0) ? ' ORDER BY g.sort_order, g.last_update DESC' : ' ORDER BY RAND()';
-    $res = $GLOBALS['db']->selectLimit($sql, $num);
+    $res = $GLOBALS['db']->limit($num)->query($sql);
 
     $idx = 0;
     $goods = array();
@@ -845,7 +845,7 @@ function assign_brand_goods($brand_id, $num = 0, $cat_id = 0,$order_rule = '')
     $sql .= $order_rule;
     if ($num > 0)
     {
-        $res = $GLOBALS['db']->selectLimit($sql, $num);
+        $res = $GLOBALS['db']->limit($num)->query($sql);
     }
     else
     {

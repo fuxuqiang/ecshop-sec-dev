@@ -179,7 +179,7 @@ function get_msg_list($num, $start)
         $sql = "SELECT * FROM  " .$GLOBALS['ecs']->table('tmp_table') . " ORDER BY msg_time DESC ";
     }
 
-    $res = $GLOBALS['db']->SelectLimit($sql, $num, $start);
+    $res = $GLOBALS['db']->limit($start, $num)->query($sql);
 
     while ($rows = $GLOBALS['db']->fetchRow($res))
     {

@@ -288,7 +288,7 @@ function brand_get_goods($brand_id, $cate, $size, $page, $sort, $order)
             "WHERE g.is_on_sale = 1 AND g.is_alone_sale = 1 AND g.is_delete = 0 AND g.brand_id = '$brand_id' $cate_where".
             "ORDER BY $sort $order";
 
-    $res = $GLOBALS['db']->selectLimit($sql, $size, ($page - 1) * $size);
+    $res = $GLOBALS['db']->limit(($page-1)*$size, $size)->query($sql);
 
     $arr = array();
     while ($row = $GLOBALS['db']->fetchRow($res))

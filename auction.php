@@ -465,7 +465,7 @@ function auction_list($size, $page)
                 "LEFT JOIN " . $GLOBALS['ecs']->table('goods') . " AS g ON a.goods_id = g.goods_id " .
             "WHERE a.act_type = '" . GAT_AUCTION . "' " .
             "AND a.start_time <= '$now' AND a.end_time >= '$now' AND a.is_finished < 2 ORDER BY a.act_id DESC";
-    $res = $GLOBALS['db']->selectLimit($sql, $size, ($page - 1) * $size);
+    $res = $GLOBALS['db']->limit(($page-1)*$size, $size)->query($sql);
     while ($row = $GLOBALS['db']->fetchRow($res))
     {
         $ext_info = unserialize($row['ext_info']);

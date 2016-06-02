@@ -206,7 +206,7 @@ function get_accountlist($user_id, $account_type = '')
     /* 查询记录 */
     $sql = "SELECT * FROM " . $GLOBALS['ecs']->table('account_log') . $where .
             " ORDER BY log_id DESC";
-    $res = $GLOBALS['db']->selectLimit($sql, $filter['page_size'], $filter['start']);
+    $res = $GLOBALS['db']->limit($filter['start'], $filter['page_size'])->query($sql);
 
     $arr = array();
     while ($row = $GLOBALS['db']->fetchRow($res))

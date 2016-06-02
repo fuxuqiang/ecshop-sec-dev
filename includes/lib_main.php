@@ -1591,7 +1591,7 @@ function assign_comment($id, $type, $page = 1)
     $sql = 'SELECT * FROM ' . $GLOBALS['ecs']->table('comment') .
             " WHERE id_value = '$id' AND comment_type = '$type' AND status = 1 AND parent_id = 0".
             ' ORDER BY comment_id DESC';
-    $res = $GLOBALS['db']->selectLimit($sql, $size, ($page-1) * $size);
+    $res = $GLOBALS['db']->limit(($page-1)*$size, $size)->query($sql);
 
     $arr = array();
     $ids = '';

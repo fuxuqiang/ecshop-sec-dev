@@ -452,7 +452,7 @@ function wholesale_list($size, $page, $where)
             "FROM " . $GLOBALS['ecs']->table('wholesale') . " AS w, " .
                       $GLOBALS['ecs']->table('goods') . " AS g " . $where .
             " AND w.goods_id = g.goods_id ";
-    $res = $GLOBALS['db']->selectLimit($sql, $size, ($page - 1) * $size);
+    $res = $GLOBALS['db']->limit(($page-1)*$size, $size)->query($sql);
     while ($row = $GLOBALS['db']->fetchRow($res))
     {
         if (empty($row['goods_thumb']))

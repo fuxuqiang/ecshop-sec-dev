@@ -277,7 +277,7 @@ function process_image($page = 1, $page_size = 100, $type = 0, $thumb= true, $wa
     if ($type == 0)
     {
         $sql = "SELECT g.goods_id, g.original_img, g.goods_img, g.goods_thumb FROM ".$GLOBALS['ecs']->table('goods'). " AS g WHERE g.original_img > ''" . $GLOBALS['goods_where'];
-        $res = $GLOBALS['db']->SelectLimit($sql, $page_size, ($page-1)*$page_size);
+        $res = $GLOBALS['db']->limit(($page-1)*$page_size, $page_size)->query($sql);
         while ($row = $GLOBALS['db']->fetchRow($res))
         {
             $goods_thumb = '';
@@ -408,7 +408,7 @@ function process_image($page = 1, $page_size = 100, $type = 0, $thumb= true, $wa
     {
         /* 遍历商品相册 */
         $sql = "SELECT album.goods_id, album.img_id, album.img_url, album.thumb_url, album.img_original FROM ".$GLOBALS['ecs']->table('goods_gallery'). " AS album " . $GLOBALS['album_where'];
-        $res = $GLOBALS['db']->SelectLimit($sql, $page_size, ($page - 1) * $page_size);
+        $res = $GLOBALS['db']->limit(($page-1)*$page_size, $page_size)->query($sql);
 
         while ($row = $GLOBALS['db']->fetchRow($res))
         {
@@ -532,7 +532,7 @@ function process_image_ex($page = 1, $page_size = 100, $type = 0, $thumb= true, 
     if ($type == 0)
     {
         $sql = "SELECT g.goods_id, g.original_img, g.goods_img, g.goods_thumb FROM ".$GLOBALS['ecs']->table('goods'). " AS g WHERE g.original_img > ''" . $goods_where;
-        $res = $GLOBALS['db']->SelectLimit($sql, $page_size, ($page-1)*$page_size);
+        $res = $GLOBALS['db']->limit(($page-1)*$page_size, $page_size)->query($sql);
 
         while ($row = $GLOBALS['db']->fetchRow($res))
         {
@@ -549,7 +549,7 @@ function process_image_ex($page = 1, $page_size = 100, $type = 0, $thumb= true, 
     else
     {
         $sql = "SELECT album.goods_id, album.img_id, album.img_url, album.thumb_url, album.img_original FROM ".$GLOBALS['ecs']->table('goods_gallery'). " AS album " . $GLOBALS['album_where'];
-        $res = $GLOBALS['db']->SelectLimit($sql, $page_size, ($page - 1) * $page_size);
+        $res = $GLOBALS['db']->limit(($page-1)*$page_size, $page_size)->query($sql);
 
         while ($row = $GLOBALS['db']->fetchRow($res))
         {

@@ -20,37 +20,34 @@ if (!defined('IN_ECS'))
 
 class cls_mysql
 {
-    var $link_id    = NULL;
+    public $link_id    = NULL;
 
-    var $settings   = array();
+    private $settings   = array();
 
-    var $queryCount = 0;
-    var $queryTime  = '';
-    var $queryLog   = array();
+    public $queryCount = 0;
+    public $queryTime  = '';
+    private $queryLog   = array();
 
-    var $max_cache_time = 300; // 最大的缓存时间，以秒为单位
+    private $max_cache_time = 300; // 最大的缓存时间，以秒为单位
 
-    var $cache_data_dir = 'temp/query_caches/';
-    var $root_path      = '';
+    private $cache_data_dir = 'temp/query_caches/';
+    private $root_path      = '';
 
-    var $error_message  = array();
-    var $platform       = '';
-    var $version        = '';
-    var $dbhash         = '';
-    var $starttime      = 0;
-    var $timeline       = 0;
-    var $timezone       = 0;
+    private $error_message  = array();
+    private $platform       = '';
+    private $version        = '';
+    private $dbhash         = '';
+    private $starttime      = 0;
+    private $timeline       = 0;
+    private $timezone       = 0;
 
-    var $mysql_config_cache_file_time = 0;
+    private $mysql_config_cache_file_time = 0;
 
-    var $mysql_disable_cache_tables = array(); // 不允许被缓存的表，遇到将不会进行缓存
+    private $mysql_disable_cache_tables = array(); // 不允许被缓存的表，遇到将不会进行缓存
+
+    private $options = array('where'=>null, 'limit'=>null);
 
     function __construct($dbhost, $dbuser, $dbpw, $dbname = '', $charset = 'gbk', $quiet = 0)
-    {
-        $this->cls_mysql($dbhost, $dbuser, $dbpw, $dbname, $charset, $quiet);
-    }
-
-    function cls_mysql($dbhost, $dbuser, $dbpw, $dbname = '', $charset = 'gbk', $quiet = 0)
     {
         if (defined('EC_CHARSET'))
         {
@@ -80,7 +77,7 @@ class cls_mysql
 
     function connect($dbhost, $dbuser, $dbpw, $dbname = '', $charset = 'utf8', $quiet = 0)
     {
-        $this->link_id = @mysql_connect($dbhost, $dbuser, $dbpw, true);
+        $this->link_id = mysqli_connect($dbhost, $dbuser, $dbpw);
             
         if (!$this->link_id)
         {
@@ -93,11 +90,11 @@ class cls_mysql
         }
 
         $this->dbhash  = md5($this->root_path . $dbhost . $dbuser . $dbpw . $dbname);
-        $this->version = mysql_get_server_info($this->link_id);
+        $this->version = mysqli_get_server_info($this->link_id);
 
         /* 对字符集进行初始化 */
         $this->set_mysql_charset($charset);
-        mysql_query("SET sql_mode=''", $this->link_id);
+        mysqli_query($this->link_id, "SET sql_mode=''");
 
         $sqlcache_config_file = $this->root_path . $this->cache_data_dir . 'sqlcache_config_file_' . $this->dbhash . '.php';
 
@@ -109,8 +106,8 @@ class cls_mysql
         {
             if ($dbhost != '.')
             {
-                $result = mysql_query("SHOW VARIABLES LIKE 'basedir'", $this->link_id);
-                $row    = mysql_fetch_assoc($result);
+                $result = mysqli_query($this->link_id, "SHOW VARIABLES LIKE 'basedir'");
+                $row    = mysqli_fetch_assoc($result);
                 if (!empty($row['Value']{1}) && $row['Value']{1} == ':' && !empty($row['Value']{2}) && $row['Value']{2} == "\\")
                 {
                     $this->platform = 'WINDOWS';
@@ -129,8 +126,8 @@ class cls_mysql
                 ($dbhost != '.' && strtolower($dbhost) != 'localhost:3306' && $dbhost != '127.0.0.1:3306') ||
                 (PHP_VERSION >= '5.1' && date_default_timezone_get() == 'UTC'))
             {
-                $result = mysql_query("SELECT UNIX_TIMESTAMP() AS timeline, UNIX_TIMESTAMP('" . date('Y-m-d H:i:s', $this->starttime) . "') AS timezone", $this->link_id);
-                $row    = mysql_fetch_assoc($result);
+                $result = mysqli_query($this->link_id, "SELECT UNIX_TIMESTAMP() AS timeline, UNIX_TIMESTAMP('" . date('Y-m-d H:i:s', $this->starttime) . "') AS timezone");
+                $row    = mysqli_fetch_assoc($result);
 
                 if ($dbhost != '.' && strtolower($dbhost) != 'localhost:3306' && $dbhost != '127.0.0.1:3306')
                 {
@@ -155,7 +152,7 @@ class cls_mysql
         /* 选择数据库 */
         if ($dbname)
         {
-            if (mysql_select_db($dbname, $this->link_id) === false )
+            if (mysqli_select_db($this->link_id, $dbname) === false )
             {
                 if (!$quiet)
                 {
@@ -189,17 +186,27 @@ class cls_mysql
         }
         if ($charset != 'latin1')
         {
-            mysql_query("SET character_set_connection=$charset, character_set_results=$charset, character_set_client=binary", $this->link_id);
+            mysqli_query($this->link_id, "SET character_set_connection=$charset, character_set_results=$charset, character_set_client=binary");
         }
     }
 
     function fetch_array($query, $result_type = MYSQL_ASSOC)
     {
-        return mysql_fetch_array($query, $result_type);
+        return mysqli_fetch_array($query, $result_type);
+    }
+
+    function limit($start, $num = 0)
+    {
+        $this->options['limit'] = ' LIMIT ';
+        $this->options['limit'] .= $num? $start.','.$num : $start;
+        return $this;
     }
 
     function query($sql, $type = '')
     {
+        $sql .= $this->options['limit'];
+        $this->ini();
+
         if ($this->link_id === NULL)
         {
             $this->connect($this->settings['dbhost'], $this->settings['dbuser'], $this->settings['dbpw'], $this->settings['dbname'], $this->settings['charset']);
@@ -221,12 +228,12 @@ class cls_mysql
             mysql_ping($this->link_id);
         }
 
-        if (!($query = mysql_query($sql, $this->link_id)) && $type != 'SILENT')
+        if (!($query = mysqli_query($this->link_id, $sql)) && $type != 'SILENT')
         {
             $this->error_message[]['message'] = 'MySQL Query Error';
             $this->error_message[]['sql'] = $sql;
-            $this->error_message[]['error'] = mysql_error($this->link_id);
-            $this->error_message[]['errno'] = mysql_errno($this->link_id);
+            $this->error_message[]['error'] = mysqli_error($this->link_id);
+            $this->error_message[]['errno'] = mysqli_errno($this->link_id);
 
             $this->ErrorMsg();
 
@@ -286,7 +293,7 @@ class cls_mysql
 
     function fetchRow($query)
     {
-        return mysql_fetch_assoc($query);
+        return mysqli_fetch_assoc($query);
     }
 
     function fetch_fields($query)
@@ -331,21 +338,7 @@ class cls_mysql
         exit;
     }
 
-/* 仿真 Adodb 函数 */
-    function selectLimit($sql, $num, $start = 0)
-    {
-        if ($start == 0)
-        {
-            $sql .= ' LIMIT ' . $num;
-        }
-        else
-        {
-            $sql .= ' LIMIT ' . $start . ', ' . $num;
-        }
-
-        return $this->query($sql);
-    }
-
+    /* 仿真 Adodb 函数 */
     function getOne($sql, $limited = false)
     {
         if ($limited == true)
@@ -356,7 +349,7 @@ class cls_mysql
         $res = $this->query($sql);
         if ($res !== false)
         {
-            $row = mysql_fetch_row($res);
+            $row = mysqli_fetch_row($res);
 
             if ($row !== false)
             {
@@ -406,13 +399,7 @@ class cls_mysql
         $res = $this->query($sql);
         if ($res !== false)
         {
-            $arr = array();
-            while ($row = mysql_fetch_assoc($res))
-            {
-                $arr[] = $row;
-            }
-
-            return $arr;
+            return $arr = mysqli_fetch_all($res, MYSQLI_ASSOC);
         }
         else
         {
@@ -456,7 +443,7 @@ class cls_mysql
         $res = $this->query($sql);
         if ($res !== false)
         {
-            return mysql_fetch_assoc($res);
+            return mysqli_fetch_assoc($res);
         }
         else
         {
@@ -498,7 +485,7 @@ class cls_mysql
         if ($res !== false)
         {
             $arr = array();
-            while ($row = mysql_fetch_row($res))
+            while ($row = mysqli_fetch_row($res))
             {
                 $arr[] = $row[0];
             }
@@ -803,6 +790,10 @@ class cls_mysql
         }
 
         array_unique($this->mysql_disable_cache_tables);
+    }
+
+    private function ini(){
+        $this->options = array('where'=>null, 'limit'=>null);
     }
 }
 

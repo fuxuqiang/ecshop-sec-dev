@@ -373,7 +373,7 @@ function get_topic_list()
         $filter = $result['filter'];
     }
 
-    $query = $GLOBALS['db']->selectLimit($sql, $filter['page_size'], $filter['start']);
+    $query = $GLOBALS['db']->limit($filter['start'], $filter['page_size'])->query($sql);
 
     $res = array();
 

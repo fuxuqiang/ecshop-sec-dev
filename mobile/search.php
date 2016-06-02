@@ -379,7 +379,7 @@ else
             "WHERE g.is_delete = 0 AND g.is_on_sale = 1 AND g.is_alone_sale = 1 $attr_in ".
                 "AND (( 1 " . $categories . $keywords . $brand . $min_price . $max_price . $intro . $outstock . " ) ".$tag_where." ) " .
             "ORDER BY $sort $order";
-    $res = $db->SelectLimit($sql, $size, ($page - 1) * $size);
+    $res = $db->limit(($page-1)*$size, $size)->query($sql);
 
     $arr = array();
     while ($row = $db->FetchRow($res))

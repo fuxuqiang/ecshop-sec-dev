@@ -582,7 +582,7 @@ function get_adslist()
             'GROUP BY ad.ad_id '.
             'ORDER by '.$filter['sort_by'].' '.$filter['sort_order'];
 
-    $res = $GLOBALS['db']->selectLimit($sql, $filter['page_size'], $filter['start']);
+    $res = $GLOBALS['db']->limit($filter['start'], $filter['page_size'])->query($sql);
 
     while ($rows = $GLOBALS['db']->fetchRow($res))
     {

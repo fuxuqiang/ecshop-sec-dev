@@ -326,7 +326,7 @@ function ad_position_list()
     /* 查询数据 */
     $arr = array();
     $sql = 'SELECT * FROM ' .$GLOBALS['ecs']->table('ad_position'). ' ORDER BY position_id DESC';
-    $res = $GLOBALS['db']->selectLimit($sql, $filter['page_size'], $filter['start']);
+    $res = $GLOBALS['db']->limit($filter['start'], $filter['page_size'])->query($sql);
     while ($rows = $GLOBALS['db']->fetchRow($res))
     {
         $position_desc = !empty($rows['position_desc']) ? sub_str($rows['position_desc'], 50, true) : '';
