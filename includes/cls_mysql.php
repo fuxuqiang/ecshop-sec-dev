@@ -45,8 +45,9 @@ class cls_mysql
 
     private $mysql_disable_cache_tables = array(); // 不允许被缓存的表，遇到将不会进行缓存
 
-    private $options = array('where'=>null, 'limit'=>null);
+    private $limit;
 
+    // 构造函数
     function __construct($dbhost, $dbuser, $dbpw, $dbname = '', $charset = 'gbk', $quiet = 0)
     {
         if (defined('EC_CHARSET'))
@@ -75,6 +76,7 @@ class cls_mysql
         }
     }
 
+    // 连接数据库
     function connect($dbhost, $dbuser, $dbpw, $dbname = '', $charset = 'utf8', $quiet = 0)
     {
         $this->link_id = mysqli_connect($dbhost, $dbuser, $dbpw);
@@ -172,11 +174,7 @@ class cls_mysql
         }
     }
 
-    function select_database($dbname)
-    {
-        return mysql_select_db($dbname, $this->link_id);
-    }
-
+	// 设置字符集
     function set_mysql_charset($charset)
     {
         /* 对字符集进行初始化 */
@@ -197,15 +195,15 @@ class cls_mysql
 
     function limit($start, $num = 0)
     {
-        $this->options['limit'] = ' LIMIT ';
-        $this->options['limit'] .= $num? $start.','.$num : $start;
+        $this->limit  = ' LIMIT ';
+        $this->limit .= $num? $start.','.$num : $start;
         return $this;
     }
 
     function query($sql, $type = '')
     {
-        $sql .= $this->options['limit'];
-        $this->ini();
+        $sql .= $this->limit;
+        $this->limit = null;
 
         if ($this->link_id === NULL)
         {
@@ -288,17 +286,12 @@ class cls_mysql
 
     function insert_id()
     {
-        return mysql_insert_id($this->link_id);
+        return mysqli_insert_id($this->link_id);
     }
 
     function fetchRow($query)
     {
         return mysqli_fetch_assoc($query);
-    }
-
-    function fetch_fields($query)
-    {
-        return mysql_fetch_field($query);
     }
 
     function version()
@@ -790,10 +783,6 @@ class cls_mysql
         }
 
         array_unique($this->mysql_disable_cache_tables);
-    }
-
-    private function ini(){
-        $this->options = array('where'=>null, 'limit'=>null);
     }
 }
 

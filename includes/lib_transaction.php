@@ -428,7 +428,7 @@ function cancel_order($order_id, $user_id = 0)
         /* 如果使用库存，且下订单时减库存，则增加库存 */
         if ($GLOBALS['_CFG']['use_storage'] == '1' && $GLOBALS['_CFG']['stock_dec_time'] == SDT_PLACE)
         {
-            change_order_goods_storage($order['order_id'], false, 1);
+            change_order_goods_storage($order['order_id'], false, SDT_PLACE);
         }
 
         /* 修改订单 */
