@@ -55,7 +55,7 @@ else
 
 require(ROOT_PATH . 'data/config.php');
 
-if (defined('DEBUG_MODE') == false)
+if (!defined('DEBUG_MODE'))
 {
     define('DEBUG_MODE', 0);
 }

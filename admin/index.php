@@ -65,7 +65,7 @@ elseif ($_REQUEST['act'] == 'top')
         $smarty->assign('authorize_name',$_SESSION['authorize_name']);//授权名称
     }
     $smarty->assign('http_host',$_SERVER['HTTP_HOST']);
-    $smarty->assign('yunqi_login',$_SESSION['yunqi_login']);
+    // $smarty->assign('yunqi_login',$_SESSION['yunqi_login']);
     $smarty->assign('certi', $certificate);
     $smarty->display('top.htm');
 }

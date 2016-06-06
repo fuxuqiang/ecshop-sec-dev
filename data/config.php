@@ -22,6 +22,8 @@ $cookie_domain    = "";
 
 $session = "1440";
 
+define('DEBUG_MODE', 1);
+
 define('EC_CHARSET','utf-8');
 
 define('ADMIN_PATH','admin');
