@@ -261,7 +261,7 @@ class cls_mysql
 
     function errno()
     {
-        return mysql_errno($this->link_id);
+        return mysqli_errno($this->link_id);
     }
 
     function result($query, $row)
