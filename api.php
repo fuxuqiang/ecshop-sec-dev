@@ -11,11 +11,9 @@
  * $Author: sxc_shop $
  * $Id: goods.php 15921 2009-05-07 05:35:58Z sxc_shop $
 */
-
 define('IN_ECS', true);
 
 require(dirname(__FILE__) . '/includes/init.php');
-// require(ROOT_PATH . 'includes/lib_license.php');
 require_once('includes/cls_certificate.php');
 require_once('includes/cls_json.php');
 define('RETURN_TYPE', empty($_POST['return_data']) ? 1 : ($_POST['return_data'] == 'json' ? 2 : 1));
@@ -204,7 +202,6 @@ function ome_update_order_item(){
 
 // 检测商品是否有效
 function verify_goods_valid($order_sn,$data,&$msg){
-    error_log(print_R($data,1)."\n",3,"/tmp/chen_1.log");
     $bns = array();
     $msg = '';
     foreach ($data['order'] as $key => $value) {
@@ -401,13 +398,9 @@ function get_product($bn,$order){
 
 
 function getStructDataByType($data,$type='json'){
-    // if($type=='xml'){
-    //     return $this->xml2array($data);
-    // }else{
-        $return_data = json_decode($data,true);
-        $return_data or $return_data = json_decode(stripcslashes($data),true);
-        return  $return_data;
-    // }
+    $return_data = json_decode($data,true);
+    $return_data or $return_data = json_decode(stripcslashes($data),true);
+    return  $return_data;
 }
 
 
@@ -528,8 +521,6 @@ function update_consignee(){
     if (!$orders) {
         api_err('','订单号“'.$order_sn.'”不存在。');
     }
-    // $state = str_replace('省', '', $data['ship_state']);
-    // $city = str_replace('市', '', $data['ship_city']);
     $state = $data['ship_state'];
     $city = $data['ship_city'];
     $district = $data['ship_district'];
@@ -552,7 +543,6 @@ function update_consignee(){
     }
     $aAddr['district'] = $region_id['region_id'];
     $aAddr['consignee'] = $data['ship_name'];
-    // $aAddr['ship_area'] = 'mainland:'.implode('/',$region_area).':'.$region_id['region_id'];
     $aAddr['address'] = $data['ship_addr'];
     $aAddr['zipcode'] = $data['ship_zip'];
     $aAddr['tel'] = $data['ship_tel'];
@@ -662,8 +652,6 @@ function update_order_status(){
                     $loginfo['behavior'] = '未支付';
                     break;
                 case '1':
-                    // $loginfo['msg'] = $msg.'已支付';
-                    // $loginfo['behavior'] = '已支付';
                     $loginfo['msg'] = $msg.'已支付';
                     $loginfo['behavior'] = '已支付';
                     $status = '2';
@@ -1007,8 +995,6 @@ function search_site_info()
  */
 function check_auth()
 {
-    // return true;
-    // $license = get_shop_license();  // 取出网店 license信息
     $GLOBALS['cert'] = new certificate();
     $license = $GLOBALS['cert']->get_shop_certificate();  // 取出网店 license信息
 
@@ -1017,76 +1003,38 @@ function check_auth()
         api_err('0x006', 'no certificate');   //没有证书数据，输出系统级错误:用户权限不够
     }
 
-    if (!check_shopex_ac_new($_POST, $license['token']))
+    if (!check_shopex_ac($_POST, $license['token']))
     {
         api_err('0x009');   //输出系统级错误:签名无效
     }
-
-    // /* 对应用申请的session进行验证 */
-    // $certi['certificate_id'] = $license['certificate_id']; // 网店证书ID
-    // $certi['app_id'] = 'ecshop_b2c'; // 说明客户端来源
-    // $certi['app_instance_id'] = 'webcollect'; // 应用服务ID
-    // $certi['version'] = VERSION . '#' .  RELEASE; // 网店软件版本号
-    // $certi['format'] = 'json'; // 官方返回数据格式
-    // $certi['certi_app'] = 'sess.valid_session'; // 证书方法
-    // $certi['certi_session'] = $_POST['app_session']; //应用服务器申请的session值
-    // $certi['certi_ac'] = $cert->make_shopex_ac($certi, $license['token']); // 网店验证字符串
-
-    // $request_arr = $cert->exchange_shop_license($certi, $license);
-    // if ($request_arr['res'] != 'succ')
-    // {
-    //     api_err('0x001', 'session is invalid');   //输出系统级错误:身份验证失败
-    // }
 }
 
-
-function check_shopex_ac_new($params,$token){
-    return strtoupper(md5(strtoupper(md5(assemble($params))).$token));
-}
-
-
-function assemble($params)
-{
-    if(!is_array($params)){
-        return null;
-    }
-
-    ksort($params,SORT_STRING);
-    $sign = '';
-    foreach($params AS $key=>$val){
-        $sign .= $key . (is_array($val) ? assemble($val) : $val);
-    }
-    return $sign;
-}
 
 /**
  *  验证POST签名
  *
- *  @param   string   $post_params   POST传递参数
+ *  @param   string   $params        POST传递参数
  *  @param   string   $token         证书加密码
  *
  *  @return  boolean                 返回是否有效
  */
-function check_shopex_ac($post_params,$token)
-{
-    ksort($post_params);
-    $str = '';
-    foreach($post_params as $key=>$value)
-    {
-        if ($key!='ac')
-        {
-            $str.=$value;
-        }
+function check_shopex_ac($params,$token){
+    $verfy=strtolower(trim($params['ac']));
+    unset($params['ac']);
+
+    ksort($params);
+    $tmp_verfy='';
+    foreach($params as $key=>$value){
+        $params[$key]=stripslashes($value);
+        $tmp_verfy.=$params[$key];
     }
-    if ($post_params['ac'] == md5($str.$token))
-    {
+    if($verfy && $verfy==strtolower(md5(trim($tmp_verfy.$token)))){
         return true;
-    }
-    else
-    {
+    }else{
         return false;
     }
 }
+
 
 /**
  *  系统级错误处理
@@ -1166,7 +1114,6 @@ function data_back($info, $msg = '', $post, $result = 'success')
     {
         /* json方式 */
         $json  = new JSON;
-        // error_log(print_R(json_encode($data_arr),1)."\n",3,"/tmp/chen_".date('Y-m-d',time()).".log");
         die($json->encode($data_arr));    //把生成的返回字符串打印出来
     }
 }
@@ -1254,18 +1201,6 @@ function _array2xml(&$data,&$xml){
 
 function create_goods_properties($goods_id)
 {
-    /* 对属性进行重新排序和分组
-    $sql = "SELECT attr_group ".
-            "FROM " . $GLOBALS['ecs']->table('goods_type') . " AS gt, " . $GLOBALS['ecs']->table('goods') . " AS g ".
-            "WHERE g.goods_id='$goods_id' AND gt.cat_id=g.goods_type";
-    $grp = $GLOBALS['db']->getOne($sql);
-
-    if (!empty($grp))
-    {
-        $groups = explode("\n", strtr($grp, "\r", ''));
-    }
-    */
-
     /* 获得商品的规格 */
     $sql = "SELECT a.attr_id, a.attr_name, a.attr_group, a.is_linked, a.attr_type, ".
                 "g.goods_attr_id, g.attr_value, g.attr_price " .
@@ -1283,9 +1218,6 @@ function create_goods_properties($goods_id)
     {
         if ($row['attr_type'] == 0)
         {
-            //$group = (isset($groups[$row['attr_group']])) ? $groups[$row['attr_group']] : $GLOBALS['_LANG']['goods_attr'];
-
-            //$arr['props_name'][$row['attr_group']]['name'] = $group;
             $arr['props_name'][] = array('name' => $row['attr_name'], 'value' => $row['attr_value']);
 
             $arr['props'][] = array('pid' => $row['attr_id'], 'vid' => $row['goods_attr_id']);
@@ -1748,14 +1680,14 @@ function fy_logistics_offline_send(){
         if ($cfg == '1'){
             $order['invoice_no'] = $invoice_no;
             $tpl = get_mail_template('deliver_notice');
-            $smarty->assign('order', $order);
-            $smarty->assign('send_time', local_date($GLOBALS['_CFG']['time_format']));
-            $smarty->assign('shop_name', $GLOBALS['_CFG']['shop_name']);
-            $smarty->assign('send_date', local_date($GLOBALS['_CFG']['date_format']));
-            $smarty->assign('sent_date', local_date($GLOBALS['_CFG']['date_format']));
-            $smarty->assign('confirm_url', $ecs->url() . 'receive.php?id=' . $order['order_id'] . '&con=' . rawurlencode($order['consignee']));
-            $smarty->assign('send_msg_url',$ecs->url() . 'user.php?act=message_list&order_id=' . $order['order_id']);
-            $content = $smarty->fetch('str:' . $tpl['template_content']);
+            $GLOBALS['smarty']->assign('order', $order);
+            $GLOBALS['smarty']->assign('send_time', local_date($GLOBALS['_CFG']['time_format']));
+            $GLOBALS['smarty']->assign('shop_name', $GLOBALS['_CFG']['shop_name']);
+            $GLOBALS['smarty']->assign('send_date', local_date($GLOBALS['_CFG']['date_format']));
+            $GLOBALS['smarty']->assign('sent_date', local_date($GLOBALS['_CFG']['date_format']));
+            $GLOBALS['smarty']->assign('confirm_url', $ecs->url() . 'receive.php?id=' . $order['order_id'] . '&con=' . rawurlencode($order['consignee']));
+            $GLOBALS['smarty']->assign('send_msg_url',$ecs->url() . 'user.php?act=message_list&order_id=' . $order['order_id']);
+            $content = $GLOBALS['smarty']->fetch('str:' . $tpl['template_content']);
             send_mail($order['consignee'], $order['email'], $tpl['template_subject'], $content, $tpl['is_html']);
         }
 
@@ -2026,8 +1958,6 @@ function update_store(){
                     // 单规格商品
                     $sql_goods = "update ".$GLOBALS['ecs']->table('goods')." set goods_number = {$val['store']} WHERE goods_sn='".$val['bn']."'";
                     if($GLOBALS['db']->query($sql_goods)){
-                        // print_r($sql_goods);//exit();
-                        // $val['last_modified'] = $memo['last_modified'];
                         $result_data['true_bn'][]=$val['bn'];
                     }else{
                         $result_data['error_response'][]=$val['bn'];
@@ -2175,7 +2105,6 @@ function ome_create_reimburse(){
     if(!$data['order_id']){
         api_err('0x003', 'order_id no exist');
     }
-    // $sql = "select * from " . $GLOBALS['ecs']->table('order_info') . " where  order_sn = '".$data['order_id']."' and order_status != ".OS_RETURNED." and pay_status = ".PS_PAYED." and shipping_status = ".SS_UNSHIPPED." ";
     $sql = "select *,money_paid+surplus as payed_all from " . $GLOBALS['ecs']->table('order_info') . " where  order_sn = '".$data['order_id']."' and money_paid+surplus>0";
     $order = $GLOBALS['db']->getRow($sql);
     if(!$order){
@@ -2206,13 +2135,7 @@ function ome_create_reimburse(){
         /* 如果使用库存，则增加库存（不论何时减库存都需要） */
         if ($_CFG['use_storage'] == '1' && $_CFG['stock_dec_time'] == SDT_PLACE ) change_order_goods_storage($order['order_id'], false, SDT_PLACE);
 
-        /* 退货用户余额 */
-        // if ($order['user_id'] > 0 && $order['surplus'] > 0)
-        // {
-        //     $surplus = $order['money_paid'] < 0 ? $order['surplus'] + $order['money_paid'] : $order['surplus'];
-        //     log_account_change($order['user_id'], $surplus, 0, 0, 0, sprintf($GLOBALS['_LANG']['return_order_surplus'], $order['order_sn']));
-        //     $GLOBALS['db']->query("UPDATE ". $GLOBALS['ecs']->table('order_info') . " SET `order_amount` = '0' WHERE `order_id` =". $order['order_id']);
-        // }
+
         /* 退货积分 */
         if ($order['user_id'] > 0 && $order['integral'] > 0)
         {
@@ -2234,22 +2157,15 @@ function ome_create_reimburse(){
         $action_note = "管理员退款订单：".$order['order_sn']."，部分退款金额：".$data['cur_money'];
         /* 标记订单为“已确认”、“未付款” */
         $arr = array('order_status'     => OS_CONFIRMED,
-                     // 'pay_status'       => PS_UNPAYED,
-                     // 'shipping_status'  => SS_UNSHIPPED,
-                     // 'money_paid'       => 0,
-                     // 'invoice_no'       => '',
-                     // 'order_amount'     => 0
         );
         if(order_refund($order, 1, $action_note,$data['cur_money']) == false){
             api_err('0x003', 'reimburse fail');
         }
         if ($order['money_paid']-$data['cur_money']>=0) {
             $arr['money_paid'] = $order['money_paid']-$data['cur_money'];
-            // $arr['order_amount'] = $arr['order_amount'] - $data['cur_money'];
         }elseif ($order['money_paid']+$order['surplus']>=$data['cur_money']) {
             $arr['money_paid'] = 0;
             $arr['surplus'] = $order['surplus']+$order['money_paid']-$data['cur_money'];
-            // $arr['order_amount'] = $arr['order_amount']-$data['cur_money'];
         }
 
         update_order($order['order_id'], $arr);
@@ -2487,14 +2403,14 @@ function ome_create_delivery(){
                 {
                     $order['invoice_no'] = $delivery['invoice_no'];
                     $tpl = get_mail_template('deliver_notice');
-                    $smarty->assign('order', $order);
-                    $smarty->assign('send_time', local_date($_CFG['time_format']));
-                    $smarty->assign('shop_name', $_CFG['shop_name']);
-                    $smarty->assign('send_date', local_date($_CFG['date_format']));
-                    $smarty->assign('sent_date', local_date($_CFG['date_format']));
-                    $smarty->assign('confirm_url', $ecs->url() . 'receive.php?id=' . $order['order_id'] . '&con=' . rawurlencode($order['consignee']));
-                    $smarty->assign('send_msg_url',$ecs->url() . 'user.php?act=message_list&order_id=' . $order['order_id']);
-                    $content = $smarty->fetch('str:' . $tpl['template_content']);
+                    $GLOBALS['smarty']->assign('order', $order);
+                    $GLOBALS['smarty']->assign('send_time', local_date($_CFG['time_format']));
+                    $GLOBALS['smarty']->assign('shop_name', $_CFG['shop_name']);
+                    $GLOBALS['smarty']->assign('send_date', local_date($_CFG['date_format']));
+                    $GLOBALS['smarty']->assign('sent_date', local_date($_CFG['date_format']));
+                    $GLOBALS['smarty']->assign('confirm_url', $ecs->url() . 'receive.php?id=' . $order['order_id'] . '&con=' . rawurlencode($order['consignee']));
+                    $GLOBALS['smarty']->assign('send_msg_url',$ecs->url() . 'user.php?act=message_list&order_id=' . $order['order_id']);
+                    $content = $GLOBALS['smarty']->fetch('str:' . $tpl['template_content']);
                     if (!send_mail($order['consignee'], $order['email'], $tpl['template_subject'], $content, $tpl['is_html']))
                     {
                         $msg = $_LANG['send_mail_fail'];
@@ -2554,7 +2470,6 @@ function ome_create_delivery(){
         $back_order['insure_fee']  = $order['insure_fee'];
         $back_order['shipping_fee']= ($data['money']?$data['money']:'0');
         $back_order['return_time']   = GMTIME_UTC;
-        // $back_order['update_time'] = GMTIME_UTC;
         $back_order['update_time'] = $order['shipping_time'];
         $back_order['agency_id']   = $order['agency_id'];
 
@@ -2617,12 +2532,15 @@ function ome_create_delivery(){
             }
         }
 
-        $action_note = "系统管理员退款订单：".$order['order_sn'];
+        // $action_note = "系统管理员退货订单：".$order['order_sn'];
         /* todo 处理退款 */
         if ($order['pay_status'] != PS_UNPAYED)
         {
-            if(order_refund($order, 1, $action_note,$data['money']) == false){
-                api_err('0x003', '退款失败');
+            if (abs($data['money'])>0) {
+                $action_note = "系统管理员退款订单：".$order['order_sn'];
+                if(order_refund($order, 1, $action_note,$data['money']) == false){
+                    api_err('0x003', '退款失败');
+                }
             }
         }
 
@@ -2639,6 +2557,9 @@ function ome_create_delivery(){
                 $part_arr['surplus'] = $order['surplus'] - $data['money'];
             }
             $action_note = "系统管理员部分退款订单：".$order['order_sn'];
+            if (abs($data['money'])>0) {
+                order_refund($order, 1, $action_note,$data['money']);
+            }
             update_order($order['order_id'], $part_arr);
             order_action($order['order_sn'], OS_RETURNED, SS_SHIPPED, $order['pay_status'], $action_note);
             /* 清除缓存 */
@@ -2670,6 +2591,7 @@ function ome_create_delivery(){
         update_order($order['order_id'], $arr);
 
         /* 记录log */
+        $action_note = "系统管理员退货订单：".$order['order_sn'];
         order_action($order['order_sn'], OS_RETURNED, SS_UNSHIPPED, PS_UNPAYED, $action_note);
 
 
@@ -2830,7 +2752,6 @@ function shopex_goods_cat_list()
         foreach ($res as $cat) $cat_list[$cat['cat_id']] = $cat;
 
         foreach ($cat_list as $cid => $cat) {
-            // $path = '';
             $re_arr[$cid]['cat_name'] = $cat['cat_name']; //分类名称
             $re_arr[$cid]['order_by'] = $cat['sort_order']; //分类排序
             $re_arr[$cid]['desc'] = $cat['cat_desc']; //分类描述
@@ -2838,9 +2759,6 @@ function shopex_goods_cat_list()
             $re_arr[$cid]['type_name'] = '';
             $re_arr[$cid]['last_modify'] = time(); //最后修改时间
             $re_arr[$cid]['cat_path'] = empty($cat['parent_id']) ? '' : $cat_list[$cat['parent_id']]['cat_name'];
-            // get_cat_path($cat, $cat_list, $path);
-            // krsort($path);
-            // $re_arr[$cid]['cat_path'] = implode('->', $path);
         }
         $re_arr = array_slice($re_arr, ($page_size * ($page_no - 1)), $page_size);
         $re_arr['item_total'] = count($cat_list);
@@ -2883,7 +2801,6 @@ function shopex_brand_list()
             $re_arr[$k]['brand_alias'] = ''; //别名
             $re_arr[$k]['disabled'] = 'false'; //是否屏蔽
             $re_arr[$k]['order_by'] = $v['sort_order']; //排序
-            // $re_arr[$k]['brand_setting'] = ''; //品牌参数
             $re_arr[$k]['last_modify'] = 0; //最后修改时间
         }
         $re_arr['item_total'] = count($res);
@@ -3516,4 +3433,5 @@ function shopex_goods_search()
     }
     api_response('true', 'No Data', '', RETURN_TYPE);
 }
+
 ?>

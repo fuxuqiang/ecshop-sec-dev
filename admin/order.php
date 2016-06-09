@@ -418,7 +418,6 @@ elseif ($_REQUEST['act'] == 'info')
 
         $goods_list[] = $row;
     }
-    // echo "<pre>";print_r($order);//exit();
 
     $attr = array();
     $arr  = array();
@@ -2271,8 +2270,9 @@ elseif ($_REQUEST['act'] == 'add' || $_REQUEST['act'] == 'edit')
         $total = order_weight_price($order_id);
         foreach ($shipping_list AS $key => $shipping)
         {
+            $shipping['configure'] = unserialize($shipping['configure']);
             $shipping_fee = shipping_fee($shipping['shipping_code'],
-                unserialize($shipping['configure']), $total['weight'], $total['amount'], $total['number']);
+                $shipping['configure'], $total['weight'], $total['amount'], $total['number']);
             $shipping_list[$key]['shipping_fee'] = $shipping_fee;
             $shipping_list[$key]['format_shipping_fee'] = price_format($shipping_fee);
             $shipping_list[$key]['free_money'] = price_format($shipping['configure']['free_money']);

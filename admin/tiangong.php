@@ -109,10 +109,6 @@ class tiangong
         $param['client_id'] = $payment['tiangong_client_id'];
         $param['sign'] = $this->sign($param,$payment);
 
-        //error_log(print_r($param,1)."\n~~~~",3,"/Users/roshan/www/ecshop/admin/ecshop.log");
-//        error_log(print_r($param,1)."\n~~~~",3,"/Users/roshan/www/ecshop/admin/ecshop.log");
-        //error_log(print_r($payment,1)."\n~~~~",3,"/Users/roshan/www/ecshop/admin/ecshop.log");
-
         $def_url  = '<div style="text-align:center"><form name="tiangong" accept-charset="UTF-8" style="text-align:center;" method="post" action="https://api.teegon.com/charge/pay" target="_blank">';
         $def_url .= "<input type='hidden' name='order_no' value='" . $param['order_no'] . "' />";
         $def_url .= "<input type='hidden' name='channel' value='" . $param['channel'] . "' />";
@@ -143,16 +139,9 @@ class tiangong
             }
         }
         $payment  = get_payment($_GET['code']);
-        $_GET['data'] = stripslashes($_GET['data']);
-        //$_GET['data']=json_decode($_GET['data'],true);
-
-        //验证签名
-       // echo "<pre/>";
+        $_GET['data'] = stripslashes($_GET['data']);        
         unset($_GET['code']);
         $resign = $this->sign($_GET,$payment);
-        //print_r($_GET);
-        //print_r($resign);exit;
-
 
         //修改订单状态
         $pay_id = get_order_id_by_sn($_GET['order_no']);
@@ -169,73 +158,7 @@ class tiangong
 
 
     }
-//    function respond()
-//    {
-//        if (!empty($_POST))
-//        {
-//            foreach($_POST as $key => $data)
-//            {
-//                $_GET[$key] = $data;
-//            }
-//        }
-//        $payment  = get_payment($_GET['code']);
-//        $seller_email = rawurldecode($_GET['seller_email']);
-//        $order_sn = str_replace($_GET['subject'], '', $_GET['out_trade_no']);
-//        $order_sn = trim($order_sn);
-//
-//        /* 检查数字签名是否正确 */
-//        ksort($_GET);
-//        reset($_GET);
-//
-//        $sign = '';
-//        foreach ($_GET AS $key=>$val)
-//        {
-//            if ($key != 'sign' && $key != 'sign_type' && $key != 'code')
-//            {
-//                $sign .= "$key=$val&";
-//            }
-//        }
-//
-//        $sign = substr($sign, 0, -1) . $payment['alipay_key'];
-//        //$sign = substr($sign, 0, -1) . ALIPAY_AUTH;
-//        if (md5($sign) != $_GET['sign'])
-//        {
-//            return false;
-//        }
-//
-//        /* 检查支付的金额是否相符 */
-//        if (!check_money($order_sn, $_GET['total_fee']))
-//        {
-//            return false;
-//        }
-//
-//        if ($_GET['trade_status'] == 'WAIT_SELLER_SEND_GOODS')
-//        {
-//            /* 改变订单状态 */
-//            order_paid($order_sn, 2);
-//
-//            return true;
-//        }
-//        elseif ($_GET['trade_status'] == 'TRADE_FINISHED')
-//        {
-//            /* 改变订单状态 */
-//            order_paid($order_sn);
-//
-//            return true;
-//        }
-//        elseif ($_GET['trade_status'] == 'TRADE_SUCCESS')
-//        {
-//            /* 改变订单状态 */
-//            order_paid($order_sn, 2);
-//
-//            return true;
-//        }
-//        else
-//        {
-//            return false;
-//        }
-//    }
-//}
+
 //tiangong 加密算法
     public function sign($para_temp,$payment){
         //除去待签名参数数组中的空值和签名参数

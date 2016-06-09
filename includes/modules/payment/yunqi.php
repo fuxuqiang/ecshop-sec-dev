@@ -96,18 +96,13 @@ class yunqi
         $param['order_no'] = $order['order_sn']; //订单号
         $param['channel'] = $order['yunqi_paymethod']=='wxpay'?$order['yunqi_paymethod']:'alipay';
         $param['return_url'] = return_url(basename(__FILE__, '.php'));
-       // $param['return_url'] = 'http://www.qq.com';
         $param['amount'] = $order['order_amount'];
         $param['subject'] = (isset($order['process_type']) and $order['process_type']==0)?'余额充值':$name;
         $param['metadata'] = $order['yunqi_paymethod']=='wxpay'?'yunqiwx':'yunqi';
-        //$param['notify_url'] = 'http://www.baidu.com';//支付成功后天工支付网关通知
         $param['notify_url'] = return_url(basename(__FILE__, '.php'));
         $param['client_ip'] = $_SERVER["REMOTE_ADDR"];
         $param['client_id'] = $payment['yunqi_client_id'];
         $param['sign'] = $this->sign($param,$payment);
-//        error_log(print_r($order,1)."\n~~~~",3,"/Users/roshan/www/ecshop/admin/ecshop.log");
-//        error_log(print_r($param,1)."\n~~~~",3,"/Users/roshan/www/ecshop/admin/ecshop.log");
-        //error_log(print_r($payment,1)."\n~~~~",3,"/Users/roshan/www/ecshop/admin/ecshop.log");
 
         $def_url  = '<div style="text-align:center"><form name="yunqi" accept-charset="UTF-8" style="text-align:center;" method="post" action="https://api.teegon.com/charge/pay" target="_blank">';
         $def_url .= "<input type='hidden' name='order_no' value='" . $param['order_no'] . "' />";
@@ -141,14 +136,8 @@ class yunqi
         $payment  = get_payment($_GET['code']);
         $this->edit_payment($payment);
         $_GET['data'] = stripslashes($_GET['data']);
-        //$_GET['data']=json_decode($_GET['data'],true);
-
-        //验证签名
-       // echo "<pre/>";
         unset($_GET['code']);
         $resign = $this->sign($_GET,$payment);
-        //print_r($_GET);
-        //print_r($resign);exit;
 
         //获取paid
         $pay_id = get_order_id_by_sn($_GET['order_no']);
@@ -175,11 +164,6 @@ class yunqi
                 echo $tgreturn;
                 exit;
             }
-        //error_log(print_r($tgarr,1)."\n~~~~",3,"/Users/roshan/www/ecshop/admin/ecshop.log");
-        //error_log(print_r($tgreturn,1)."\n~~~~",3,"/Users/roshan/www/ecshop/admin/ecshop.log");
-        //error_log(print_r($tgsign,1)."\n~~~~",3,"/Users/roshan/www/ecshop/admin/ecshop.log");
-            //}
-
             return true;
         }else{
             return false;
@@ -188,73 +172,7 @@ class yunqi
 
 
     }
-//    function respond()
-//    {
-//        if (!empty($_POST))
-//        {
-//            foreach($_POST as $key => $data)
-//            {
-//                $_GET[$key] = $data;
-//            }
-//        }
-//        $payment  = get_payment($_GET['code']);
-//        $seller_email = rawurldecode($_GET['seller_email']);
-//        $order_sn = str_replace($_GET['subject'], '', $_GET['out_trade_no']);
-//        $order_sn = trim($order_sn);
-//
-//        /* 检查数字签名是否正确 */
-//        ksort($_GET);
-//        reset($_GET);
-//
-//        $sign = '';
-//        foreach ($_GET AS $key=>$val)
-//        {
-//            if ($key != 'sign' && $key != 'sign_type' && $key != 'code')
-//            {
-//                $sign .= "$key=$val&";
-//            }
-//        }
-//
-//        $sign = substr($sign, 0, -1) . $payment['alipay_key'];
-//        //$sign = substr($sign, 0, -1) . ALIPAY_AUTH;
-//        if (md5($sign) != $_GET['sign'])
-//        {
-//            return false;
-//        }
-//
-//        /* 检查支付的金额是否相符 */
-//        if (!check_money($order_sn, $_GET['total_fee']))
-//        {
-//            return false;
-//        }
-//
-//        if ($_GET['trade_status'] == 'WAIT_SELLER_SEND_GOODS')
-//        {
-//            /* 改变订单状态 */
-//            order_paid($order_sn, 2);
-//
-//            return true;
-//        }
-//        elseif ($_GET['trade_status'] == 'TRADE_FINISHED')
-//        {
-//            /* 改变订单状态 */
-//            order_paid($order_sn);
-//
-//            return true;
-//        }
-//        elseif ($_GET['trade_status'] == 'TRADE_SUCCESS')
-//        {
-//            /* 改变订单状态 */
-//            order_paid($order_sn, 2);
-//
-//            return true;
-//        }
-//        else
-//        {
-//            return false;
-//        }
-//    }
-//}
+
 //yunqi 加密算法
     public function sign($para_temp,$payment){
         //除去待签名参数数组中的空值和签名参数

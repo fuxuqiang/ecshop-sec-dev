@@ -65,7 +65,6 @@ class matrix
         $sql = "INSERT INTO ".$this->ecs->table('shop_bind')." (name, node_id, node_type, status, app_url) ".
                "VALUES ('".$data['name']."','".$data['node_id']."','".$data['node_type']."','".$data['status']."','".$data['app_url']."')";
 
-        error_log(date("c")."\t".$sql."\n\n",3,LOG_DIR."/api.log");
            
         $this->db->query($sql);
         /* 转入权限分配列表 */
@@ -81,10 +80,8 @@ class matrix
      * @param   array     $node_type    绑定类型
      */
     function delete_shop_bind($node_type){
-        error_log(date("c")."\t".__LINE__."\n\n",3,LOG_DIR."/api.log");
         if(!$node_type) return false;
         $sql = "delete from ".$this->ecs->table('shop_bind')." where node_type = '".$node_type."'";
-        error_log(date("c")."delete_shop_bind:\t".__LINE__.print_r($sql,1)."\n\n",3,LOG_DIR."/api.log");
         $this->db->query($sql);
         /* 将矩阵的绑定节点状态写入configg */
         $this->bind_config($node_type,'false');
@@ -102,17 +99,14 @@ class matrix
         $sql = "select value from ".$this->ecs->table('shop_config')." where code ='bind_list'";
         $bind_row = $this->db->getOne($sql);
         $bind_row and $list = json_decode($bind_row,1);
-        error_log(date("c")."\t".__LINE__.print_r($list,1)."\n\n",3,LOG_DIR."/api.log");
         if($list){
             if($status=='true'){
                 $list = array_push($list, $code);
             }else{
                 unset($list[array_search($code,$list)]);
             } 
-            error_log(date("c")."list:\t".__LINE__.print_r($list,1)."\n\n",3,LOG_DIR."/api.log");
             $sql = "update from ".$this->ecs->table('shop_config')." set value='".json_encode($list)."' where code='bind_list";
             if(empty($list)) $sql = "delete from ".$this->ecs->table('shop_config')." where code='bind_list'";
-            error_log(date("c")."bind_config:\t".__LINE__.print_r($sql,1)."\n\n",3,LOG_DIR."/api.log");
             $this->db->query($sql);
         }else{
             if($status=='true'){
@@ -196,8 +190,6 @@ class matrix
            error_log(date("c")."\t".rawurldecode($str_debug_info)."\n".stripslashes(var_export($paramss,true))."\n\n",3,LOG_DIR."/api_".date("Y-m-d",time()).".log");
            unset($str_debug_info,$array_debug_info);
         }
-        error_log(date("c")."\t".__LINE__.print_r($commit_setting,1)."\n\n",3,LOG_DIR."/api.log");
-        error_log(date("c")."\t".__LINE__.print_r($shop,1)."\n\n",3,LOG_DIR."/api.log");
         $i=0;
         do{
             $i++;
@@ -278,7 +270,6 @@ class matrix
                 $goods_total[$val['iid']][$val['product_id']]['product_id'] = $val['product_id'];
                 $goods_total[$val['iid']][$val['product_id']]['num'] = $val['num'];
                 $goods_total[$val['iid']][$val['product_id']]['total'] = $val['total_item_fee'];
-                //unset($datas[$val['iid']][$k]['product_id']);
             }
             if( !empty($goods_total) ){
                 foreach( $goods_total as $key=>$val ){
@@ -346,7 +337,6 @@ class matrix
         }else{
             $sql = "insert into ".$this->ecs->table('callback_status')." set msg_id='".$msg['msg_id']."',type='".$type."',http_type='".$http_type."',status='".$status."',type_id='".$tpye_id."',method='".$method."',date_time='".$time."',data='".$data."',times=1";
         }   
-        error_log(date('c')."set_callback  sql:\n".print_r($sql,1),3,__FILE__.".log");    
         $this->db->query($sql);
         //接口失败，修改订单的返回状态 order_info 的 callback_status
         if($status=='false' || $status=='true'){
@@ -395,9 +385,7 @@ class matrix
         }else{
             $sql = "update ".$this->ecs->table('callback_status')." set {$set_times}status='{$status}' {$sqlstr} where msg_id='".$msg_id."'  and status!='true'  ";
         }
-        error_log(date("c")."\t sql :".$sql."\n",3,__FILE__.".log");
         if( $this->db->query($sql) === false ){
-            // error_log(date("c")."\t error sql :".$sql."\n",3,__FILE__.".log");
         }
         //修改订单的返回状态 order_info 的 callback_status
         $order_sql = "update ".$this->ecs->table('order_info')." set callback_status='".$status."' where order_sn='".$data['type_id']."'";
@@ -451,73 +439,44 @@ class matrix
     function get_order_goods($res,$has_product){
         $return_value = array();
         foreach ($res as $key => $value) {
-            // if (isset($value['p_goods_attr']) && strstr($value['p_goods_attr'],"|")) {
-            //     $sql = "SELECT sum(attr_price) as attr_price FROM ".$GLOBALS['ecs']->table('goods_attr')." WHERE goods_id = '".$value['goods_id']."' AND goods_attr_id in (".str_replace("|", ",", $value['p_goods_attr']).")";
-            //     $attr_price = $GLOBALS['db']->getOne($sql);
-            //     $attr_price && $value['shop_price'] = $value['shop_price']+$attr_price;
-            // }
-            
-            // if ($return_value[$value['goods_id']]) {
-            //     $return_value[$value['goods_id']]['items_num'] = $return_value[$value['goods_id']]['items_num']+$value['goods_number'];
-            //     $return_value[$value['goods_id']]['order_items']['item'][] = array(
-            //         'iid' => $value['product_id'],
-            //         'bn' => $has_product?$value['product_sn']:$value['goods_sn'],
-            //         'price' => $value['goods_price'],
-            //         'name' => $value['goods_name'],
-            //         'weight' => $value['goods_weight'],
-            //         'num' => $value['goods_number'],
-            //         'total_item_fee' => $value['goods_price'],
-            //         'sku_properties' => str_replace(array("\r\n", "\r", "\n"), " ", $value['goods_attr']),
-            //         'sendnum' => $value['send_number'],
-            //         'item_type' => 'product',
-            //         'sale_price' => $value['goods_price'],
-            //         'discount_fee' => '0',
-            //         'score' => $value['give_integral']<0?$value['goods_price']:$value['give_integral'],
-            //         'item_status' => 'normal'
-            //     );
-            // }else{
-
-                $sku_properties = '';
-                if ($value['goods_attr']) {
-                    $sku_properties = str_replace(' ','',$value['goods_attr']);
-                    $sku_properties = str_replace(array("\r\n", "\r", "\n"), ";", $sku_properties);
-                    $sku_properties = trim($sku_properties,';');
-                }
-                $return_value[] = array(
-                    'iid' => $value['goods_id'],
-                    'title' => $value['goods_name'],
-                    'weight' => $value['goods_weight'],
-                    'bn' => $value['goods_sn'],
-                    // 'orders_bn' => $value['goods_sn'],
-                    'orders_bn' => $has_product?$value['product_sn']:$value['goods_sn'], //erp要求传跟order_items里的一样
-                    'items_num' => $value['goods_number'],
-                    'total_order_fee' => $value['goods_price'],
-                    'oid' => $order_sn,
-                    'status' => 'TRADE_ACTIVE',
-                    'type' => $value['is_gift']?'gift':'goods',
-                    'order_items' => array(
-                        'item' => array(
-                            0 => array(
-                                'iid' => $value['product_id'],
-                                'bn' => $has_product?$value['product_sn']:$value['goods_sn'],
-                                'price' => $value['goods_price'],
-                                // 'price' => $value['shop_price'],
-                                'name' => $value['goods_name'],
-                                'weight' => $value['goods_weight'],
-                                'num' => $value['goods_number'],
-                                'total_item_fee' => $value['goods_price'],
-                                'sku_properties' => $sku_properties,
-                                'sendnum' => $value['send_number'],
-                                'item_type' => 'product',
-                                'sale_price' => $this->format_number($value['goods_price']*$value['goods_number']-$value['discount_fee']),
-                                'discount_fee' => $value['discount_fee'],
-                                'score' => $value['give_integral']<0?$value['goods_price']:$value['give_integral'],
-                                'item_status' => 'normal'
-                            )
+            $sku_properties = '';
+            if ($value['goods_attr']) {
+                $sku_properties = str_replace(' ','',$value['goods_attr']);
+                $sku_properties = str_replace(array("\r\n", "\r", "\n"), ";", $sku_properties);
+                $sku_properties = trim($sku_properties,';');
+            }
+            $return_value[] = array(
+                'iid' => $value['goods_id'],
+                'title' => $value['goods_name'],
+                'weight' => $value['goods_weight'],
+                'bn' => $value['goods_sn'],
+                'orders_bn' => $has_product?$value['product_sn']:$value['goods_sn'], //erp要求传跟order_items里的一样
+                'items_num' => $value['goods_number'],
+                'total_order_fee' => $value['goods_price'],
+                'oid' => $order_sn,
+                'status' => 'TRADE_ACTIVE',
+                'type' => $value['is_gift']?'gift':'goods',
+                'order_items' => array(
+                    'item' => array(
+                        0 => array(
+                            'iid' => $value['product_id'],
+                            'bn' => $has_product?$value['product_sn']:$value['goods_sn'],
+                            'price' => $value['goods_price'],
+                            'name' => $value['goods_name'],
+                            'weight' => $value['goods_weight'],
+                            'num' => $value['goods_number'],
+                            'total_item_fee' => $value['goods_price'],
+                            'sku_properties' => $sku_properties,
+                            'sendnum' => $value['send_number'],
+                            'item_type' => 'product',
+                            'sale_price' => $this->format_number($value['goods_price']*$value['goods_number']-$value['discount_fee']),
+                            'discount_fee' => $value['discount_fee'],
+                            'score' => $value['give_integral']<0?$value['goods_price']:$value['give_integral'],
+                            'item_status' => 'normal'
                         )
                     )
-                );
-            // }
+                )
+            );
         }
         return $return_value;
     }
@@ -551,15 +510,6 @@ class matrix
         $order_items = $this->get_order_items($order_id);//order_items数据
         $prduct_list = $this->getProductList($order_items,$p_real_price);
         $goods_list = $this->getGoodsList($prduct_list[2]);
-        // $sql = "SELECT o.*, IF(o.product_id > 0, p.product_number, g.goods_number) AS storage, o.goods_attr, g.suppliers_id, IFNULL(b.brand_name, '') AS brand_name, p.product_sn
-        //     FROM " . $ecs->table('order_goods') . " AS o
-        //         LEFT JOIN " . $ecs->table('products') . " AS p
-        //             ON p.product_id = o.product_id
-        //         LEFT JOIN " . $ecs->table('goods') . " AS g
-        //             ON o.goods_id = g.goods_id
-        //         LEFT JOIN " . $ecs->table('brand') . " AS b
-        //             ON g.brand_id = b.brand_id
-        //     WHERE o.order_id = '$order_id'";
         $return_value = array();
         if( !empty($goods_list) ){
             foreach( $goods_list as $k=>$value ){
@@ -654,7 +604,6 @@ class matrix
 
 
         $paramss['created'] = date('Y-m-d H:i:s',$order_info['add_time']);//订单创建时间
-        // $paramss['modified'] = date('Y-m-d H:i:s',$order_info['add_time']);//订单修改时间，没有则用创建时间
         if(in_array($order_info['pay_status'], array(1,2))){ //订单支付时间 已支付或付款中
             $paramss['pay_time'] = date('Y-m-d H:i:s',$order_info['pay_time']);
         }
@@ -664,7 +613,6 @@ class matrix
         $paramss['payment_lists'] = json_encode($paramss['payment_lists']);
 
         $paramss['status'] = $order_status['status'][$order_info['order_status']];//交易状态
-        // $paramss['pay_status'] = $order_status['pay_status'][$order_info['pay_status']];//支付状态
         // 如果是未支付，判断是否是全部退款
         if ($order_info['pay_status'] == '0' && $order_info['pay_time']>0) {
             $sql = "select count(user_money) as user_money from ".$GLOBALS['ecs']->table('account_log')." where user_id = '".$order_info[
@@ -680,7 +628,7 @@ class matrix
         }
         $paramss['ship_status'] = $order_status['ship_status'][$order_info['shipping_status']];//发货状态
         $paramss['payed_fee'] = $this->format_number($order_info['surplus'] + $order_info['money_paid']);//已支付金额 
-        // $paramss['total_goods_fee'] = $order_info['card_fee']?$this->format_number($order_info['goods_amount']+$order_info['card_fee']):$this->format_number($order_info['goods_amount']);//商品总额
+
         $paramss['total_goods_fee'] = $this->format_number($order_info['goods_amount']);//商品总额
         $total_fee = $order_info['goods_amount'] - $order_info['discount'] - $order_info['goods_discount_fee'] + $order_info['tax'] + $order_info['shipping_fee'] + $order_info['insure_fee'] + $order_info['pay_fee'] + $order_info['pack_fee'] + $order_info['card_fee'];
         $paramss['total_trade_fee'] = $this->format_number($total_fee);//交易总额
@@ -691,33 +639,28 @@ class matrix
         }
 
         // 获取退款费用
-        // if($paramss['payed_fee'] > 0){
-            $refund_money = 0;
-            $sql = "select action_note from ".$GLOBALS['ecs']->table('order_action')." where order_id = ".$order_info['order_id']." and order_status = 4 ";
-            $refund_data = $this->db->getAll($sql);
-            if($refund_data){
-                foreach ($refund_data as $v) {
-                    $_refund_money = 0;
-                    if($pos = strpos($v['action_note'], '部分退款金额：')){
-                        $_refund_money = substr($v['action_note'], $pos+21);
-                        if(is_numeric($_refund_money)) $refund_money += $_refund_money;
-                    }
+        $refund_money = 0;
+        $sql = "select action_note from ".$GLOBALS['ecs']->table('order_action')." where order_id = ".$order_info['order_id']." and order_status = 4 ";
+        $refund_data = $this->db->getAll($sql);
+        if($refund_data){
+            foreach ($refund_data as $v) {
+                $_refund_money = 0;
+                if($pos = strpos($v['action_note'], '部分退款金额：')){
+                    $_refund_money = substr($v['action_note'], $pos+21);
+                    if(is_numeric($_refund_money)) $refund_money += $_refund_money;
                 }
             }
-            // $paramss['payed_fee'] = $this->format_number($paramss['payed_fee'] - $refund_money);
-            // $paramss['total_trade_fee'] = $this->format_number($paramss['total_trade_fee'] - $refund_money);
-            //纯退款 
-            if($refund_money > 0 and $paramss['total_trade_fee'] >  ( $paramss['payed_fee'] + $order_info['bonus'] + $order_info['integral_money'] ) ){
-                if($paramss['payed_fee'] > 0){
-                    $paramss['pay_status'] = 'REFUND_PART';
-                    // $paramss['status'] = 'TRADE_ACTIVE';
-                    $order_info['shipping_status'] == 1 and $paramss['status'] = 'TRADE_FINISHED';//已发货 订单状态就变成完成
-                }else{
-                    $paramss['pay_status'] = 'REFUND_ALL';
-                    $paramss['status'] = 'TRADE_CLOSED';
-                }
+        }
+        //纯退款 
+        if($refund_money > 0 and $paramss['total_trade_fee'] >  ( $paramss['payed_fee'] + $order_info['bonus'] + $order_info['integral_money'] ) ){
+            if($paramss['payed_fee'] > 0){
+                $paramss['pay_status'] = 'REFUND_PART';
+                $order_info['shipping_status'] == 1 and $paramss['status'] = 'TRADE_FINISHED';//已发货 订单状态就变成完成
+            }else{
+                $paramss['pay_status'] = 'REFUND_ALL';
+                $paramss['status'] = 'TRADE_CLOSED';
             }
-        // }
+        }
 
         $sql = "select back_id from ".$GLOBALS['ecs']->table('back_order')." where order_id = ".$order_info['order_id']." AND order_sn='".$order_info['order_sn']."'";
         $back_id = $this->db->getOne($sql);
@@ -770,7 +713,6 @@ class matrix
             $paramss['orders_discount_fee'] = $orders_discount_fee;
             $paramss['total_trade_fee'] = $this->format_number($paramss['total_trade_fee'] - $orders_discount_fee);
         }
-        // $paramss['orders_discount_fee'] = $order_info['bonus'] + $order_info['integral_money'];
 
         //订单商品信息
         if($this->_filterParams('orders', $fields)){
@@ -783,7 +725,6 @@ class matrix
             $goods_orders = $this->getGoods($order_info['order_id'],$order_info['order_sn'],$order_card,true);
             $paramss['orders']['order'] = $goods_orders;
             $paramss['orders'] = json_encode($paramss['orders']);
-            // $paramss['orders_discount_fee'] = 0;
             $paramss['goods_discount_fee'] = $this->format_number($order_info['goods_discount_fee']);
         }
         //订单配送信息

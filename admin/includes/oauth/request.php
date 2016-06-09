@@ -32,8 +32,6 @@ class oauth2_request extends oauth2 {
     public function post($api, $params=array(), $signtime=null)
     {
         $url = "{$this->site}/{$api}";
-        //echo '请求地址：' . $url;
-        //echo '<hr/>';
         $headers = array();
         if ($this->__token) {
             $headers['Authorization'] = 'OAuth2 ' . $this->__token;
@@ -119,23 +117,18 @@ class oauth2_request extends oauth2 {
             $sign_data = $this->sign($action, $urlinfo['path'], $headers, $get_params, $data, $signtime);
             break;
         }
-        //$headers = array_merge($this->default_headers,(array)$headers);
 
         $set_headers = array();
         foreach((array)$headers as $k=>$v){
             $set_headers[] .= $k.': '.$v;
         }
-//        $set_headers[] = 'Accept: '. $action;
 
         $this->responseBody = '';
 
         $ch = curl_init();
 
         $url_data = array_diff($sign_data, $get_params);
-        //print_r($url_data);exit;
         $url = rtrim($url, '&') . (strpos($url, '?')===false ? '?' : '&'). http_build_query($url_data);
-        //echo '<br/><br/><br/><br/>';
-        //echo $url, "<HR>";
         curl_setopt($ch, CURLOPT_URL, $url);
 
 
@@ -148,7 +141,6 @@ class oauth2_request extends oauth2 {
         curl_setopt($ch, CURLOPT_HTTP_VERSION, $this->http_ver);
 
        if(substr($url, 0,5)=='https') curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 3);
-       //else curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
          curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 
         switch(strtoupper($action)){
@@ -168,9 +160,6 @@ class oauth2_request extends oauth2 {
         }
         curl_close($ch);
 
-       // var_dump($this->responseBody);
-       // echo "<hr>";
-       // var_dump($this->responseHeader);
 
         preg_match('/\d{3}/',$this->responseHeader,$match);
         $this->responseCode = $match[0];

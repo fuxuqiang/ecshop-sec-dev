@@ -1810,7 +1810,6 @@ elseif ($_REQUEST['step'] == 'done')
     }
     $goods_name = implode(',',$ccc);
     $order['goods_name'] = $goods_name;
-//        error_log(print_r($goods_name,1)."\n~~~~",3,"/Users/roshan/www/ecshop/admin/ecshop.log");
 
 //天工结束
 
@@ -1842,14 +1841,7 @@ elseif ($_REQUEST['step'] == 'done')
     unset($_SESSION['flow_consignee']); // 清除session中保存的收货人信息
     unset($_SESSION['flow_order']);
     unset($_SESSION['direct_shopping']);
-    // error_log(print_R($order,1)."\n",3,"/tmp/chen.log");
-    // echo "<pre>";print_r($order);exit();
 
-}
-elseif ($_REQUEST['step'] == 'chen') {
-    include_once(ROOT_PATH . 'includes/cls_matrix.php');
-    $matrix = new matrix;
-    $matrix->createOrder('2016042755957');
 }
 
 /*------------------------------------------------------ */
@@ -2137,12 +2129,19 @@ elseif ($_REQUEST['step'] == 'add_package_to_cart')
 }
 elseif ($_REQUEST['step'] == 'repurchase') {
     include_once('includes/cls_json.php');
-    $order_id = strip_tags($_POST['order_id']);
+    $order_id = intval($_POST['order_id']);
     $order_id = json_str_iconv($order_id);
+    $user_id = $_SESSION['user_id'];
+    $json  = new JSON;
+    $order = $db->getOne('SELECT count(*) FROM ' . $ecs->table('order_info') . ' WHERE order_id = ' . $order_id . ' and user_id = ' . $user_id);
+    if (!$order) {
+        $result = array('error' => 1, 'message' => $_LANG['repurchase_fail']);
+        die($json->encode($result));
+    }
+
     $db->query('DELETE FROM ' .$ecs->table('cart') . " WHERE rec_type = " . CART_REPURCHASE);
     $order_goods = $db->getAll("SELECT goods_id, goods_number, goods_attr_id, parent_id FROM " . $ecs->table('order_goods') . " WHERE order_id = " . $order_id);
     $result = array('error' => 0, 'message' => '');
-    $json  = new JSON;
     foreach ($order_goods as $goods) {
         $spec = empty($goods['goods_attr_id']) ? array() : explode(',', $goods['goods_attr_id']);
         if (!addto_cart($goods['goods_id'], $goods['goods_number'], $spec, $goods['parent_id'], CART_REPURCHASE)) {

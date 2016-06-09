@@ -85,10 +85,6 @@ class oauth2{
         $arr_post = $_POST;
         $sign = $arr_get['sign'];
         $arr_get = $arr_get['sign'];
-
-        #echo "<pre>";
-        #print_r($_GET);
-        #print_r($_POST);
         return true;
     }
 
@@ -108,26 +104,12 @@ class oauth2{
         $post_params = rawurlencode(urldecode(http_build_query($post_data)));
         $header_params = $header_data?rawurlencode(urldecode(http_build_query($header_data))):'';
 
-        #$get_params = $post_params = $header_params = null;
-        #foreach(array('get_params' =>$get_data, 'post_params'=>$post_data) as $key => $val){
-        #    $$key = $this->build_query($val);
-        #}
-        #$get_params = rawurlencode(ltrim($get_params, '&'));
-        #$post_params = rawurlencode(ltrim($post_params, '&'));
-        #$header_params = rawurlencode(ltrim($header_params, '&'));
-
 
         $path = rawurlencode('/'.ltrim($path, '/'));
 
-        #$orgsign = "{$this->secret}&".strtoupper($action)."&{$path}&{$get_params}&{$this->secret}";
         $orgsign = "{$this->secret}&".strtoupper($action)."&{$path}&{$header_params}&{$get_params}&{$post_params}&{$this->secret}";
-        //echo "<hr>";
-        //echo $orgsign,"<HR>";
         
         $sign = strtoupper(md5($orgsign));
-        #echo $sign;exit;
-
-        #echo "\r\n", $orgsign, "\r\n", $sign, "\r\n";
 
         $get_data['sign'] = $sign;
         return $get_data;
