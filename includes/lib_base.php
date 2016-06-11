@@ -1289,7 +1289,7 @@ function write_static_cache($cache_name, $caches)
     {
         return false;
     }
-    $cache_file_path = ROOT_PATH . '/temp/static_caches/' . $cache_name . '.php';
+    $cache_file_path = ROOT_PATH . 'temp/static_caches/' . $cache_name . '.php';
     $content = "<?php\r\n";
     $content .= "\$data = " . var_export($caches, true) . ";\r\n";
     $content .= "?>";
