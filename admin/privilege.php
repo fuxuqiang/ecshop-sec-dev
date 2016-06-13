@@ -52,7 +52,7 @@ if ($_REQUEST['act'] == 'login')
     header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
     header("Cache-Control: no-cache, must-revalidate");
     header("Pragma: no-cache");
-    if($_REQUEST['type']=='yunqi'){
+    if(isset($_REQUEST['type']) && $_REQUEST['type']=='yunqi'){
         $ecs = $GLOBALS['ecs'];
         $db = $GLOBALS['db'];
         header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
