@@ -223,7 +223,7 @@ class cls_mysql
         /* 当当前的时间大于类初始化时间的时候，自动执行 ping 这个自动重新连接操作 */
         if (time() > $this->starttime + 1)
         {
-            mysql_ping($this->link_id);
+            mysqli_ping($this->link_id);
         }
 
         if (!($query = mysqli_query($this->link_id, $sql)) && $type != 'SILENT')
