@@ -653,7 +653,7 @@ elseif ($_REQUEST['step'] == 'checkout')
             }
         }
     }
-    $yunqi_payment and array_unshift($payment_list, $yunqi_payment);
+    isset($yunqi_payment) and array_unshift($payment_list, $yunqi_payment);
     $smarty->assign('payment_list', $payment_list);
 
     /* 取得包装与贺卡 */
