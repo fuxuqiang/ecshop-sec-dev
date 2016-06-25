@@ -33,7 +33,7 @@ function filterArray(&$data, $filterarr) {
 function filter($str, $filterarr){
     foreach($filterarr as $value)
     {
-        if (preg_match("/".$value."/is",$str)==1 || preg_match("/".$value."/is",urlencode($str))==1)
+        if (preg_match("/".$value."/is", $str)==1 || preg_match("/".$value."/is", urlencode($str))==1)
         {
             header("Content-type: text/html; charset=utf-8"); 
             print "您的提交带有不合法参数,谢谢合作";
