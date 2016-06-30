@@ -12,15 +12,12 @@
  * $Author: liubo $
  * $Id: init.php 17217 2011-01-19 06:29:08Z liubo $
 */
-require_once(dirname(__FILE__) . '/safety.php');
+
+require_once __DIR__.'/safety.php';
+
 if (!defined('IN_ECS'))
 {
     die('Hacking attempt');
-}
-
-if (__FILE__ == '')
-{
-    die('Fatal error code: 0');
 }
 
 /* 取得当前ecshop所在的根目录 */

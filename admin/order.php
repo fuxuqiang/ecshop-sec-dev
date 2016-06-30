@@ -473,9 +473,13 @@ elseif ($_REQUEST['act'] == 'info')
         //$smarty->assign('print_time',   local_date($_CFG['time_format']));
         //发货地址所在地
         $region_array = array();
-        $region_id = !empty($_CFG['shop_country']) ? $_CFG['shop_country'] . ',' : '';
-        $region_id .= !empty($_CFG['shop_province']) ? $_CFG['shop_province'] . ',' : '';
-        $region_id .= !empty($_CFG['shop_city']) ? $_CFG['shop_city'] . ',' : '';
+        $region_id = !empty($_CFG['shop_country'])? $_CFG['shop_country'].',' : '';
+        $region_id .= !empty($_CFG['shop_province'])? $_CFG['shop_province'].',' : '';
+        $region_id .= !empty($_CFG['shop_city'])? $_CFG['shop_city'].',' : '';
+        $region_id .= !empty($order['country'])? $order['country'].',' : '';
+        $region_id .= !empty($order['province'])? $order['province'].',' : '';
+        $region_id .= !empty($order['city'])? $order['city'].',' : '';
+        $region_id .= !empty($order['district'])? $order['district'].',' : '';
         $region_id = substr($region_id, 0, -1);
         $region = $db->getAll("SELECT region_id, region_name FROM " . $ecs->table("region") . " WHERE region_id IN ($region_id)");
         if (!empty($region))
@@ -554,12 +558,14 @@ elseif ($_REQUEST['act'] == 'info')
             }
             foreach ($temp_config_lable as $temp_key => $temp_lable)
             {
-                $temp_info = explode(',', $temp_lable);
-                if (is_array($temp_info))
-                {
-                    $temp_info[1] = $lable_box[$temp_info[0]];
+                if ($temp_lable) {
+                    $temp_info = explode(',', $temp_lable);
+                    if (is_array($temp_info))
+                    {
+                        $temp_info[1] = $lable_box[$temp_info[0]];
+                    }
+                    $temp_config_lable[$temp_key] = implode(',', $temp_info);
                 }
-                $temp_config_lable[$temp_key] = implode(',', $temp_info);
             }
             $shipping['config_lable'] = implode('||,||',  $temp_config_lable);
 
