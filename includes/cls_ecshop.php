@@ -22,7 +22,7 @@ define('APPNAME', 'ECSHOP');
 define('VERSION', 'v3.0.0');
 define('RELEASE', '20160518');
 
-class ECS
+class cls_ecshop
 {
     var $db_name = '';
     var $prefix  = 'ecs_';
@@ -35,7 +35,7 @@ class ECS
      *
      * @return  void
      */
-    function ECS($db_name, $prefix)
+    function __construct($db_name, $prefix)
     {
         $this->db_name = $db_name;
         $this->prefix  = $prefix;

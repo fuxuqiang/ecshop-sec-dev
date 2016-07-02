@@ -18,7 +18,7 @@ if (!defined('IN_ECS'))
     die('Hacking attempt');
 }
 
-class ecs_error
+class cls_error
 {
     var $_message   = array();
     var $_template  = '';
@@ -32,18 +32,6 @@ class ecs_error
      * @return  void
      */
     function __construct($tpl)
-    {
-        $this->ecs_error($tpl);
-    }
-
-    /**
-     * 构造函数
-     *
-     * @access  public
-     * @param   string  $tpl
-     * @return  void
-     */
-    function ecs_error($tpl)
     {
         $this->_template = $tpl;
     }
