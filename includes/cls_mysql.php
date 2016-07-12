@@ -79,7 +79,7 @@ class cls_mysql
     // 连接数据库
     function connect($dbhost, $dbuser, $dbpw, $dbname = '', $charset = 'utf8', $quiet = 0)
     {
-        $this->link_id = mysqli_connect($dbhost, $dbuser, $dbpw);
+        $this->link_id = mysqli_connect($dbhost, $dbuser, $dbpw, $dbname);
             
         if (!$this->link_id)
         {
@@ -149,28 +149,6 @@ class cls_mysql
                        '$this->platform = ' . "'" . $this->platform . "';\r\n?" . '>';
 
             @file_put_contents($sqlcache_config_file, $content);
-        }
-
-        /* 选择数据库 */
-        if ($dbname)
-        {
-            if (mysqli_select_db($this->link_id, $dbname) === false )
-            {
-                if (!$quiet)
-                {
-                    $this->ErrorMsg("Can't select MySQL database($dbname)!");
-                }
-
-                return false;
-            }
-            else
-            {
-                return true;
-            }
-        }
-        else
-        {
-            return true;
         }
     }
 

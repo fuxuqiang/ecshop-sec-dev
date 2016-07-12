@@ -40,7 +40,7 @@ else
     ini_set('include_path', '.:'.ROOT_PATH);
 }
 
-require ROOT_PATH.'data/config.php';
+require_once ROOT_PATH.'data/config.php';
 
 if (!defined('DEBUG_MODE'))
 {
@@ -58,14 +58,14 @@ function __autoload($name) {
     require_once ROOT_PATH."includes/$name.php";
 }
 
-require ROOT_PATH.'includes/inc_constant.php';
-require ROOT_PATH.'includes/lib_time.php';
-require ROOT_PATH.'includes/lib_base.php';
-require ROOT_PATH.'includes/lib_common.php';
-require ROOT_PATH.'includes/lib_main.php';
-require ROOT_PATH.'includes/lib_insert.php';
-require ROOT_PATH.'includes/lib_goods.php';
-require ROOT_PATH.'includes/lib_article.php';
+require_once ROOT_PATH.'includes/inc_constant.php';
+require_once ROOT_PATH.'includes/lib_time.php';
+require_once ROOT_PATH.'includes/lib_base.php';
+require_once ROOT_PATH.'includes/lib_common.php';
+require_once ROOT_PATH.'includes/lib_main.php';
+require_once ROOT_PATH.'includes/lib_insert.php';
+require_once ROOT_PATH.'includes/lib_goods.php';
+require_once ROOT_PATH.'includes/lib_article.php';
 
 /* 对用户传入的变量进行转义操作。*/
 if (!get_magic_quotes_gpc())
@@ -100,7 +100,7 @@ $err = new cls_error('message.dwt');
 $_CFG = load_config();
 
 /* 载入语言文件 */
-require(ROOT_PATH . 'languages/' . $_CFG['lang'] . '/common.php');
+require ROOT_PATH.'languages/'.$_CFG['lang'].'/common.php';
 
 if ($_CFG['shop_closed'] == 1)
 {

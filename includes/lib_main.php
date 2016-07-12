@@ -902,39 +902,26 @@ function is_spider($record = true)
         return '';
     }
 
-    $searchengine_bot = array(
-        'googlebot',
-        'mediapartners-google',
-        'baiduspider+',
-        'msnbot',
-        'yodaobot',
-        'yahoo! slurp;',
-        'yahoo! slurp china;',
-        'iaskspider',
-        'sogou web spider',
-        'sogou push spider'
-    );
-
-    $searchengine_name = array(
-        'GOOGLE',
-        'GOOGLE ADSENSE',
-        'BAIDU',
-        'MSN',
-        'YODAO',
-        'YAHOO',
-        'Yahoo China',
-        'IASK',
-        'SOGOU',
-        'SOGOU'
+    $searchengine = array(
+        'googlebot' => 'GOOGLE',
+        'mediapartners-google' => 'GOOGLE ADSENSE',
+        'baiduspider+' => 'BAIDU',
+        'msnbot' => 'MSN',
+        'yodaobot' => 'YODAO',
+        'yahoo! slurp;' => 'YAHOO',
+        'yahoo! slurp china;' => 'Yahoo China',
+        'iaskspider' => 'IASK',
+        'sogou web spider' => 'SOGOU',
+        'sogou push spider' => 'SOGOU'
     );
 
     $spider = strtolower($_SERVER['HTTP_USER_AGENT']);
 
-    foreach ($searchengine_bot AS $key => $value)
+    foreach ($searchengine AS $key => $value)
     {
-        if (strpos($spider, $value) !== false)
+        if (strpos($spider, $key) !== false)
         {
-            $spider = $searchengine_name[$key];
+            $spider = $value;
 
             if ($record === true)
             {
