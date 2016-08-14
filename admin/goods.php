@@ -253,7 +253,7 @@ elseif ($_REQUEST['act'] == 'add' || $_REQUEST['act'] == 'edit' || $_REQUEST['ac
 
         /* 获取商品类型存在规格的类型 */
         $specifications = get_goods_type_specifications();
-        $goods['specifications_id'] = $specifications[$goods['goods_type']];
+        isset($specifications[$goods['goods_type']]) && $goods['specifications_id'] = $specifications[$goods['goods_type']];
         $_attribute = get_goods_specifications_list($goods['goods_id']);
         $goods['_attribute'] = empty($_attribute) ? '' : 1;
 
