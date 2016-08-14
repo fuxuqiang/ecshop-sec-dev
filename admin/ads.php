@@ -359,8 +359,8 @@ elseif ($_REQUEST['act'] == 'update')
     }
 
     /* 获得广告的开始时期与结束日期 */
-    $start_time = local_strtotime($_POST['start_time']);
-    $end_time   = local_strtotime($_POST['end_time']);
+    $start_time = strtotime($_POST['start_time']);
+    $end_time   = strtotime($_POST['end_time']);
 
     /* 编辑图片类型的广告 */
     if ($type == 0)
