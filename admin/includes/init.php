@@ -112,7 +112,7 @@ if (strpos(PHP_SELF, '.php/') !== false)
 }
 
 /* 创建 ECSHOP 对象 */
-$ecs = new ECS($db_name, $prefix);
+$ecs = new cls_ecshop($db_name, $prefix);
 define('DATA_DIR', $ecs->data_dir());
 define('IMAGE_DIR', $ecs->image_dir());
 
@@ -122,7 +122,7 @@ $db = new cls_mysql($db_host, $db_user, $db_pass, $db_name);
 $db_host = $db_user = $db_pass = $db_name = NULL;
 
 /* 创建错误处理对象 */
-$err = new ecs_error('message.htm');
+$err = new clS_error('message.htm');
 
 /* 初始化session */
 require(ROOT_PATH . 'includes/cls_session.php');
