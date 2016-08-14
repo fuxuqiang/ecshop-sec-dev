@@ -138,7 +138,7 @@ elseif ($_REQUEST['act'] == 'list')
     $smarty->assign('panel_flag',  $panel_flag);
     $smarty->assign('panel_display',  $panel_display);
     $smarty->assign('erp_str',  $erpstr);
-    $smarty->assign('erp_url',  $erp_url);
+    isset($erp_url) && $smarty->assign('erp_url',  $erp_url);
     $smarty->assign('erp_icon_html',  $erp_icon_html);
 
 
