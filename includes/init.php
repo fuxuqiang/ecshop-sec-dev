@@ -13,7 +13,7 @@
  * $Id: init.php 17217 2011-01-19 06:29:08Z liubo $
 */
 
-require_once __DIR__.'/safety.php';
+require __DIR__.'/safety.php';
 
 if (!defined('IN_ECS'))
 {
@@ -40,7 +40,7 @@ else
     ini_set('include_path', '.:'.ROOT_PATH);
 }
 
-require_once ROOT_PATH.'data/config.php';
+require ROOT_PATH.'data/config.php';
 
 if (!defined('DEBUG_MODE'))
 {
@@ -55,17 +55,17 @@ if (!empty($timezone))
 define('PHP_SELF', $_SERVER['SCRIPT_NAME']);
 
 function __autoload($name) {
-    require_once ROOT_PATH."includes/$name.php";
+    require ROOT_PATH."includes/$name.php";
 }
 
-require_once ROOT_PATH.'includes/inc_constant.php';
-require_once ROOT_PATH.'includes/lib_time.php';
-require_once ROOT_PATH.'includes/lib_base.php';
-require_once ROOT_PATH.'includes/lib_common.php';
-require_once ROOT_PATH.'includes/lib_main.php';
-require_once ROOT_PATH.'includes/lib_insert.php';
-require_once ROOT_PATH.'includes/lib_goods.php';
-require_once ROOT_PATH.'includes/lib_article.php';
+require ROOT_PATH.'includes/inc_constant.php';
+require ROOT_PATH.'includes/lib_time.php';
+require ROOT_PATH.'includes/lib_base.php';
+require ROOT_PATH.'includes/lib_common.php';
+require ROOT_PATH.'includes/lib_main.php';
+require ROOT_PATH.'includes/lib_insert.php';
+require ROOT_PATH.'includes/lib_goods.php';
+require ROOT_PATH.'includes/lib_article.php';
 
 /* 对用户传入的变量进行转义操作。*/
 if (!get_magic_quotes_gpc())
@@ -139,7 +139,7 @@ if (!defined('INIT_NO_USERS'))
 }
 if(isset($_SERVER['PHP_SELF']))
 {
-    $_SERVER['PHP_SELF']=htmlspecialchars($_SERVER['PHP_SELF']);
+    $_SERVER['PHP_SELF'] = htmlspecialchars($_SERVER['PHP_SELF']);
 }
 if (!defined('INIT_NO_SMARTY'))
 {
@@ -175,7 +175,6 @@ if (!defined('INIT_NO_SMARTY'))
     {
         $smarty->assign('ecs_css_path', 'themes/' . $_CFG['template'] . '/style.css');
     }
-
 }
 
 if (!defined('INIT_NO_USERS'))
