@@ -108,9 +108,9 @@
 <!--
 var currTemplateFile = '{$curr_template_file}';
 var selCategories    = '{$arr_cates}';
+var selArticleCats   = '{$arr_article_cats}';
 var selRegions       = new Array();
 var selBrands        = new Array();
-var selArticleCats   = new Array();
 var selAdPositions   = new Array();
 
 {foreach from=$temp_regions item=region key=id}
@@ -119,10 +119,6 @@ selRegions[{$id}] = '{$region|escape:quotes}';
 
 {foreach from=$arr_brands item=brand key=id}
 selBrands[{$id}] = '{$brand|escape:quotes}';
-{/foreach}
-
-{foreach from=$arr_article_cats item=cat key=id}
-selArticleCats[{$id}] = '{$cat}';
 {/foreach}
 
 {foreach from=$arr_ad_positions item=ad_position key=id}
@@ -138,83 +134,30 @@ onload = function()
 }
 
 /**
- * 创建区域选择的下拉列表
+ * 创建下拉列表
  */
-function buildRegionSelect(selName)
+function buildSelect(selName, optContent, optVal=true)
 {
-    var sel = '<select name="' + selName + '">';
+    var sel = '<select name="' + selName + '"><option value="">' + selectPlease + '</option>';
 
-    sel += '<option value="">' + selectPlease + '</option>';
-
-    for (i=0; i < selRegions.length; i++)
+    if (Array.isArray(optContent))
     {
-        sel += '<option value="' + selRegions[i] + '">' + selRegions[i] + '</option>';
-    }
-
-    sel += '</select>';
-
-    return sel;
-}
-
-/**
- * 创建选择品牌的下拉列表
- */
-function buildBrandSelect(selName)
-{
-    var sel = '<select name="' + selName + '">';
-
-    sel += '<option value="">' + selectPlease + '</option>';
-
-    for (brand in selBrands)
-    {
-        if (brand != "______array" && brand != "toJSONString")
+        for (k in optContent)
         {
-          sel += '<option value="' + brand + '">' + selBrands[brand] + '</option>';
+            if (optVal)
+            {
+                var val = optContent[k];
+            }
+            else
+            {
+                var val = k;
+            }
+            sel += '<option value="' + val + '">' + optContent[k] + '</option>';
         }
     }
-
-    sel += '</select>';
-
-    return sel;
-}
-
-/**
- * 创建选择文章分类的下拉列表
- */
-function buildArticleCatSelect(selName)
-{
-    var sel = '<select name="' + selName + '">';
-
-    sel += '<option value="">' + selectPlease + '</option>';
-
-    for (cat in selArticleCats)
+    else
     {
-        if (cat != "______array" && cat != "toJSONString")
-        {
-          sel += '<option value="' + cat + '">' + selArticleCats[cat] + '</option>';
-        }
-    }
-
-    sel += '</select>';
-
-    return sel;
-}
-
-/**
- * 创建选择广告位置的列表
- */
-function buildAdPositionsSelect(selName)
-{
-    var sel = '<select name="' + selName + '">';
-
-    sel += '<option value="">' + selectPlease + '</option>';
-
-    for (ap in selAdPositions)
-    {
-        if (ap != "______array" && ap != "toJSONString")
-        {
-          sel += '<option value="' + ap + '">' + selAdPositions[ap] + '</option>';
-        }
+        sel += optContent;
     }
 
     sel += '</select>';
@@ -238,13 +181,13 @@ function addCatGoods(obj)
     cell.align     = 'right';
 
     cell           = row.insertCell(-1);
-    cell.innerHTML = buildRegionSelect('regions[cat_goods][]');
+    cell.innerHTML = buildSelect('regions[cat_goods][]', selRegions);
 
     cell           = row.insertCell(-1);
     cell.innerHTML = '<input type="text" name="sort_order[cat_goods][]" value="0" size="4" />';
 
     cell           = row.insertCell(-1);
-    cell.innerHTML = '<select name="categories[cat_goods][]"><option value="">' + selectPlease + '</option>' + selCategories + '</select>';
+    cell.innerHTML = buildSelect('categories[cat_goods][]', selCategories, false);
 
     cell           = row.insertCell(-1);
     cell.innerHTML = '<input type="text" name="number[cat_goods][]" value="5" size="4" />';
@@ -268,13 +211,13 @@ function addBrandGoods(obj)
     cell.align     = 'right';
 
     cell           = row.insertCell(-1);
-    cell.innerHTML = buildRegionSelect('regions[brand_goods][]');
+    cell.innerHTML = buildSelect('regions[cat_goods][]', selRegions);
 
     cell           = row.insertCell(-1);
     cell.innerHTML = '<input type="text" name="sort_order[brand_goods][]" value="0" size="4" />';
 
     cell           = row.insertCell(-1);
-    cell.innerHTML = buildBrandSelect('brands[brand_goods][]');
+    cell.innerHTML = buildSelect('brands[brand_goods][]', selBrands, false);
 
     cell           = row.insertCell(-1);
     cell.innerHTML = '<input type="text" name="number[brand_goods][]" value="5" size="4" />';
@@ -298,13 +241,13 @@ function addArticles(obj)
     cell.align     = 'right';
 
     cell           = row.insertCell(-1);
-    cell.innerHTML = buildRegionSelect('regions[cat_articles][]');
+    cell.innerHTML = buildSelect('regions[cat_goods][]', selRegions);
 
     cell           = row.insertCell(-1);
     cell.innerHTML = '<input type="text" name="sort_order[cat_articles][]" value="0" size="4" />';
 
     cell           = row.insertCell(-1);
-    cell.innerHTML = buildArticleCatSelect('article_cat[cat_articles][]');
+    cell.innerHTML = buildSelect('article_cat[cat_articles][]', selArticleCats, false);
 
     cell           = row.insertCell(-1);
     cell.innerHTML = '<input type="text" name="number[cat_articles][]" value="5" size="4" />';
@@ -328,13 +271,13 @@ function addAdPosition(obj)
     cell.align     = 'right';
 
     cell           = row.insertCell(-1);
-    cell.innerHTML = buildRegionSelect('regions[ad_position][]');
+    cell.innerHTML = buildSelect('regions[cat_goods][]', selRegions);
 
     cell           = row.insertCell(-1);
     cell.innerHTML = '<input type="text" name="sort_order[ad_position][]" value="0" size="4" />';
 
     cell           = row.insertCell(-1);
-    cell.innerHTML = buildAdPositionsSelect('ad_position[]');
+    cell.innerHTML = buildSelect('ad_position[]', selAdPositions, false);
 
     cell           = row.insertCell(-1);
     cell.innerHTML = '<input type="text" name="number[ad_position][]" value="1" size="4" />';
