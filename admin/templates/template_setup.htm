@@ -211,7 +211,7 @@ function addBrandGoods(obj)
     cell.align     = 'right';
 
     cell           = row.insertCell(-1);
-    cell.innerHTML = buildSelect('regions[cat_goods][]', selRegions);
+    cell.innerHTML = buildSelect('regions[brand_goods][]', selRegions);
 
     cell           = row.insertCell(-1);
     cell.innerHTML = '<input type="text" name="sort_order[brand_goods][]" value="0" size="4" />';
@@ -241,7 +241,7 @@ function addArticles(obj)
     cell.align     = 'right';
 
     cell           = row.insertCell(-1);
-    cell.innerHTML = buildSelect('regions[cat_goods][]', selRegions);
+    cell.innerHTML = buildSelect('regions[cat_articles][]', selRegions);
 
     cell           = row.insertCell(-1);
     cell.innerHTML = '<input type="text" name="sort_order[cat_articles][]" value="0" size="4" />';
@@ -271,7 +271,7 @@ function addAdPosition(obj)
     cell.align     = 'right';
 
     cell           = row.insertCell(-1);
-    cell.innerHTML = buildSelect('regions[cat_goods][]', selRegions);
+    cell.innerHTML = buildSelect('regions[ad_position][]', selRegions);
 
     cell           = row.insertCell(-1);
     cell.innerHTML = '<input type="text" name="sort_order[ad_position][]" value="0" size="4" />';
