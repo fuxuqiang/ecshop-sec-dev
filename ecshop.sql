@@ -1,24 +1,1406 @@
--- phpMyAdmin SQL Dump
--- version 4.0.10deb1
--- http://www.phpmyadmin.net
+-- --------------------------------------------------------
+CREATE DATABASE `ecshop` DEFAULT CHARACTER SET utf8;
+USE `ecshop`;
 --
--- 主机: localhost
--- 生成日期: 2016-05-29 20:13:29
--- 服务器版本: 5.5.49-0ubuntu0.14.04.1
--- PHP 版本: 5.5.9-1ubuntu4.17
+-- 表的结构 `ad`
+--
 
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET time_zone = "+00:00";
+DROP TABLE IF EXISTS `ad`;
+CREATE TABLE `ad` (
+  `ad_id` smallint(5) unsigned NOT NULL auto_increment,
+  `position_id` smallint unsigned NOT NULL default '0',
+  `media_type` tinyint(3) unsigned NOT NULL default '0',
+  `ad_name` varchar(60) NOT NULL default '',
+  `ad_link` varchar(255) NOT NULL default '',
+  `ad_code` text NOT NULL,
+  `start_time` int(11) NOT NULL default '0',
+  `end_time` int(11) NOT NULL default '0',
+  `link_man` varchar(60) NOT NULL default '',
+  `link_email` varchar(60) NOT NULL default '',
+  `link_phone` varchar(60) NOT NULL default '',
+  `click_count` mediumint(8) unsigned NOT NULL default '0',
+  `enabled` tinyint(3) unsigned NOT NULL default '1',
+  PRIMARY KEY  (`ad_id`),
+  KEY `position_id` (`position_id`),
+  KEY `enabled` (`enabled`)
+) ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
 
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
+-- --------------------------------------------------------
 
 --
--- 数据库: `ecshop`
+-- 表的结构 `ad_position`
 --
+
+DROP TABLE IF EXISTS `ad_position`;
+CREATE TABLE `ad_position` (
+  `position_id` tinyint(3) unsigned NOT NULL auto_increment,
+  `position_name` varchar(60) NOT NULL default '',
+  `ad_width` smallint(5) unsigned NOT NULL default '0',
+  `ad_height` smallint(5) unsigned NOT NULL default '0',
+  `position_desc` varchar(255) NOT NULL default '',
+  `position_style` text NOT NULL,
+  PRIMARY KEY  (`position_id`)
+)  ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `admin_action`
+--
+
+DROP TABLE IF EXISTS `admin_action`;
+CREATE TABLE `admin_action` (
+  `action_id` tinyint(3) unsigned NOT NULL auto_increment,
+  `parent_id` tinyint(3) unsigned NOT NULL default '0',
+  `action_code` varchar(20) NOT NULL default '',
+  `relevance` varchar(20) NOT NULL default '',
+  PRIMARY KEY  (`action_id`),
+  KEY `parent_id` (`parent_id`)
+)  ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `admin_log`
+--
+
+DROP TABLE IF EXISTS `admin_log`;
+CREATE TABLE `admin_log` (
+  `log_id` int(10) unsigned NOT NULL auto_increment,
+  `log_time` int(10) unsigned NOT NULL default '0',
+  `user_id` tinyint(3) unsigned NOT NULL default '0',
+  `log_info` varchar(255) NOT NULL default '',
+  `ip_address` varchar(15) NOT NULL default '',
+  PRIMARY KEY  (`log_id`),
+  KEY `log_time` (`log_time`),
+  KEY `user_id` (`user_id`)
+)  ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `admin_message`
+--
+
+DROP TABLE IF EXISTS `admin_message`;
+CREATE TABLE `admin_message` (
+  `message_id` smallint(5) unsigned NOT NULL auto_increment,
+  `sender_id` tinyint(3) unsigned NOT NULL default '0',
+  `receiver_id` tinyint(3) unsigned NOT NULL default '0',
+  `sent_time` int(11) unsigned NOT NULL default '0',
+  `read_time` int(11) unsigned NOT NULL default '0',
+  `readed` tinyint(1) unsigned NOT NULL default '0',
+  `deleted` tinyint(1) unsigned NOT NULL default '0',
+  `title` varchar(150) NOT NULL default '',
+  `message` text NOT NULL,
+  PRIMARY KEY  (`message_id`),
+  KEY `sender_id` (`sender_id`,`receiver_id`),
+  KEY `receiver_id` (`receiver_id`)
+)  ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `admin_user`
+--
+
+DROP TABLE IF EXISTS `admin_user`;
+CREATE TABLE `admin_user` (
+  `user_id` smallint(5) unsigned NOT NULL auto_increment,
+  `user_name` varchar(60) NOT NULL default '',
+  `email` varchar(60) NOT NULL default '',
+  `password` varchar(32) NOT NULL default '',
+  `ec_salt` VARCHAR( 10 )  NULL,
+  `add_time` int(11) NOT NULL default '0',
+  `last_login` int(11) NOT NULL default '0',
+  `last_ip` varchar(15) NOT NULL default '',
+  `action_list` text NOT NULL,
+  `nav_list` text NOT NULL,
+  `lang_type` varchar(50) NOT NULL default '',
+  `agency_id` smallint(5) unsigned,
+  `suppliers_id` smallint(5) unsigned default '0',
+  `todolist` LONGTEXT NULL,
+  `role_id` smallint(5) default NULL,
+  `passport_uid` varchar(20) default NULL,
+  `yq_create_time` smallint(11) default NULL,
+  PRIMARY KEY  (`user_id`),
+  KEY `user_name` (`user_name`),
+  KEY `agency_id` (`agency_id`)
+) ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `adsense`
+--
+
+DROP TABLE IF EXISTS `adsense`;
+CREATE TABLE `adsense` (
+  `from_ad` smallint(5) NOT NULL default '0',
+  `referer` varchar(255) NOT NULL default '',
+  `clicks` int(10) unsigned NOT NULL default '0',
+  KEY `from_ad` (`from_ad`)
+)  ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `area_region`
+--
+
+DROP TABLE IF EXISTS `area_region`;
+CREATE TABLE `area_region` (
+  `shipping_area_id` smallint(5) unsigned NOT NULL default '0',
+  `region_id` smallint(5) unsigned NOT NULL default '0',
+  PRIMARY KEY  (`shipping_area_id`,`region_id`)
+)  ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `article`
+--
+
+DROP TABLE IF EXISTS `article`;
+CREATE TABLE `article` (
+  `article_id` mediumint(8) unsigned NOT NULL auto_increment,
+  `cat_id` smallint(5) NOT NULL default '0',
+  `title` varchar(150) NOT NULL default '',
+  `content` longtext NOT NULL,
+  `author` varchar(30) NOT NULL default '',
+  `author_email` varchar(60) NOT NULL default '',
+  `keywords` varchar(255) NOT NULL default '',
+  `article_type` tinyint(1) unsigned NOT NULL default '2',
+  `is_open` tinyint(1) unsigned NOT NULL default '1',
+  `add_time` int(10) unsigned NOT NULL default '0',
+  `file_url` varchar(255) NOT NULL default '',
+  `open_type` tinyint(1) unsigned NOT NULL default '0',
+  `link` varchar(255) NOT NULL default '',
+  `description` varchar(255) default NULL,
+  PRIMARY KEY  (`article_id`),
+  KEY `cat_id` (`cat_id`)
+)  ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `article_cat`
+--
+
+DROP TABLE IF EXISTS `article_cat`;
+CREATE TABLE `article_cat` (
+  `cat_id` smallint(5) NOT NULL auto_increment,
+  `cat_name` varchar(255) NOT NULL default '',
+  `cat_type` tinyint(1) unsigned NOT NULL default '1',
+  `keywords` varchar(255) NOT NULL default '',
+  `cat_desc` varchar(255) NOT NULL default '',
+  `sort_order` tinyint(3) unsigned NOT NULL default '50',
+  `show_in_nav` tinyint(1) unsigned NOT NULL default '0',
+  `parent_id` smallint(5) unsigned NOT NULL default '0',
+  PRIMARY KEY  (`cat_id`),
+  KEY `cat_type` (`cat_type`),
+  KEY `sort_order` (`sort_order`),
+  KEY `parent_id` (`parent_id`)
+)  ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `attribute`
+--
+
+DROP TABLE IF EXISTS `attribute`;
+CREATE TABLE `attribute` (
+  `attr_id` smallint(5) unsigned NOT NULL auto_increment,
+  `cat_id` smallint(5) unsigned NOT NULL default '0',
+  `attr_name` varchar(60) NOT NULL default '',
+  `attr_input_type` tinyint(1) unsigned NOT NULL default '1',
+  `attr_type` tinyint(1) unsigned NOT NULL default '1',
+  `attr_values` text NOT NULL,
+  `attr_index` tinyint(1) unsigned NOT NULL default '0',
+  `sort_order` tinyint(3) unsigned NOT NULL default '0',
+  `is_linked` tinyint(1) unsigned NOT NULL default '0',
+  `attr_group` tinyint( 1 ) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY  (`attr_id`),
+  KEY `cat_id` (`cat_id`)
+)  ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `bonus_type`
+--
+
+DROP TABLE IF EXISTS `bonus_type`;
+CREATE TABLE `bonus_type` (
+  `type_id` smallint unsigned NOT NULL auto_increment,
+  `type_name` varchar(60) NOT NULL default '',
+  `type_money` decimal(10,2) NOT NULL default '0.00',
+  `send_type` tinyint(3) unsigned NOT NULL default '0',
+  `min_amount` decimal(10,2) unsigned NOT NULL default '0.00',
+  `max_amount` decimal(10,2) unsigned NOT NULL default '0.00',
+  `send_start_date` int(11) NOT NULL default '0',
+  `send_end_date` int(11) NOT NULL default '0',
+  `use_start_date` int(11) NOT NULL default '0',
+  `use_end_date` int(11) NOT NULL default '0',
+  `min_goods_amount` decimal(10,2) unsigned NOT NULL default '0.00',
+  PRIMARY KEY  (`type_id`)
+)  ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `booking_goods`
+--
+
+DROP TABLE IF EXISTS `booking_goods`;
+CREATE TABLE `booking_goods` (
+  `rec_id` mediumint(8) unsigned NOT NULL auto_increment,
+  `user_id` mediumint(8) unsigned NOT NULL default '0',
+  `email` varchar(60) NOT NULL default '',
+  `link_man` varchar(60) NOT NULL default '',
+  `tel` varchar(60) NOT NULL default '',
+  `goods_id` mediumint(8) unsigned NOT NULL default '0',
+  `goods_desc` varchar(255) NOT NULL default '',
+  `goods_number` smallint(5) unsigned NOT NULL default '0',
+  `booking_time` int(10) unsigned NOT NULL default '0',
+  `is_dispose` tinyint(1) unsigned NOT NULL default '0',
+  `dispose_user` varchar(30) NOT NULL default '',
+  `dispose_time` int(10) unsigned NOT NULL default '0',
+  `dispose_note` varchar(255) NOT NULL default '',
+  PRIMARY KEY  (`rec_id`),
+  KEY `user_id` (`user_id`)
+)  ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `brand`
+--
+
+DROP TABLE IF EXISTS `brand`;
+CREATE TABLE `brand` (
+  `brand_id` smallint(5) unsigned NOT NULL auto_increment,
+  `brand_name` varchar(60) NOT NULL default '',
+  `brand_logo` varchar(80) NOT NULL default '',
+  `brand_desc` text NOT NULL,
+  `site_url` varchar(255) NOT NULL default '',
+  `sort_order` tinyint(3) unsigned NOT NULL default '50',
+  `is_show` tinyint( 1 ) unsigned NOT NULL default '1',
+  PRIMARY KEY  (`brand_id`),
+  KEY `is_show` (`is_show`)
+)  ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `card`
+--
+
+DROP TABLE IF EXISTS `card`;
+CREATE TABLE `card` (
+  `card_id` tinyint(3) unsigned NOT NULL auto_increment,
+  `card_name` varchar(120) NOT NULL default '',
+  `card_img` varchar(255) NOT NULL default '',
+  `card_fee` decimal(6,2) unsigned NOT NULL default '0.00',
+  `free_money` decimal(6,2) unsigned NOT NULL default '0.00',
+  `card_desc` varchar(255) NOT NULL default '',
+  PRIMARY KEY  (`card_id`)
+)  ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `cart`
+--
+
+DROP TABLE IF EXISTS `cart`;
+CREATE TABLE `cart` (
+  `rec_id` mediumint(8) unsigned NOT NULL auto_increment,
+  `user_id` mediumint(8) unsigned NOT NULL default '0',
+  `session_id` char(32) binary NOT NULL default '',
+  `goods_id` mediumint(8) unsigned NOT NULL default '0',
+  `goods_sn` varchar(60) NOT NULL default '',
+  `product_id` mediumint(8) unsigned NOT NULL default '0',
+  `goods_name` varchar(120) NOT NULL default '',
+  `market_price` decimal(10,2) unsigned NOT NULL default '0.00',
+  `goods_price` decimal(10,2) NOT NULL default '0.00',
+  `goods_number` smallint(5) unsigned NOT NULL default '0',
+  `goods_attr` text NOT NULL,
+  `is_real` tinyint(1) unsigned NOT NULL default '0',
+  `extension_code` varchar(30) NOT NULL default '',
+  `parent_id` mediumint(8) unsigned NOT NULL default '0',
+  `rec_type` tinyint(1) unsigned NOT NULL default '0',
+  `is_gift` smallint unsigned NOT NULL default '0',
+  `is_shipping` tinyint(1) unsigned NOT NULL default '0',
+  `can_handsel` tinyint(3) unsigned NOT NULL default '0',
+  `goods_attr_id` varchar(255) NOT NULL default '',
+  PRIMARY KEY  (`rec_id`),
+  KEY `session_id` (`session_id`)
+)  ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `category`
+--
+
+DROP TABLE IF EXISTS `category`;
+CREATE TABLE `category` (
+  `cat_id` smallint(5) unsigned NOT NULL auto_increment,
+  `cat_name` varchar(90) NOT NULL default '',
+  `keywords` varchar(255) NOT NULL default '',
+  `cat_desc` varchar(255) NOT NULL default '',
+  `parent_id` smallint(5) unsigned NOT NULL default '0',
+  `sort_order` tinyint(1) unsigned NOT NULL default '50',
+  `template_file` varchar(50) NOT NULL default '',
+  `measure_unit` varchar(15) NOT NULL default '',
+  `show_in_nav` tinyint(1) NOT NULL default '0',
+  `style` varchar( 150 ) NOT NULL,
+  `is_show` tinyint(1) unsigned NOT NULL default '1',
+  `grade` tinyint(4) NOT NULL default '0',
+  `filter_attr` varchar(255) NOT NULL default '0',
+  PRIMARY KEY  (`cat_id`),
+  KEY `parent_id` (`parent_id`)
+)  ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `collect_goods`
+--
+
+DROP TABLE IF EXISTS `collect_goods`;
+CREATE TABLE `collect_goods` (
+  `rec_id` mediumint(8) unsigned NOT NULL auto_increment,
+  `user_id` mediumint(8) unsigned NOT NULL default '0',
+  `goods_id` mediumint(8) unsigned NOT NULL default '0',
+  `add_time` int(11) unsigned NOT NULL default '0',
+  `is_attention` TINYINT( 1 ) NOT NULL DEFAULT '0',
+  PRIMARY KEY  (`rec_id`),
+  KEY `user_id` (`user_id`),
+  KEY `goods_id` (`goods_id`),
+  KEY `is_attention` (`is_attention`)
+)  ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `comment`
+--
+
+DROP TABLE IF EXISTS `comment`;
+CREATE TABLE `comment` (
+  `comment_id` int(10) unsigned NOT NULL auto_increment,
+  `comment_type` tinyint(3) unsigned NOT NULL default '0',
+  `id_value` mediumint(8) unsigned NOT NULL default '0',
+  `email` varchar(60) NOT NULL default '',
+  `user_name` varchar(60) NOT NULL default '',
+  `content` text NOT NULL,
+  `comment_rank` tinyint(1) unsigned NOT NULL default '0',
+  `add_time` int(10) unsigned NOT NULL default '0',
+  `ip_address` varchar(15) NOT NULL default '',
+  `status` tinyint(3) unsigned NOT NULL default '0',
+  `parent_id` int(10) unsigned NOT NULL default '0',
+  `user_id` int(10) unsigned NOT NULL default '0',
+  PRIMARY KEY  (`comment_id`),
+  KEY `parent_id` (`parent_id`),
+  KEY `id_value` (`id_value`)
+)  ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `crons`
+--
+
+DROP TABLE IF EXISTS `crons`;
+CREATE TABLE `crons` (
+  `cron_id` tinyint(3) unsigned NOT NULL auto_increment,
+  `cron_code` varchar(20) NOT NULL,
+  `cron_name` varchar(120) NOT NULL,
+  `cron_desc` text,
+  `cron_order` tinyint(3) unsigned NOT NULL default '0',
+  `cron_config` text NOT NULL,
+  `thistime` int(10) NOT NULL default '0',
+  `nextime` int(10) NOT NULL,
+  `day` tinyint(2) NOT NULL,
+  `week` varchar(1) NOT NULL,
+  `hour` varchar(2) NOT NULL,
+  `minute` varchar(255) NOT NULL,
+  `enable` tinyint(1) NOT NULL default '1',
+  `run_once` tinyint(1) NOT NULL default '0',
+  `allow_ip` varchar(100) NOT NULL default '',
+  `alow_files` varchar(255) NOT NULL,
+  PRIMARY KEY  (`cron_id`),
+  KEY `nextime` (`nextime`),
+  KEY `enable` (`enable`),
+  KEY `cron_code` (`cron_code`)
+) ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `error_log`
+--
+
+DROP TABLE IF EXISTS `error_log`;
+CREATE TABLE `error_log` (
+  `id` int(10) NOT NULL auto_increment,
+  `info` varchar(255) NOT NULL,
+  `file` varchar(100) NOT NULL,
+  `time` int(10) NOT NULL,
+  PRIMARY KEY  (`id`),
+  KEY `time` (`time`)
+) ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `feedback`
+--
+
+DROP TABLE IF EXISTS `feedback`;
+CREATE TABLE `feedback` (
+  `msg_id` mediumint(8) unsigned NOT NULL auto_increment,
+  `parent_id` mediumint(8) unsigned NOT NULL default '0',
+  `user_id` mediumint(8) unsigned NOT NULL default '0',
+  `user_name` varchar(60) NOT NULL default '',
+  `user_email` varchar(60) NOT NULL default '',
+  `msg_title` varchar(200) NOT NULL default '',
+  `msg_type` tinyint(1) unsigned NOT NULL default '0',
+  `msg_status` tinyint( 1 ) unsigned NOT NULL DEFAULT '0',
+  `msg_content` text NOT NULL,
+  `msg_time` int(10) unsigned NOT NULL default '0',
+  `message_img` varchar(255) NOT NULL default '0',
+  `order_id` int(11) unsigned NOT NULL default '0',
+  `msg_area` TINYINT(1) unsigned NOT NULL default '0',
+  PRIMARY KEY  (`msg_id`),
+  KEY `user_id` (`user_id`)
+)  ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `friend_link`
+--
+
+DROP TABLE IF EXISTS `friend_link`;
+CREATE TABLE `friend_link` (
+  `link_id` smallint(5) unsigned NOT NULL auto_increment,
+  `link_name` varchar(255) NOT NULL default '',
+  `link_url` varchar(255) NOT NULL default '',
+  `link_logo` varchar(255) NOT NULL default '',
+  `show_order` tinyint(3) unsigned NOT NULL default '50',
+  PRIMARY KEY  (`link_id`),
+  KEY `show_order` (`show_order`)
+)  ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `goods`
+--
+
+DROP TABLE IF EXISTS `goods`;
+CREATE TABLE `goods` (
+  `goods_id` mediumint(8) unsigned NOT NULL auto_increment,
+  `cat_id` smallint(5) unsigned NOT NULL default '0',
+  `goods_sn` varchar(60) NOT NULL default '',
+  `goods_name` varchar(120) NOT NULL default '',
+  `goods_name_style` varchar(60) NOT NULL default '+',
+  `click_count` int(10) unsigned NOT NULL default '0',
+  `brand_id` smallint(5) unsigned NOT NULL default '0',
+  `provider_name` varchar(100) NOT NULL default '',
+  `goods_number` mediumint(8) unsigned NOT NULL default '0',
+  `goods_weight` decimal(10,3) unsigned NOT NULL default '0.000',
+  `market_price` decimal(10,2) unsigned NOT NULL default '0.00',
+  `virtual_sales` smallint(5) unsigned NOT NULL default '0',
+  `shop_price` decimal(10,2) unsigned NOT NULL default '0.00',
+  `promote_price` decimal(10,2) unsigned NOT NULL default '0.00',
+  `promote_start_date` int(11) unsigned NOT NULL default '0',
+  `promote_end_date` int(11) unsigned NOT NULL default '0',
+  `warn_number` tinyint(3) unsigned NOT NULL default '1',
+  `keywords` varchar(255) NOT NULL default '',
+  `goods_brief` varchar(255) NOT NULL default '',
+  `goods_desc` text NOT NULL,
+  `goods_thumb` varchar(255) NOT NULL default '',
+  `goods_img` varchar(255) NOT NULL default '',
+  `original_img` varchar(255) NOT NULL default '',
+  `is_real` tinyint(3) unsigned NOT NULL default '1',
+  `extension_code` varchar(30) NOT NULL default '',
+  `is_on_sale` tinyint(1) unsigned NOT NULL default '1',
+  `is_alone_sale` tinyint(1) unsigned NOT NULL default '1',
+  `is_shipping` tinyint(1) unsigned NOT NULL default '0',
+  `integral` int unsigned NOT NULL default '0',
+  `add_time` int(10) unsigned NOT NULL default '0',
+  `sort_order` smallint(4) unsigned NOT NULL default '100',
+  `is_delete` tinyint(1) unsigned NOT NULL default '0',
+  `is_best` tinyint(1) unsigned NOT NULL default '0',
+  `is_new` tinyint(1) unsigned NOT NULL default '0',
+  `is_hot` tinyint(1) unsigned NOT NULL default '0',
+  `is_promote` tinyint(1) unsigned NOT NULL default '0',
+  `bonus_type_id` tinyint(3) unsigned NOT NULL default '0',
+  `last_update` int(10) unsigned NOT NULL default '0',
+  `goods_type` smallint(5) unsigned NOT NULL default '0',
+  `seller_note` varchar(255) NOT NULL default '',
+  `give_integral` int NOT NULL default '-1',
+  `rank_integral` int NOT NULL default '-1',
+  `suppliers_id` smallint(5) unsigned default NULL,
+  `is_check` tinyint(1) unsigned default NULL,
+  PRIMARY KEY  (`goods_id`),
+  KEY `goods_sn` (`goods_sn`),
+  KEY `cat_id` (`cat_id`),
+  KEY `last_update` (`last_update`),
+  KEY `brand_id` (`brand_id`),
+  KEY `goods_weight` (`goods_weight`),
+  KEY `promote_end_date` (`promote_end_date`),
+  KEY `promote_start_date` (`promote_start_date`),
+  KEY `goods_number` (`goods_number`),
+  KEY `sort_order` (`sort_order`)
+)  ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `goods_article`
+--
+
+DROP TABLE IF EXISTS `goods_article`;
+CREATE TABLE `goods_article` (
+  `goods_id` mediumint(8) unsigned NOT NULL default '0',
+  `article_id` mediumint(8) unsigned NOT NULL default '0',
+  `admin_id` tinyint(3) unsigned NOT NULL default '0',
+  PRIMARY KEY  (`goods_id`,`article_id`,`admin_id`)
+)  ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `goods_attr`
+--
+
+DROP TABLE IF EXISTS `goods_attr`;
+CREATE TABLE `goods_attr` (
+  `goods_attr_id` int(10) unsigned NOT NULL auto_increment,
+  `goods_id` mediumint(8) unsigned NOT NULL default '0',
+  `attr_id` smallint(5) unsigned NOT NULL default '0',
+  `attr_value` text NOT NULL,
+  `attr_price` varchar(255) NOT NULL default '',
+  PRIMARY KEY  (`goods_attr_id`),
+  KEY `goods_id` (`goods_id`),
+  KEY `attr_id` (`attr_id`)
+)  ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `goods_cat`
+--
+
+DROP TABLE IF EXISTS `goods_cat`;
+CREATE TABLE `goods_cat` (
+  `goods_id` mediumint(8) unsigned NOT NULL default '0',
+  `cat_id` smallint(5) unsigned NOT NULL default '0',
+  PRIMARY KEY  (`goods_id`,`cat_id`)
+)  ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `goods_gallery`
+--
+
+DROP TABLE IF EXISTS `goods_gallery`;
+CREATE TABLE `goods_gallery` (
+  `img_id` mediumint(8) unsigned NOT NULL auto_increment,
+  `goods_id` mediumint(8) unsigned NOT NULL default '0',
+  `img_url` varchar(255) NOT NULL default '',
+  `img_desc` varchar(255) NOT NULL default '',
+  `thumb_url` varchar(255) NOT NULL default '',
+  `img_original` varchar(255) NOT NULL default '',
+  PRIMARY KEY  (`img_id`),
+  KEY `goods_id` (`goods_id`)
+)  ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `goods_type`
+--
+
+DROP TABLE IF EXISTS `goods_type`;
+CREATE TABLE `goods_type` (
+  `cat_id` smallint(5) unsigned NOT NULL auto_increment,
+  `cat_name` varchar(60) NOT NULL default '',
+  `enabled` tinyint(1) unsigned NOT NULL default '1',
+  `attr_group` VARCHAR( 255 ) NOT NULL,
+  PRIMARY KEY  (`cat_id`)
+)  ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `group_goods`
+--
+
+DROP TABLE IF EXISTS `group_goods`;
+CREATE TABLE `group_goods` (
+  `parent_id` mediumint(8) unsigned NOT NULL default '0',
+  `goods_id` mediumint(8) unsigned NOT NULL default '0',
+  `goods_price` decimal(10,2) unsigned NOT NULL default '0.00',
+  `admin_id` tinyint(3) unsigned NOT NULL default '0',
+  PRIMARY KEY  (`parent_id`,`goods_id`,`admin_id`)
+)  ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `link_goods`
+--
+
+DROP TABLE IF EXISTS `link_goods`;
+CREATE TABLE `link_goods` (
+  `goods_id` mediumint(8) unsigned NOT NULL default '0',
+  `link_goods_id` mediumint(8) unsigned NOT NULL default '0',
+  `is_double` tinyint(1) unsigned NOT NULL default '0',
+  `admin_id` tinyint(3) unsigned NOT NULL default '0',
+  PRIMARY KEY  (`goods_id`,`link_goods_id`,`admin_id`)
+)  ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `mail_templates`
+--
+
+DROP TABLE IF EXISTS `mail_templates`;
+CREATE TABLE `mail_templates` (
+  `template_id` tinyint(1) unsigned NOT NULL auto_increment,
+  `template_code` varchar(30) NOT NULL default '',
+  `is_html` tinyint(1) unsigned NOT NULL default '0',
+  `template_subject` varchar(200) NOT NULL default '',
+  `template_content` text NOT NULL,
+  `last_modify` int(10) unsigned NOT NULL default '0',
+  `last_send` int(10) unsigned NOT NULL default '0',
+  `type` varchar(10) NOT NULL,
+  PRIMARY KEY  (`template_id`),
+  UNIQUE (`template_code`),
+  KEY `type` (`type`)
+)  ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `member_price`
+--
+
+DROP TABLE IF EXISTS `member_price`;
+CREATE TABLE `member_price` (
+  `price_id` mediumint(8) unsigned NOT NULL auto_increment,
+  `goods_id` mediumint(8) unsigned NOT NULL default '0',
+  `user_rank` tinyint(3) NOT NULL default '0',
+  `user_price` decimal(10,2) NOT NULL default '0.00',
+  PRIMARY KEY  (`price_id`),
+  KEY `goods_id` (`goods_id`,`user_rank`)
+)  ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `keywords`
+--
+
+DROP TABLE IF EXISTS `keywords`;
+CREATE TABLE `keywords` (
+  `date` date NOT NULL default '0000-00-00',
+  `searchengine` varchar(20) NOT NULL default '',
+  `keyword` varchar(90) NOT NULL default '',
+  `count` mediumint(8) unsigned NOT NULL default '0',
+  PRIMARY KEY  (`date`,`searchengine`,`keyword`)
+) ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `order_action`
+--
+
+DROP TABLE IF EXISTS `order_action`;
+CREATE TABLE `order_action` (
+  `action_id` mediumint(8) unsigned NOT NULL auto_increment,
+  `order_id` mediumint(8) unsigned NOT NULL default '0',
+  `action_user` varchar(30) NOT NULL default '',
+  `order_status` tinyint(1) unsigned NOT NULL default '0',
+  `shipping_status` tinyint(1) unsigned NOT NULL default '0',
+  `pay_status` tinyint(1) unsigned NOT NULL default '0',
+  `action_place` TINYINT( 1 ) UNSIGNED NOT NULL default '0',
+  `action_note` varchar(255) NOT NULL default '',
+  `log_time` int(11) unsigned NOT NULL default '0',
+  PRIMARY KEY  (`action_id`),
+  KEY `order_id` (`order_id`)
+)  ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `order_goods`
+--
+
+DROP TABLE IF EXISTS `order_goods`;
+CREATE TABLE `order_goods` (
+  `rec_id` mediumint(8) unsigned NOT NULL auto_increment,
+  `order_id` mediumint(8) unsigned NOT NULL default '0',
+  `goods_id` mediumint(8) unsigned NOT NULL default '0',
+  `goods_name` varchar(120) NOT NULL default '',
+  `goods_sn` varchar(60) NOT NULL default '',
+  `product_id` mediumint(8) unsigned NOT NULL default '0',
+  `goods_number` smallint(5) unsigned NOT NULL default '1',
+  `market_price` decimal(10,2) NOT NULL default '0.00',
+  `goods_price` decimal(10,2) NOT NULL default '0.00',
+  `discount_fee` decimal(10,2) NOT NULL DEFAULT '0.00' COMMENT '对接erp专用，商品优惠金额',
+  `goods_attr` text NOT NULL,
+  `send_number` smallint(5) unsigned NOT NULL default '0',
+  `is_real` tinyint(1) unsigned NOT NULL default '0',
+  `extension_code` varchar(30) NOT NULL default '',
+  `parent_id` mediumint(8) unsigned NOT NULL default '0',
+  `is_gift` smallint unsigned NOT NULL default '0',
+  `goods_attr_id` varchar(255) NOT NULL default '',
+  PRIMARY KEY  (`rec_id`),
+  KEY `order_id` (`order_id`),
+  KEY `goods_id` (`goods_id`)
+)  ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `order_info`
+--
+
+DROP TABLE IF EXISTS `order_info`;
+CREATE TABLE `order_info` (
+  `order_id` mediumint(8) unsigned NOT NULL auto_increment,
+  `order_sn` varchar(20) NOT NULL default '',
+  `user_id` mediumint(8) unsigned NOT NULL default '0',
+  `order_status` tinyint(1) unsigned NOT NULL default '0',
+  `shipping_status` tinyint(1) unsigned NOT NULL default '0',
+  `pay_status` tinyint(1) unsigned NOT NULL default '0',
+  `consignee` varchar(60) NOT NULL default '',
+  `country` smallint(5) unsigned NOT NULL default '0',
+  `province` smallint(5) unsigned NOT NULL default '0',
+  `city` smallint(5) unsigned NOT NULL default '0',
+  `district` smallint(5) unsigned NOT NULL default '0',
+  `address` varchar(255) NOT NULL default '',
+  `zipcode` varchar(60) NOT NULL default '',
+  `tel` varchar(60) NOT NULL default '',
+  `mobile` varchar(60) NOT NULL default '',
+  `email` varchar(60) NOT NULL default '',
+  `best_time` varchar(120) NOT NULL default '',
+  `sign_building` varchar(120) NOT NULL default '',
+  `postscript` varchar(255) NOT NULL default '',
+  `shipping_id` tinyint(3) NOT NULL default '0',
+  `shipping_name` varchar(120) NOT NULL default '',
+  `pay_id` tinyint(3) NOT NULL default '0',
+  `pay_name` varchar(120) NOT NULL default '',
+  `how_oos` varchar(120) NOT NULL default '',
+  `how_surplus` varchar(120) NOT NULL default '',
+  `pack_name` varchar(120) NOT NULL default '',
+  `card_name` varchar(120) NOT NULL default '',
+  `card_message` varchar(255) NOT NULL default '',
+  `inv_payee` varchar(120) NOT NULL default '',
+  `inv_content` varchar(120) NOT NULL default '',
+  `goods_amount` decimal(10,2) NOT NULL default '0.00',
+  `shipping_fee` decimal(10,2) NOT NULL default '0.00',
+  `insure_fee` DECIMAL( 10, 2 ) NOT NULL DEFAULT '0.00',
+  `pay_fee` DECIMAL( 10, 2 ) NOT NULL DEFAULT '0.00',
+  `pack_fee` decimal(10,2) NOT NULL default '0.00',
+  `card_fee` decimal(10,2) NOT NULL default '0.00',
+  `goods_discount_fee` decimal(10,2) NOT NULL DEFAULT '0.00' COMMENT '对接erp专用，商品优惠总金额',
+  `money_paid` decimal(10, 2) NOT NULL default '0.00',
+  `surplus` decimal(10,2) NOT NULL default '0.00',
+  `integral` int unsigned NOT NULL default '0.00',
+  `integral_money` decimal(10,2) NOT NULL default '0.00',
+  `bonus` decimal(10,2) NOT NULL default '0.00',
+  `order_amount` decimal(10,2) NOT NULL default '0.00',
+  `from_ad` smallint(5) NOT NULL default '0',
+  `referer` varchar(255) NOT NULL default '',
+  `add_time` int(10) unsigned NOT NULL default '0',
+  `confirm_time` int(10) unsigned NOT NULL default '0',
+  `pay_time` int(10) unsigned NOT NULL default '0',
+  `shipping_time` int(10) unsigned NOT NULL default '0',
+  `pack_id` tinyint(3) unsigned NOT NULL default '0',
+  `card_id` tinyint(3) unsigned NOT NULL default '0',
+  `bonus_id` mediumint(8) unsigned NOT NULL default '0',
+  `invoice_no` varchar(255) NOT NULL default '',
+  `extension_code` varchar(30) NOT NULL default '',
+  `extension_id` mediumint(8) unsigned NOT NULL default '0',
+  `to_buyer` varchar(255) NOT NULL default '',
+  `pay_note` varchar(255) NOT NULL default '',
+  `agency_id` smallint(5) unsigned NOT NULL,
+  `inv_type` varchar(60) NOT NULL,
+  `tax` decimal(10, 2) NOT NULL,
+  `is_separate` tinyint(1) NOT NULL default '0',
+  `parent_id` mediumint(8) unsigned NOT NULL default '0',
+  `discount` decimal(10, 2) NOT NULL,
+  `callback_status` enum('true','false') DEFAULT 'true',
+  `lastmodify` int(10) unsigned NOT NULL default '0',
+  PRIMARY KEY  (`order_id`),
+  UNIQUE KEY `order_sn` (`order_sn`),
+  KEY `user_id` (`user_id`),
+  KEY `order_status` (`order_status`),
+  KEY `shipping_status` (`shipping_status`),
+  KEY `pay_status` (`pay_status`),
+  KEY `shipping_id` (`shipping_id`),
+  KEY `pay_id` (`pay_id`),
+  KEY `extension_code` (`extension_code`,`extension_id`),
+  KEY `agency_id` (`agency_id`)
+)  ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `pack`
+--
+
+DROP TABLE IF EXISTS `pack`;
+CREATE TABLE `pack` (
+  `pack_id` tinyint(3) unsigned NOT NULL auto_increment,
+  `pack_name` varchar(120) NOT NULL default '',
+  `pack_img` varchar(255) NOT NULL default '',
+  `pack_fee` decimal(6,2) unsigned NOT NULL default '0',
+  `free_money` smallint(5) unsigned NOT NULL default '0',
+  `pack_desc` varchar(255) NOT NULL default '',
+  PRIMARY KEY  (`pack_id`)
+)  ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `payment`
+--
+
+DROP TABLE IF EXISTS `payment`;
+CREATE TABLE `payment` (
+  `pay_id` tinyint(3) unsigned NOT NULL auto_increment,
+  `pay_code` varchar(20) NOT NULL default '',
+  `pay_name` varchar(120) NOT NULL default '',
+  `pay_fee` VARCHAR( 10 ) NOT NULL DEFAULT '0',
+  `pay_desc` text NOT NULL,
+  `pay_order` tinyint(3) unsigned NOT NULL default '0',
+  `pay_config` text NOT NULL,
+  `enabled` tinyint(1) unsigned NOT NULL default '0',
+  `is_cod` tinyint(1) unsigned NOT NULL default '0',
+  `is_online` tinyint(1) unsigned NOT NULL default '0',
+  PRIMARY KEY  (`pay_id`),
+  UNIQUE KEY `pay_code` (`pay_code`)
+)  ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `plugins`
+--
+
+DROP TABLE IF EXISTS `plugins`;
+CREATE TABLE `plugins` (
+  `code` varchar(30) NOT NULL default '',
+  `version` varchar(10) NOT NULL default '',
+  `library` varchar(255) NOT NULL default '',
+  `assign` tinyint(1) unsigned NOT NULL default '0',
+  `install_date` int(10) unsigned NOT NULL default '0',
+  PRIMARY KEY  (`code`)
+)  ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `region`
+--
+
+DROP TABLE IF EXISTS `region`;
+CREATE TABLE `region` (
+  `region_id` smallint(5) unsigned NOT NULL auto_increment,
+  `parent_id` smallint(5) unsigned NOT NULL default '0',
+  `region_name` varchar(120) NOT NULL default '',
+  `region_type` tinyint(1) NOT NULL default '2',
+  `agency_id` smallint(5) unsigned NOT NULL default '0',
+  PRIMARY KEY  (`region_id`),
+  KEY `parent_id` (`parent_id`),
+  KEY `region_type` (`region_type`),
+  KEY `agency_id` (`agency_id`)
+)  ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `reg_extend_info`
+--
+
+DROP TABLE IF EXISTS `reg_extend_info`;
+CREATE TABLE `reg_extend_info` (
+  `Id` int(10) unsigned NOT NULL auto_increment,
+  `user_id` mediumint(8) unsigned NOT NULL,
+  `reg_field_id` int(10) unsigned NOT NULL,
+  `content` text NOT NULL,
+  PRIMARY KEY  (`Id`)
+) ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `reg_fields`
+--
+
+DROP TABLE IF EXISTS `reg_fields`;
+CREATE TABLE `reg_fields` (
+  `id` tinyint(3) unsigned NOT NULL auto_increment,
+  `reg_field_name` varchar(60) NOT NULL,
+  `dis_order` tinyint unsigned NOT NULL default '100',
+  `display` tinyint(1) unsigned NOT NULL default '1',
+  `type` tinyint(1) unsigned NOT NULL default '0',
+  `is_need` tinyint(1) unsigned NOT NULL default '1',
+  PRIMARY KEY  (`id`)
+) ENGINE=MyISAM, AUTO_INCREMENT=100;
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `searchengine`
+--
+
+DROP TABLE IF EXISTS `searchengine`;
+CREATE TABLE `searchengine` (
+  `date` date NOT NULL default '0000-00-00',
+  `searchengine` varchar(20) NOT NULL default '',
+  `count` mediumint(8) unsigned NOT NULL default '0',
+  PRIMARY KEY  (`date`,`searchengine`)
+) ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `sessions`
+--
+
+DROP TABLE IF EXISTS `sessions`;
+CREATE TABLE `sessions` (
+  `sesskey` char(32) binary NOT NULL default '',
+  `expiry` int(10) unsigned NOT NULL default '0',
+  `userid` mediumint(8) unsigned NOT NULL default '0',
+  `adminid` mediumint(8) unsigned NOT NULL default '0',
+  `ip` char(15) NOT NULL default '',
+  `user_name` varchar(60) NOT NULL,
+  `user_rank` tinyint(3) NOT NULL,
+  `discount` decimal(3,2) NOT NULL,
+  `email` varchar(60) NOT NULL,
+  `data` char(255) NOT NULL default '',
+  PRIMARY KEY  (`sesskey`),
+  KEY `expiry` (`expiry`)
+) ENGINE=MEMORY DEFAULT CHARACTER SET utf8;
+
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `sessions_data`
+--
+
+DROP TABLE IF EXISTS `sessions_data`;
+CREATE TABLE `sessions_data` (
+  `sesskey` varchar( 32 ) binary NOT NULL default '',
+  `expiry` int( 10 ) unsigned NOT NULL default '0',
+  `data` longtext NOT NULL ,
+  PRIMARY KEY ( `sesskey` ) ,
+  KEY `expiry` ( `expiry` )
+) ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `shipping`
+--
+
+DROP TABLE IF EXISTS `shipping`;
+CREATE TABLE `shipping` (
+  `shipping_id` tinyint(3) unsigned NOT NULL auto_increment,
+  `shipping_code` varchar(20) NOT NULL default '',
+  `shipping_name` varchar(120) NOT NULL default '',
+  `shipping_desc` varchar(255) NOT NULL default '',
+  `insure` VARCHAR( 10 ) NOT NULL DEFAULT '0',
+  `support_cod` tinyint(1) unsigned NOT NULL default '0',
+  `enabled` tinyint(1) unsigned NOT NULL default '0',
+  `shipping_print` text NOT NULL,
+  `print_bg` varchar(255) default NULL,
+  `config_lable` text,
+  `print_model` tinyint(1) default '0',
+  `shipping_order` tinyint(3) unsigned NOT NULL default '0',
+  PRIMARY KEY  (`shipping_id`),
+  KEY `shipping_code` (`shipping_code`,`enabled`)
+)  ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `shipping_area`
+--
+
+DROP TABLE IF EXISTS `shipping_area`;
+CREATE TABLE `shipping_area` (
+  `shipping_area_id` smallint(5) unsigned NOT NULL auto_increment,
+  `shipping_area_name` varchar(150) NOT NULL default '',
+  `shipping_id` tinyint(3) unsigned NOT NULL default '0',
+  `configure` text NOT NULL,
+  PRIMARY KEY  (`shipping_area_id`),
+  KEY `shipping_id` (`shipping_id`)
+)  ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `shop_config`
+--
+
+DROP TABLE IF EXISTS `shop_config`;
+CREATE TABLE `shop_config` (
+  `id` smallint(5) unsigned NOT NULL auto_increment,
+  `parent_id` smallint(5) unsigned NOT NULL default '0',
+  `code` varchar(30) NOT NULL default '',
+  `type` varchar(10) NOT NULL default '',
+  `store_range` varchar(255) NOT NULL default '',
+  `store_dir` varchar(255) NOT NULL default '',
+  `value` text NOT NULL,
+  `sort_order` tinyint(3) unsigned NOT NULL  default '1',
+  PRIMARY KEY  (`id`),
+  UNIQUE KEY `code` (`code`),
+  KEY `parent_id` (`parent_id`)
+)  ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `snatch_log`
+--
+
+DROP TABLE IF EXISTS `snatch_log`;
+CREATE TABLE `snatch_log` (
+  `log_id` mediumint(8) unsigned NOT NULL auto_increment,
+  `snatch_id` tinyint(3) unsigned NOT NULL default '0',
+  `user_id` mediumint(8) unsigned NOT NULL default '0',
+  `bid_price` decimal(10,2) NOT NULL default '0.00',
+  `bid_time` int(10) unsigned NOT NULL default '0',
+  PRIMARY KEY  (`log_id`),
+  KEY `snatch_id` (`snatch_id`)
+)  ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `stats`
+--
+
+DROP TABLE IF EXISTS `stats`;
+CREATE TABLE `stats` (
+  `access_time` int(10) unsigned NOT NULL default '0',
+  `ip_address` varchar(15) NOT NULL default '',
+  `visit_times` smallint(5) unsigned NOT NULL default '1',
+  `browser` varchar(60) NOT NULL default '',
+  `system` varchar(20) NOT NULL default '',
+  `language` varchar(20) NOT NULL default '',
+  `area` varchar(30) NOT NULL default '',
+  `referer_domain` varchar(100) NOT NULL default '',
+  `referer_path` varchar(200) NOT NULL default '',
+  `access_url` varchar(255) NOT NULL default '',
+  KEY `access_time` (`access_time`)
+)  ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `tag`
+--
+
+DROP TABLE IF EXISTS `tag`;
+CREATE TABLE `tag` (
+  `tag_id` mediumint(8) NOT NULL auto_increment,
+  `user_id` mediumint(8) unsigned NOT NULL default '0',
+  `goods_id` mediumint(8) unsigned NOT NULL default '0',
+  `tag_words` varchar(255) NOT NULL default '',
+  PRIMARY KEY  (`tag_id`),
+  KEY `user_id` (`user_id`),
+  KEY `goods_id` (`goods_id`)
+)  ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `template`
+--
+
+DROP TABLE IF EXISTS `template`;
+CREATE TABLE `template` (
+  `filename` varchar(30) NOT NULL default '',
+  `region` varchar(40) NOT NULL default '',
+  `library` varchar(40) NOT NULL default '',
+  `sort_order` tinyint(1) unsigned NOT NULL default '0',
+  `id` smallint(5) unsigned NOT NULL default '0',
+  `number` tinyint(1) unsigned NOT NULL default '5',
+  `type` tinyint(1) unsigned NOT NULL default '0',
+  `theme` varchar(60) NOT NULL default '',
+  `remarks` varchar(30) NOT NULL default '',
+  KEY `filename` (`filename`,`region`),
+  KEY `theme` (`theme`),
+  KEY `remarks` (`remarks`)
+)  ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `user_address`
+--
+
+DROP TABLE IF EXISTS `user_address`;
+CREATE TABLE `user_address` (
+  `address_id` mediumint(8) unsigned NOT NULL auto_increment,
+  `address_name` varchar(50) NOT NULL default '',
+  `user_id` mediumint(8) unsigned NOT NULL default '0',
+  `consignee` varchar(60) NOT NULL default '',
+  `email` varchar(60) NOT NULL default '',
+  `country` smallint(5) NOT NULL default '0',
+  `province` smallint(5) NOT NULL default '0',
+  `city` smallint(5) NOT NULL default '0',
+  `district` smallint(5) NOT NULL default '0',
+  `address` varchar(120) NOT NULL default '',
+  `zipcode` varchar(60) NOT NULL default '',
+  `tel` varchar(60) NOT NULL default '',
+  `mobile` varchar(60) NOT NULL default '',
+  `sign_building` varchar(120) NOT NULL default '',
+  `best_time` varchar(120) NOT NULL default '',
+  PRIMARY KEY  (`address_id`),
+  KEY `user_id` (`user_id`)
+)  ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `user_bonus`
+--
+
+DROP TABLE IF EXISTS `user_bonus`;
+CREATE TABLE `user_bonus` (
+  `bonus_id` mediumint(8) unsigned NOT NULL auto_increment,
+  `bonus_type_id` tinyint(3) unsigned NOT NULL default '0',
+  `bonus_sn` bigint(20) unsigned NOT NULL default '0',
+  `user_id` mediumint(8) unsigned NOT NULL default '0',
+  `used_time` int(10) unsigned NOT NULL default '0',
+  `order_id` mediumint(8) unsigned NOT NULL default '0',
+  `emailed` tinyint unsigned NOT NULL default '0',
+  PRIMARY KEY  (`bonus_id`),
+  KEY `user_id` (`user_id`)
+)  ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+-- ---------------------------------------------------------
+--
+-- 表的结构 `user_feed`
+--
+
+DROP TABLE IF EXISTS `user_feed`;
+CREATE TABLE IF NOT EXISTS `user_feed` (
+  `feed_id` mediumint(8) unsigned NOT NULL auto_increment,
+  `user_id` mediumint(8) unsigned NOT NULL default '0',
+  `value_id` mediumint(8) unsigned NOT NULL default '0',
+  `goods_id` mediumint(8) unsigned NOT NULL default '0',
+  `feed_type` tinyint(1) unsigned NOT NULL default '0',
+  `is_feed` tinyint(1) unsigned NOT NULL default '0',
+  PRIMARY KEY  (`feed_id`)
+)  ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `user_rank`
+--
+
+DROP TABLE IF EXISTS `user_rank`;
+CREATE TABLE `user_rank` (
+  `rank_id` tinyint(3) unsigned NOT NULL auto_increment,
+  `rank_name` varchar(30) NOT NULL default '',
+  `min_points` int unsigned NOT NULL default '0',
+  `max_points` int unsigned NOT NULL default '0',
+  `discount` tinyint(3) unsigned NOT NULL default '0',
+  `show_price` tinyint(1) unsigned NOT NULL default '1',
+  `special_rank` tinyint(1) unsigned NOT NULL default '0',
+  PRIMARY KEY  (`rank_id`)
+)  ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `users`
+--
+
+DROP TABLE IF EXISTS `users`;
+CREATE TABLE `users` (
+  `user_id` mediumint(8) unsigned NOT NULL auto_increment,
+  `email` varchar(60) NOT NULL default '',
+  `user_name` varchar(60) NOT NULL default '',
+  `password` varchar(32) NOT NULL default '',
+  `question` varchar(255) NOT NULL default '',
+  `answer` varchar(255) NOT NULL default '',
+  `sex` tinyint(1) unsigned NOT NULL default '0',
+  `birthday` date NOT NULL default '0000-00-00',
+  `user_money` decimal(10,2) NOT NULL default '0.00',
+  `frozen_money` decimal(10,2) NOT NULL default '0.00',
+  `pay_points` int unsigned NOT NULL default '0',
+  `rank_points` int unsigned NOT NULL default '0',
+  `address_id` mediumint(8) unsigned NOT NULL default '0',
+  `reg_time` int(10) unsigned NOT NULL default '0',
+  `last_login` INT( 11 ) UNSIGNED NOT NULL default '0',
+  `last_time` datetime NOT NULL default '0000-00-00 00:00:00',
+  `last_ip` varchar(15) NOT NULL default '',
+  `visit_count` smallint(5) unsigned NOT NULL default '0',
+  `user_rank` tinyint(3) unsigned NOT NULL default '0',
+  `is_special` tinyint(3) unsigned NOT NULL default '0',
+  `ec_salt` VARCHAR( 10 )  NULL ,
+  `salt` varchar(10) NOT NULL default '0',
+  `parent_id` mediumint(9) NOT NULL default '0',
+  `flag` TINYINT UNSIGNED NOT NULL DEFAULT '0',
+  `alias` VARCHAR( 60 ) NOT NULL ,
+  `msn` VARCHAR( 60 ) NOT NULL ,
+  `qq` VARCHAR( 20 ) NOT NULL,
+  `office_phone` VARCHAR( 20 ) NOT NULL,
+  `home_phone` VARCHAR( 20 ) NOT NULL,
+  `mobile_phone` VARCHAR( 20 ) NOT NULL,
+  `is_validated` TINYINT UNSIGNED NOT NULL DEFAULT '0',
+  `credit_line` DECIMAL( 10, 2 ) UNSIGNED NOT NULL,
+  `passwd_question` VARCHAR( 50 ) NULL,
+  `passwd_answer` VARCHAR( 255 ) NULL,
+  PRIMARY KEY  (`user_id`),
+  KEY `email` (`email`),
+  KEY `parent_id` (`parent_id`),
+  KEY `flag` (`flag`),
+  UNIQUE (`user_name`)
+)  ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `vote`
+--
+
+DROP TABLE IF EXISTS `vote`;
+CREATE TABLE `vote` (
+  `vote_id` smallint unsigned NOT NULL auto_increment,
+  `vote_name` varchar(250) NOT NULL default '',
+  `start_time` int(11) unsigned NOT NULL default '0',
+  `end_time` int(11) unsigned NOT NULL default '0',
+  `can_multi` tinyint(1) unsigned NOT NULL default '0',
+  `vote_count` int(10) unsigned NOT NULL default '0',
+  PRIMARY KEY  (`vote_id`)
+)  ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `vote_log`
+--
+
+DROP TABLE IF EXISTS `vote_log`;
+CREATE TABLE `vote_log` (
+  `log_id` mediumint(8) unsigned NOT NULL auto_increment,
+  `vote_id` smallint unsigned NOT NULL default '0',
+  `ip_address` varchar(15) NOT NULL default '',
+  `vote_time` int(10) unsigned NOT NULL default '0',
+  PRIMARY KEY  (`log_id`),
+  KEY `vote_id` (`vote_id`)
+)  ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `vote_option`
+--
+
+DROP TABLE IF EXISTS `vote_option`;
+CREATE TABLE `vote_option` (
+  `option_id` smallint(5) unsigned NOT NULL auto_increment,
+  `vote_id` smallint unsigned NOT NULL default '0',
+  `option_name` varchar(250) NOT NULL default '',
+  `option_count` int(8) unsigned NOT NULL default '0',
+  `option_order` tinyint(3) unsigned NOT NULL default '100',
+  PRIMARY KEY  (`option_id`),
+  KEY `vote_id` (`vote_id`)
+)  ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+-- --------------------------------------------------------
+--
+-- 表的结构 `pay_log`
+--
+DROP TABLE IF EXISTS `pay_log`;
+CREATE TABLE `pay_log` (
+  `log_id` int(10) unsigned NOT NULL auto_increment,
+  `order_id` mediumint(8) unsigned NOT NULL default '0',
+  `order_amount` decimal(10,2) unsigned NOT NULL,
+  `order_type` tinyint(1) unsigned NOT NULL default '0',
+  `is_paid` tinyint(1) unsigned NOT NULL default '0',
+  PRIMARY KEY  (`log_id`)
+) ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+-- --------------------------------------------------------
+--
+-- 表的结构 `user_account`
+--
+DROP TABLE IF EXISTS `user_account`;
+CREATE TABLE `user_account` (
+  `id` mediumint(8) unsigned NOT NULL auto_increment,
+  `user_id` mediumint(8) unsigned NOT NULL default '0',
+  `admin_user` varchar(255) NOT NULL,
+  `amount` decimal(10,2) NOT NULL,
+  `add_time` int(10) NOT NULL default '0',
+  `paid_time` int(10) NOT NULL default '0',
+  `admin_note` varchar(255) NOT NULL,
+  `user_note` varchar(255) NOT NULL,
+  `process_type` tinyint(1) NOT NULL default '0',
+  `payment` varchar(90) NOT NULL,
+  `is_paid` tinyint(1) NOT NULL default '0',
+  PRIMARY KEY  (`id`),
+  KEY `user_id` (`user_id`),
+  KEY `is_paid` (`is_paid`)
+) ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+--
+-- 表的结构 `agency`
+--
+DROP TABLE IF EXISTS `agency`;
+CREATE TABLE `agency` (
+  `agency_id` smallint(5) unsigned NOT NULL auto_increment,
+  `agency_name` varchar(255) NOT NULL,
+  `agency_desc` text NOT NULL,
+  PRIMARY KEY  (`agency_id`),
+  KEY `agency_name` (`agency_name`)
+) ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `goods_activity`
+--
+
+DROP TABLE IF EXISTS `goods_activity`;
+CREATE TABLE `goods_activity` (
+  `act_id` mediumint(8) unsigned NOT NULL auto_increment,
+  `act_name` varchar(255) NOT NULL,
+  `act_desc` text NOT NULL,
+  `act_type` tinyint(3) unsigned NOT NULL,
+  `goods_id` mediumint(8) unsigned NOT NULL,
+  `product_id` mediumint(8) unsigned NOT NULL default '0',
+  `goods_name` varchar(255) NOT NULL,
+  `start_time` int(10) unsigned NOT NULL,
+  `end_time` int(10) unsigned NOT NULL,
+  `is_finished` tinyint(3) unsigned NOT NULL,
+  `ext_info` text NOT NULL,
+  PRIMARY KEY  (`act_id`),
+  KEY `act_name` (`act_name`,`act_type`,`goods_id`)
+) ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
 
 -- --------------------------------------------------------
 
@@ -26,8 +1408,9 @@ SET time_zone = "+00:00";
 -- 表的结构 `account_log`
 --
 
-CREATE TABLE IF NOT EXISTS `account_log` (
-  `log_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
+DROP TABLE IF EXISTS `account_log`;
+CREATE TABLE `account_log` (
+  `log_id` mediumint(8) unsigned NOT NULL auto_increment,
   `user_id` mediumint(8) unsigned NOT NULL,
   `user_money` decimal(10,2) NOT NULL,
   `frozen_money` decimal(10,2) NOT NULL,
@@ -36,130 +1419,444 @@ CREATE TABLE IF NOT EXISTS `account_log` (
   `change_time` int(10) unsigned NOT NULL,
   `change_desc` varchar(255) NOT NULL,
   `change_type` tinyint(3) unsigned NOT NULL,
-  PRIMARY KEY (`log_id`),
+  PRIMARY KEY  (`log_id`),
   KEY `user_id` (`user_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=36 ;
-
---
--- 转存表中的数据 `account_log`
---
-
-INSERT INTO `account_log` (`log_id`, `user_id`, `user_money`, `frozen_money`, `rank_points`, `pay_points`, `change_time`, `change_desc`, `change_type`) VALUES
-(1, 5, 1100000.00, 0.00, 0, 0, 1242140736, '11', 2),
-(2, 3, 400000.00, 0.00, 0, 0, 1242140752, '21312', 2),
-(3, 2, 300000.00, 0.00, 0, 0, 1242140775, '300000', 2),
-(4, 1, 50000.00, 0.00, 0, 0, 1242140811, '50', 2),
-(5, 5, 0.00, 10000.00, 0, 0, 1242140853, '32', 2),
-(6, 1, -400.00, 0.00, 0, 0, 1242142274, '支付订单 2009051298180', 99),
-(7, 1, -975.00, 0.00, 0, 0, 1242142324, '支付订单 2009051255518', 99),
-(8, 1, 0.00, 0.00, 960, 960, 1242142390, '订单 2009051255518 赠送的积分', 99),
-(9, 1, 0.00, 0.00, 385, 385, 1242142432, '订单 2009051298180 赠送的积分', 99),
-(10, 1, -2310.00, 0.00, 0, 0, 1242142549, '支付订单 2009051267570', 99),
-(11, 1, 0.00, 0.00, 2300, 2300, 1242142589, '订单 2009051267570 赠送的积分', 99),
-(12, 1, -5989.00, 0.00, 0, 0, 1242142681, '支付订单 2009051230249', 99),
-(13, 1, -8610.00, 0.00, 0, 0, 1242142808, '支付订单 2009051276258', 99),
-(14, 1, 0.00, 0.00, 0, -1, 1242142910, '参加夺宝奇兵夺宝奇兵之夏新N7 ', 99),
-(15, 1, 0.00, 0.00, 0, -1, 1242142935, '参加夺宝奇兵夺宝奇兵之诺基亚N96 ', 99),
-(16, 1, 0.00, 0.00, 0, 100000, 1242143867, '奖励', 2),
-(17, 1, -10.00, 0.00, 0, 0, 1242143920, '支付订单 2009051268194', 99),
-(18, 1, 0.00, 0.00, 0, -17000, 1242143920, '支付订单 2009051268194', 99),
-(19, 1, 0.00, 0.00, -960, -960, 1242144185, '由于退货或未发货操作，退回订单 2009051255518 赠送的积分', 99),
-(20, 1, 975.00, 0.00, 0, 0, 1242144185, '由于取消、无效或退货操作，退回支付订单 2009051255518 时使用的预付款', 99),
-(21, 1, 0.00, 0.00, 960, 960, 1242576445, '订单 2009051719232 赠送的积分', 99),
-(22, 3, -1000.00, 0.00, 0, 0, 1242973612, '追加使用余额支付订单：2009051227085', 99),
-(23, 1, -13806.60, 0.00, 0, 0, 1242976699, '支付订单 2009052224892', 99),
-(24, 1, 0.00, 0.00, 14045, 14045, 1242976740, '订单 2009052224892 赠送的积分', 99),
-(25, 1, 0.00, 0.00, -2300, -2300, 1245045334, '由于退货或未发货操作，退回订单 2009051267570 赠送的积分', 99),
-(26, 1, 2310.00, 0.00, 0, 0, 1245045334, '由于取消、无效或退货操作，退回支付订单 2009051267570 时使用的预付款', 99),
-(27, 1, 0.00, 0.00, 17044, 17044, 1245045443, '订单 2009061585887 赠送的积分', 99),
-(28, 1, 17054.00, 0.00, 0, 0, 1245045515, '1', 99),
-(29, 1, 0.00, 0.00, -17044, -17044, 1245045515, '由于退货或未发货操作，退回订单 2009061585887 赠送的积分', 99),
-(30, 1, -3196.30, 0.00, 0, 0, 1245045672, '支付订单 2009061525429', 99),
-(31, 1, -1910.00, 0.00, 0, 0, 1245047978, '支付订单 2009061503335', 99),
-(32, 1, 0.00, 0.00, 1900, 1900, 1245048189, '订单 2009061503335 赠送的积分', 99),
-(33, 1, 0.00, 0.00, -1900, -1900, 1245048212, '由于退货或未发货操作，退回订单 2009061503335 赠送的积分', 99),
-(34, 1, 1910.00, 0.00, 0, 0, 1245048212, '由于取消、无效或退货操作，退回支付订单 2009061503335 时使用的预付款', 99),
-(35, 1, -500.00, 0.00, 0, 0, 1245048585, '支付订单 2009061510313', 99);
+) ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
 
 -- --------------------------------------------------------
 
 --
--- 表的结构 `account_other_log`
+-- 表的结构 `topic`
 --
 
-CREATE TABLE IF NOT EXISTS `account_other_log` (
-  `user_id` mediumint(8) NOT NULL,
-  `order_id` mediumint(8) NOT NULL,
+DROP TABLE IF EXISTS `topic`;
+CREATE TABLE `topic` (
+  `topic_id` int(10) unsigned NOT NULL auto_increment,
+  `title` varchar(255) NOT NULL default '''''',
+  `intro` text NOT NULL,
+  `start_time` int(11) NOT NULL default '0',
+  `end_time` int(10) NOT NULL default '0',
+  `data` text NOT NULL,
+  `template` varchar(255) NOT NULL default '''''',
+  `css` text NOT NULL,
+  `topic_img` varchar(255) default NULL,
+  `title_pic` varchar(255) default NULL,
+  `base_style` char(6) default NULL,
+  `htmls` mediumtext,
+  `keywords` varchar(255) default NULL,
+  `description` varchar(255) default NULL,
+  KEY `topic_id` (`topic_id`)
+) ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `auction_log`
+--
+
+DROP TABLE IF EXISTS `auction_log`;
+CREATE TABLE `auction_log` (
+  `log_id` mediumint(8) unsigned NOT NULL auto_increment,
+  `act_id` mediumint(8) unsigned NOT NULL,
+  `bid_user` mediumint(8) unsigned NOT NULL,
+  `bid_price` decimal(10,2) unsigned NOT NULL,
+  `bid_time` int(10) unsigned NOT NULL,
+  PRIMARY KEY  (`log_id`),
+  KEY `act_id` (`act_id`)
+) ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+-- --------------------------------------------------------
+
+
+-- 增加分成信息纪录
+DROP TABLE IF EXISTS `affiliate_log`;
+CREATE TABLE  `affiliate_log` (
+ `log_id` MEDIUMINT( 8 ) NOT NULL auto_increment,
+ `order_id` MEDIUMINT( 8 ) NOT NULL ,
+ `time` INT( 10 ) NOT NULL ,
+ `user_id` MEDIUMINT( 8 ) NOT NULL,
+ `user_name` varchar(60),
+ `money` DECIMAL(10,2) NOT NULL DEFAULT '0',
+ `point` INT(10) NOT NULL DEFAULT '0',
+ `separate_type` TINYINT(1) NOT NULL DEFAULT '0',
+PRIMARY KEY ( `log_id` )
+) ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `favourable_activity`
+--
+
+DROP TABLE IF EXISTS `favourable_activity`;
+CREATE TABLE `favourable_activity` (
+  `act_id` smallint(5) unsigned NOT NULL auto_increment,
+  `act_name` varchar(255) NOT NULL,
+  `start_time` int(10) unsigned NOT NULL,
+  `end_time` int(10) unsigned NOT NULL,
+  `user_rank` varchar(255) NOT NULL,
+  `act_range` tinyint(3) unsigned NOT NULL,
+  `act_range_ext` varchar(255) NOT NULL,
+  `min_amount` decimal(10,2) unsigned NOT NULL,
+  `max_amount` decimal(10,2) unsigned NOT NULL,
+  `act_type` tinyint(3) unsigned NOT NULL,
+  `act_type_ext` decimal(10,2) unsigned NOT NULL,
+  `gift` text NOT NULL,
+  `sort_order` tinyint(3) unsigned NOT NULL DEFAULT '50',
+  PRIMARY KEY  (`act_id`),
+  KEY `act_name` (`act_name`)
+) ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `virtual_card`
+--
+DROP TABLE IF EXISTS `virtual_card`;
+CREATE TABLE `virtual_card` (
+    `card_id` mediumint(8) NOT NULL auto_increment,
+    `goods_id` mediumint(8) unsigned NOT NULL default '0',
+    `card_sn` varchar(60) NOT NULL default '',
+    `card_password` varchar(60) NOT NULL default '',
+    `add_date` int(11) NOT NULL default '0',
+    `end_date` int(11) NOT NULL default '0',
+    `is_saled` tinyint(1) NOT NULL default '0',
+    `order_sn` varchar(20) NOT NULL default '',
+    `crc32` varchar(12) NOT NULL default '0',
+    PRIMARY KEY  (`card_id`),
+    KEY `goods_id` (`goods_id`),
+    KEY `car_sn` (`card_sn`),
+    KEY `is_saled` (`is_saled`)
+    ) ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `wholesale`
+--
+DROP TABLE IF EXISTS `wholesale`;
+CREATE TABLE IF NOT EXISTS `wholesale` (
+  `act_id` mediumint(8) unsigned NOT NULL auto_increment,
+  `goods_id` mediumint(8) unsigned NOT NULL,
+  `goods_name` varchar(255) NOT NULL,
+  `rank_ids` varchar(255) NOT NULL,
+  `prices` text NOT NULL,
+  `enabled` tinyint(3) unsigned NOT NULL,
+  PRIMARY KEY  (`act_id`),
+  KEY `goods_id` (`goods_id`)
+) ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `nav`
+--
+DROP TABLE IF EXISTS `nav`;
+CREATE TABLE `nav` (
+  `id` mediumint(8) NOT NULL auto_increment,
+  `ctype` VARCHAR( 10 ) NULL,
+  `cid` SMALLINT( 5 ) UNSIGNED NULL,
+  `name` varchar(255) NOT NULL,
+  `ifshow` tinyint(1) NOT NULL,
+  `vieworder` tinyint(1) NOT NULL,
+  `opennew` tinyint(1) NOT NULL,
+  `url` varchar(255) NOT NULL,
+  `type` varchar(10) NOT NULL,
+  PRIMARY KEY  (`id`),
+  KEY `type` (`type`),
+  KEY `ifshow` (`ifshow`)
+) ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+-- 增加发送队列表
+DROP TABLE IF EXISTS `email_sendlist`;
+CREATE TABLE  `email_sendlist` (
+ `id` MEDIUMINT( 8 ) NOT NULL AUTO_INCREMENT PRIMARY KEY ,
+ `email` VARCHAR( 100 ) NOT NULL ,
+ `template_id` MEDIUMINT( 8 ) NOT NULL ,
+ `email_content` TEXT NOT NULL ,
+ `error` TINYINT( 1 ) NOT NULL DEFAULT  '0' ,
+ `pri` TINYINT( 10 ) NOT NULL ,
+ `last_send` INT( 10 ) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+-- 增加电子杂志订阅表
+DROP TABLE IF EXISTS `email_list`;
+CREATE TABLE `email_list` (
+  `id` mediumint(8) NOT NULL auto_increment,
+  `email` varchar(60) NOT NULL,
+  `stat` tinyint(1) NOT NULL default '0',
+  `hash` varchar(10) NOT NULL,
+  PRIMARY KEY  (`id`)
+) ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+-- 增加自动处理的表
+DROP TABLE IF EXISTS `auto_manage`;
+CREATE TABLE `auto_manage` (
+  `item_id` mediumint(8) NOT NULL,
+  `type` varchar(10) NOT NULL,
+  `starttime` int(10) NOT NULL,
+  `endtime` int(10) NOT NULL,
+  PRIMARY KEY  (`item_id`,`type`)
+) ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+-- 增加分类首页推荐表
+DROP TABLE IF EXISTS `cat_recommend`;
+CREATE TABLE `cat_recommend` (
+  `cat_id` smallint(5) NOT NULL,
+  `recommend_type` tinyint(1) NOT NULL,
+  PRIMARY KEY  (`cat_id`,`recommend_type`)
+) ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+-- 增加商品批量购买优惠价格表
+DROP TABLE IF EXISTS `volume_price`;
+CREATE TABLE IF NOT EXISTS `volume_price` (
+  `price_type` tinyint(1) unsigned NOT NULL,
+  `goods_id` mediumint(8) unsigned NOT NULL,
+  `volume_number` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `volume_price` decimal(10,2) NOT NULL DEFAULT '0.00',
+  PRIMARY KEY (`price_type`,`goods_id`,`volume_number`)
+) ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+-- 增加超值礼包商品表
+DROP TABLE IF EXISTS `package_goods`;
+CREATE TABLE `package_goods` (
+  `package_id` mediumint( 8 ) unsigned NOT NULL DEFAULT '0',
+  `goods_id` mediumint( 8 ) unsigned NOT NULL DEFAULT '0',
+  `product_id` mediumint(8) unsigned NOT NULL default '0',
+  `goods_number` smallint( 5 ) unsigned NOT NULL DEFAULT '1',
+  `admin_id` tinyint( 3 ) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY  (`package_id`,`goods_id`,`admin_id`,`product_id`)
+) ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+-- 增加积分商城商品表
+DROP TABLE IF EXISTS `exchange_goods`;
+CREATE TABLE IF NOT EXISTS `exchange_goods` (
+  `goods_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
+  `exchange_integral` int(10) unsigned NOT NULL DEFAULT '0',
+  `is_exchange` tinyint(1) unsigned NOT NULL DEFAULT '0',
+  `is_hot` tinyint(1) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`goods_id`)
+) ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+-- 发货单商品表 `delivery_goods`
+DROP TABLE IF EXISTS `delivery_goods`;
+CREATE TABLE `delivery_goods` (
+  `rec_id` mediumint(8) unsigned NOT NULL auto_increment,
+  `delivery_id` mediumint(8) unsigned NOT NULL default '0',
+  `goods_id` mediumint(8) unsigned NOT NULL default '0',
+  `product_id` mediumint(8) unsigned default '0',
+  `product_sn` varchar(60) default NULL,
+  `goods_name` varchar(120) default NULL,
+  `brand_name` varchar(60) default NULL,
+  `goods_sn` varchar(60) default NULL,
+  `is_real` tinyint(1) unsigned default '0',
+  `extension_code` varchar(30) default NULL,
+  `parent_id` mediumint(8) unsigned default '0',
+  `send_number` smallint(5) unsigned default '0',
+  `goods_attr` text,
+  PRIMARY KEY  (`rec_id`),
+  KEY `delivery_id` (`delivery_id`,`goods_id`),
+  KEY `goods_id` (`goods_id`)
+) ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+-- 发货单表 `delivery_order`
+DROP TABLE IF EXISTS `delivery_order`;
+CREATE TABLE `delivery_order` (
+  `delivery_id` mediumint(8) unsigned NOT NULL auto_increment,
+  `delivery_sn` varchar(20) NOT NULL,
   `order_sn` varchar(20) NOT NULL,
-  `money` decimal(10,2) NOT NULL DEFAULT '0.00',
-  `pay_type` varchar(20) NOT NULL,
-  `pay_time` varchar(10) NOT NULL,
-  `change_desc` varchar(255) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+  `order_id` mediumint(8) unsigned NOT NULL default '0',
+  `invoice_no` varchar(50) default NULL,
+  `add_time` int(10) unsigned default '0',
+  `shipping_id` tinyint(3) unsigned default '0',
+  `shipping_name` varchar(120) default NULL,
+  `user_id` mediumint(8) unsigned default '0',
+  `action_user` varchar(30) default NULL,
+  `consignee` varchar(60) default NULL,
+  `address` varchar(250) default NULL,
+  `country` smallint(5) unsigned default '0',
+  `province` smallint(5) unsigned default '0',
+  `city` smallint(5) unsigned default '0',
+  `district` smallint(5) unsigned default '0',
+  `sign_building` varchar(120) default NULL,
+  `email` varchar(60) default NULL,
+  `zipcode` varchar(60) default NULL,
+  `tel` varchar(60) default NULL,
+  `mobile` varchar(60) default NULL,
+  `best_time` varchar(120) default NULL,
+  `postscript` varchar(255) default NULL,
+  `how_oos` varchar(120) default NULL,
+  `insure_fee` decimal(10,2) unsigned default '0.00',
+  `shipping_fee` decimal(10,2) unsigned default '0.00',
+  `update_time` int(10) unsigned default '0',
+  `suppliers_id` smallint(5) default '0',
+  `status` tinyint(1) unsigned NOT NULL default '0',
+  `agency_id` smallint(5) unsigned default '0',
+  PRIMARY KEY  (`delivery_id`),
+  KEY `user_id` (`user_id`),
+  KEY `order_id` (`order_id`)
+) ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
 
--- --------------------------------------------------------
+-- 退货单商品表 `back_goods`
+DROP TABLE IF EXISTS `back_goods`;
+CREATE TABLE `back_goods` (
+  `rec_id` mediumint(8) unsigned NOT NULL auto_increment,
+  `back_id` mediumint(8) unsigned default '0',
+  `goods_id` mediumint(8) unsigned NOT NULL default '0',
+  `product_id` mediumint(8) unsigned NOT NULL default '0',
+  `product_sn` varchar(60) default NULL,
+  `goods_name` varchar(120) default NULL,
+  `brand_name` varchar(60) default NULL,
+  `goods_sn` varchar(60) default NULL,
+  `is_real` tinyint(1) unsigned default '0',
+  `send_number` smallint(5) unsigned default '0',
+  `goods_attr` text,
+  PRIMARY KEY  (`rec_id`),
+  KEY `back_id` (`back_id`),
+  KEY `goods_id` (`goods_id`)
+) ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+-- 退货单表 `back_order`
+DROP TABLE IF EXISTS `back_order`;
+CREATE TABLE `back_order` (
+  `back_id` mediumint(8) unsigned NOT NULL auto_increment,
+  `delivery_sn` varchar(20) NOT NULL,
+  `order_sn` varchar(20) NOT NULL,
+  `order_id` mediumint(8) unsigned NOT NULL default '0',
+  `invoice_no` varchar(50) default NULL,
+  `add_time` int(10) unsigned default '0',
+  `shipping_id` tinyint(3) unsigned default '0',
+  `shipping_name` varchar(120) default NULL,
+  `user_id` mediumint(8) unsigned default '0',
+  `action_user` varchar(30) default NULL,
+  `consignee` varchar(60) default NULL,
+  `address` varchar(250) default NULL,
+  `country` smallint(5) unsigned default '0',
+  `province` smallint(5) unsigned default '0',
+  `city` smallint(5) unsigned default '0',
+  `district` smallint(5) unsigned default '0',
+  `sign_building` varchar(120) default NULL,
+  `email` varchar(60) default NULL,
+  `zipcode` varchar(60) default NULL,
+  `tel` varchar(60) default NULL,
+  `mobile` varchar(60) default NULL,
+  `best_time` varchar(120) default NULL,
+  `postscript` varchar(255) default NULL,
+  `how_oos` varchar(120) default NULL,
+  `insure_fee` decimal(10,2) unsigned default '0.00',
+  `shipping_fee` decimal(10,2) unsigned default '0.00',
+  `update_time` int(10) unsigned default '0',
+  `suppliers_id` smallint(5) default '0',
+  `status` tinyint(1) unsigned NOT NULL default '0',
+  `return_time` int(10) unsigned default '0',
+  `agency_id` smallint(5) unsigned default '0',
+  PRIMARY KEY  (`back_id`),
+  KEY `user_id` (`user_id`),
+  KEY `order_id` (`order_id`)
+) ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+-- 供货商 `suppliers`
+DROP TABLE IF EXISTS `suppliers`;
+CREATE TABLE `suppliers` (
+  `suppliers_id` smallint(5) unsigned NOT NULL auto_increment,
+  `suppliers_name` varchar(255) default NULL,
+  `suppliers_desc` mediumtext,
+  `is_check` tinyint(1) unsigned NOT NULL default '1',
+  PRIMARY KEY  (`suppliers_id`)
+) ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+-- 首页主广告用户自定义表 `ad_custom`
+DROP TABLE IF EXISTS `ad_custom`;
+CREATE TABLE `ad_custom` (
+`ad_id` MEDIUMINT( 8 ) UNSIGNED NOT NULL auto_increment,
+`ad_type` TINYINT( 1 ) UNSIGNED DEFAULT '1' NOT NULL ,
+`ad_name` VARCHAR( 60 ) ,
+`add_time` INT( 10 ) UNSIGNED DEFAULT '0' NOT NULL ,
+`content` mediumtext,
+`url` varchar(255) ,
+`ad_status` TINYINT( 0 ) UNSIGNED DEFAULT '0' NOT NULL ,
+PRIMARY KEY ( `ad_id` )
+)ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+-- 角色管理
+
+DROP TABLE IF EXISTS `role`;
+CREATE TABLE `role` (
+  `role_id` smallint(5) unsigned NOT NULL auto_increment,
+  `role_name` varchar(60) NOT NULL default '',
+  `action_list` text NOT NULL,
+  `role_describe` text,
+  PRIMARY KEY  (`role_id`),
+  KEY `user_name` (`role_name`)
+) ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+-- 货品表
+
+DROP TABLE IF EXISTS `products`;
+CREATE TABLE `products` (
+  `product_id` mediumint(8) unsigned NOT NULL auto_increment,
+  `goods_id` mediumint(8) unsigned NOT NULL default '0',
+  `goods_attr` varchar(50) default NULL,
+  `product_sn` varchar(60) default NULL,
+  `product_number` mediumint(8) unsigned default '0',
+  PRIMARY KEY  (`product_id`)
+) ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+-- 防并发表
+DROP TABLE IF EXISTS `coincidence`;
+CREATE TABLE `coincidence` (
+  `type_id` varchar(100) NOT NULL,
+  `type` varchar(20) NOT NULL,
+  `time` int(11) DEFAULT NULL,
+  PRIMARY KEY (`type_id`,`type`)
+) ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+DROP TABLE IF EXISTS `shop_bind`;
+CREATE TABLE `shop_bind` (
+  `shop_id` int(8) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) DEFAULT NULL COMMENT '名称',
+  `node_id` varchar(32) DEFAULT NULL COMMENT '节点',
+  `node_type` varchar(128) DEFAULT NULL COMMENT '节点类型',
+  `status` enum('bind','unbind') DEFAULT NULL COMMENT '状态',
+  `app_url` varchar(200) DEFAULT NULL,
+  PRIMARY KEY (`shop_id`)
+) ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+-- 矩阵接口返回日志表
+DROP TABLE IF EXISTS `callback_status`;
+CREATE TABLE `callback_status` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `msg_id` varchar(50) DEFAULT '',
+  `type` varchar(100) DEFAULT NULL,
+  `status` enum('true','false','running') DEFAULT 'false',
+  `type_id` varchar(50) DEFAULT NULL,
+  `date_time` int(11) DEFAULT NULL,
+  `data` text,
+  `disabled` enum('true','false') DEFAULT 'false',
+  `times` tinyint(4) DEFAULT '0',
+  `method` varchar(100) NOT NULL,
+  `http_type` varchar(20) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `ind_type_type_id` USING BTREE (`type`,`type_id`),
+  KEY `date_time` (`date_time`),
+  KEY `ind_status` USING BTREE (`status`)
+) ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
+-- 对接erp在线支付方式记录
+DROP TABLE IF EXISTS `account_other_log`;
+CREATE TABLE `account_other_log` (
+`user_id` MEDIUMINT( 8 ) NOT NULL ,
+`order_id` MEDIUMINT( 8 ) NOT NULL ,
+`order_sn` VARCHAR( 20 ) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
+`money` DECIMAL( 10, 2 ) NOT NULL DEFAULT '0.00',
+`pay_type` VARCHAR( 20 ) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
+`pay_time` VARCHAR( 10 ) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
+`change_desc` VARCHAR( 255 ) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL 
+) ENGINE=MyISAM DEFAULT CHARACTER SET utf8;
+
 
 --
--- 表的结构 `ad`
---
-
-CREATE TABLE IF NOT EXISTS `ad` (
-  `ad_id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
-  `position_id` smallint(5) unsigned NOT NULL DEFAULT '0',
-  `media_type` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `ad_name` varchar(60) NOT NULL DEFAULT '',
-  `ad_link` varchar(255) NOT NULL DEFAULT '',
-  `ad_code` text NOT NULL,
-  `start_time` int(11) NOT NULL DEFAULT '0',
-  `end_time` int(11) NOT NULL DEFAULT '0',
-  `link_man` varchar(60) NOT NULL DEFAULT '',
-  `link_email` varchar(60) NOT NULL DEFAULT '',
-  `link_phone` varchar(60) NOT NULL DEFAULT '',
-  `click_count` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `enabled` tinyint(3) unsigned NOT NULL DEFAULT '1',
-  PRIMARY KEY (`ad_id`),
-  KEY `position_id` (`position_id`),
-  KEY `enabled` (`enabled`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=16 ;
-
---
--- 转存表中的数据 `ad`
---
-
-INSERT INTO `ad` (`ad_id`, `position_id`, `media_type`, `ad_name`, `ad_link`, `ad_code`, `start_time`, `end_time`, `link_man`, `link_email`, `link_phone`, `click_count`, `enabled`) VALUES
-(1, 1, 0, '测试广告', '', '1462958213922967180.jpg', 1462003200, 1527667200, '', '', '', 4, 1),
-(2, 2, 0, '测试广告2', '', '1462958236149500402.jpg', 1462608000, 1496736000, '', '', '', 6, 1),
-(3, 3, 0, '测试广告3', '', '1462958248231413208.jpg', 1462608000, 1465200000, '', '', '', 2, 1),
-(4, 5, 0, '首页广告1', '#', '1462847593436706583.jpg', 1462780800, 1465372800, '', '', '', 1, 1),
-(5, 6, 0, '首页广告2', '', '1462847610270410022.jpg', 1462780800, 1465372800, '', '', '', 1, 1),
-(6, 7, 0, '首页广告3', '', '1462847623202947787.jpg', 1462780800, 1465372800, '', '', '', 0, 1),
-(7, 8, 0, '首页广告4', '', '1462847641920447649.jpg', 1462780800, 1465372800, '', '', '', 0, 1),
-(8, 4, 0, '团购广告', '', '1462847712105834896.jpg', 1462780800, 1465372800, '', '', '', 2, 1),
-(9, 9, 0, '1层左侧广告1', '', '1462847928058332752.jpg', 1462780800, 1465372800, '', '', '', 1, 1),
-(10, 10, 0, '1层左侧广告2', '', '1462847949795308026.jpg', 1462780800, 1465372800, '', '', '', 0, 1),
-(11, 11, 0, '1层左侧广告3', '', '1462848017200363691.jpg', 1462694400, 1465286400, '', '', '', 0, 1),
-(12, 12, 0, '1层左侧广告4', '', '1462847997830622897.jpg', 1462694400, 1465286400, '', '', '', 0, 1),
-(13, 13, 0, '2层左侧广告1', '', '1462850262891884765.jpg', 1462694400, 1465286400, '', '', '', 0, 1),
-(14, 14, 0, '2层左侧广告2', '', '1462850292418967275.jpg', 1462694400, 1465286400, '', '', '', 0, 1),
-(15, 15, 0, '3层左侧广告', '', '1462848133177102814.jpg', 1462780800, 1465372800, '', '', '', 0, 1);
-
--- --------------------------------------------------------
-
---
--- 表的结构 `admin_action`
---
-
-CREATE TABLE IF NOT EXISTS `admin_action` (
-  `action_id` tinyint(3) unsigned NOT NULL AUTO_INCREMENT,
-  `parent_id` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `action_code` varchar(20) NOT NULL DEFAULT '',
-  `relevance` varchar(20) NOT NULL DEFAULT '',
-  PRIMARY KEY (`action_id`),
-  KEY `parent_id` (`parent_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=136 ;
-
---
--- 转存表中的数据 `admin_action`
+-- 导出表中的数据 `admin_action`
 --
 
 INSERT INTO `admin_action` (`action_id`, `parent_id`, `action_code`, `relevance`) VALUES
@@ -273,2124 +1970,9 @@ INSERT INTO `admin_action` (`action_id`, `parent_id`, `action_code`, `relevance`
 (134, 4, 'suppliers_manage', ''),
 (135, 4, 'role_manage', '');
 
--- --------------------------------------------------------
-
 --
--- 表的结构 `admin_log`
+--  `mail_templates`
 --
-
-CREATE TABLE IF NOT EXISTS `admin_log` (
-  `log_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `log_time` int(10) unsigned NOT NULL DEFAULT '0',
-  `user_id` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `log_info` varchar(255) NOT NULL DEFAULT '',
-  `ip_address` varchar(15) NOT NULL DEFAULT '',
-  PRIMARY KEY (`log_id`),
-  KEY `log_time` (`log_time`),
-  KEY `user_id` (`user_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=464 ;
-
---
--- 转存表中的数据 `admin_log`
---
-
-INSERT INTO `admin_log` (`log_id`, `log_time`, `user_id`, `log_info`, `ip_address`) VALUES
-(1, 1240294375, 1, '添加品牌管理: 诺基亚', '0.0.0.0'),
-(2, 1240295621, 1, '添加属性: 网络类型', '0.0.0.0'),
-(3, 1240295930, 1, '添加属性: 扩展卡', '0.0.0.0'),
-(4, 1240295980, 1, '添加属性: 操作系统', '0.0.0.0'),
-(5, 1240296082, 1, '添加属性: 通话时间（分）', '0.0.0.0'),
-(6, 1240296102, 1, '添加属性: 待机时间（小时）', '0.0.0.0'),
-(7, 1240296379, 1, '添加属性: 上市时间', '0.0.0.0'),
-(8, 1240296403, 1, '编辑属性: 网络类型', '0.0.0.0'),
-(9, 1240296415, 1, '编辑属性: 扩展卡', '0.0.0.0'),
-(10, 1240298784, 1, '添加属性: 手机颜色', '0.0.0.0'),
-(11, 1240300896, 1, '添加属性: 基本配件', '0.0.0.0'),
-(12, 1240301110, 1, '添加属性: 附加配件', '0.0.0.0'),
-(13, 1240301295, 1, '添加属性: 和铉铃声', '0.0.0.0'),
-(14, 1240301371, 1, '添加属性: 相机像数', '0.0.0.0'),
-(15, 1240301487, 1, '添加属性: 感光元件', '0.0.0.0'),
-(16, 1240301508, 1, '编辑属性: 和铉铃声', '0.0.0.0'),
-(17, 1240301518, 1, '编辑属性: 基本配件', '0.0.0.0'),
-(18, 1240301570, 1, '添加属性: 移动qq', '0.0.0.0'),
-(19, 1240301611, 1, '添加属性: gps', '0.0.0.0'),
-(20, 1240301650, 1, '添加属性: FM收音机', '0.0.0.0'),
-(21, 1240301665, 1, '编辑属性: GPS', '0.0.0.0'),
-(22, 1240301679, 1, '编辑属性: FM收音机', '0.0.0.0'),
-(23, 1240301705, 1, '添加属性: 话机电话薄（条）', '0.0.0.0'),
-(24, 1240301715, 1, '添加属性: K-JAVA', '0.0.0.0'),
-(25, 1240301788, 1, '添加属性: 价格档位', '0.0.0.0'),
-(26, 1240305032, 1, '添加属性: 手机样式', '0.0.0.0'),
-(27, 1240380338, 1, '添加属性: 图形菜单', '0.0.0.0'),
-(28, 1240380399, 1, '添加属性: 中文短消息', '0.0.0.0'),
-(29, 1240380444, 1, '添加属性: 内置游戏', '0.0.0.0'),
-(30, 1240380507, 1, '添加属性: Wap 上网', '0.0.0.0'),
-(31, 1240380533, 1, '添加属性: Wap 上网', '0.0.0.0'),
-(32, 1240380552, 1, '编辑属性: Wap 上网', '0.0.0.0'),
-(33, 1240380574, 1, '编辑属性: Wap 上网', '0.0.0.0'),
-(34, 1240380587, 1, '编辑属性: Wap 上网', '0.0.0.0'),
-(35, 1240380646, 1, '添加属性: 数据功能', '0.0.0.0'),
-(36, 1240380743, 1, '添加属性: 移动QQ', '0.0.0.0'),
-(37, 1240380759, 1, '添加属性: 视频格式', '0.0.0.0'),
-(38, 1240380831, 1, '添加属性: 扩张卡', '0.0.0.0'),
-(39, 1240380875, 1, '添加属性: 手机颜色', '0.0.0.0'),
-(40, 1240380920, 1, '添加属性: 来电防火墙', '0.0.0.0'),
-(41, 1240380945, 1, '添加属性: 英汉词典', '0.0.0.0'),
-(42, 1240380957, 1, '添加属性: 多语言显示', '0.0.0.0'),
-(43, 1240381002, 1, '添加属性: 电子书', '0.0.0.0'),
-(44, 1240381052, 1, '添加属性: 移动 MSN', '0.0.0.0'),
-(45, 1240381088, 1, '添加属性: 音频格式', '0.0.0.0'),
-(46, 1240381143, 1, '添加属性: 上市时间', '0.0.0.0'),
-(47, 1240381206, 1, '添加属性: 语音拨号', '0.0.0.0'),
-(48, 1240381229, 1, '添加属性: 语音菜单', '0.0.0.0'),
-(49, 1240381356, 1, '添加属性: 外观样式', '0.0.0.0'),
-(50, 1240381382, 1, '添加属性: 天线位置', '0.0.0.0'),
-(51, 1240381425, 1, '编辑属性: K-JAVA', '0.0.0.0'),
-(52, 1240381430, 1, '添加属性: K-JAVA', '0.0.0.0'),
-(53, 1240381464, 1, '添加属性: PDA 功能', '0.0.0.0'),
-(54, 1240381480, 1, '添加属性: 操作系统', '0.0.0.0'),
-(55, 1240381512, 1, '添加属性: 外壳材质', '0.0.0.0'),
-(56, 1240381561, 1, '编辑属性: 基本配件', '0.0.0.0'),
-(57, 1240381572, 1, '添加属性: 基本配件', '0.0.0.0'),
-(58, 1240381580, 1, '编辑属性: 附加配件', '0.0.0.0'),
-(59, 1240381602, 1, '添加属性: 附加配件', '0.0.0.0'),
-(60, 1240381627, 1, '编辑属性: 附加配件', '0.0.0.0'),
-(61, 1240381694, 1, '添加属性: 自动开关机', '0.0.0.0'),
-(62, 1240381717, 1, '添加属性: 视频分辨率', '0.0.0.0'),
-(63, 1240381731, 1, '添加属性: 影音编辑器', '0.0.0.0'),
-(64, 1240381741, 1, '添加属性: 图像编辑器', '0.0.0.0'),
-(65, 1240381759, 1, '添加属性: 可用内存', '0.0.0.0'),
-(66, 1240381775, 1, '添加属性: 主屏幕像素', '0.0.0.0'),
-(67, 1240381786, 1, '添加属性: 副屏幕像素', '0.0.0.0'),
-(68, 1240382037, 1, '添加属性: 更换外壳', '0.0.0.0'),
-(69, 1240382801, 1, '添加属性: 办公功能', '0.0.0.0'),
-(70, 1240382823, 1, '添加属性: 传感器', '0.0.0.0'),
-(71, 1240382844, 1, '添加属性: CPU频率', '0.0.0.0'),
-(72, 1240382866, 1, '添加属性: 理论待机时间', '0.0.0.0'),
-(73, 1240382875, 1, '添加属性: 理论通话时间', '0.0.0.0'),
-(74, 1240383267, 1, '编辑商品类型: 3g手机', '0.0.0.0'),
-(75, 1240383268, 1, '编辑商品类型: 手机', '0.0.0.0'),
-(76, 1240383269, 1, '编辑商品类型: 3g手机', '0.0.0.0'),
-(77, 1240383397, 1, '删除商品类型: 图形菜单', '0.0.0.0'),
-(78, 1240383432, 1, '添加属性: 图形菜单', '0.0.0.0'),
-(79, 1240383491, 1, '添加属性: EFR 服务', '0.0.0.0'),
-(80, 1240383509, 1, '添加属性: STK 服务', '0.0.0.0'),
-(81, 1240383528, 1, '添加属性: 通话录音', '0.0.0.0'),
-(82, 1240383554, 1, '添加属性: 语音菜单', '0.0.0.0'),
-(83, 1240383575, 1, '添加属性: 中文输入法', '0.0.0.0'),
-(84, 1240383594, 1, '编辑属性: 中文输入法', '0.0.0.0'),
-(85, 1240383613, 1, '编辑属性: 语音菜单', '0.0.0.0'),
-(86, 1240383635, 1, '添加属性: 和弦铃声', '0.0.0.0'),
-(87, 1240383651, 1, '添加属性: 主屏幕色彩', '0.0.0.0'),
-(88, 1240383658, 1, '添加属性: 副屏幕色彩', '0.0.0.0'),
-(89, 1240383682, 1, '添加属性: 天线位置', '0.0.0.0'),
-(90, 1240383700, 1, '添加属性: 数据功能', '0.0.0.0'),
-(91, 1240392733, 1, '安装配送方式: 邮政快递包裹', '0.0.0.0'),
-(92, 1240392748, 1, '安装配送方式: 圆通速递', '0.0.0.0'),
-(93, 1240392761, 1, '安装配送方式: 城际快递', '0.0.0.0'),
-(94, 1240392769, 1, '安装配送方式: 市内快递', '0.0.0.0'),
-(95, 1240463689, 1, '添加属性: 连拍', '0.0.0.0'),
-(96, 1240463709, 1, '添加属性: 定时拍摄', '0.0.0.0'),
-(97, 1240463729, 1, '添加属性: 照片打印', '0.0.0.0'),
-(98, 1240463748, 1, '添加属性: 照片特效', '0.0.0.0'),
-(99, 1240463766, 1, '添加属性: 电子书', '0.0.0.0'),
-(100, 1240463777, 1, '添加属性: 外壳材质', '0.0.0.0'),
-(101, 1240463793, 1, '添加属性: 名片扫描', '0.0.0.0'),
-(102, 1240463803, 1, '添加属性: GPU', '0.0.0.0'),
-(103, 1240463814, 1, '添加属性: CPU频率', '0.0.0.0'),
-(104, 1240463830, 1, '添加属性: TV-OUT电视输出', '0.0.0.0'),
-(105, 1240463843, 1, '添加属性: 来电图片识别', '0.0.0.0'),
-(106, 1240463855, 1, '添加属性: 来电防火墙', '0.0.0.0'),
-(107, 1240463865, 1, '添加属性: 背光自动调节', '0.0.0.0'),
-(108, 1240463873, 1, '添加属性: 照片分辨率', '0.0.0.0'),
-(109, 1240463880, 1, '添加属性: 变焦模式', '0.0.0.0'),
-(110, 1240463903, 1, '添加属性: 英汉词典', '0.0.0.0'),
-(111, 1240463925, 1, '添加属性: 多语言显示', '0.0.0.0'),
-(112, 1240463974, 1, '添加属性: 数据线功能', '0.0.0.0'),
-(113, 1240463992, 1, '添加属性: 留言应答', '0.0.0.0'),
-(114, 1240464004, 1, '添加属性: 可用内存(MB)', '0.0.0.0'),
-(115, 1240464015, 1, '添加属性: GPS', '0.0.0.0'),
-(116, 1240464022, 1, '添加属性: 相机闪光灯', '0.0.0.0'),
-(117, 1240464030, 1, '添加属性: 移动 MSN', '0.0.0.0'),
-(118, 1240464038, 1, '添加属性: 移动QQ', '0.0.0.0'),
-(119, 1240464050, 1, '添加属性: 内置媒体播放器', '0.0.0.0'),
-(120, 1240464066, 1, '添加属性: 电子邮件', '0.0.0.0'),
-(121, 1240464220, 1, '编辑属性: 待机时间（小时）', '0.0.0.0'),
-(122, 1240464272, 1, '编辑属性: 网络类型', '0.0.0.0'),
-(123, 1240464277, 1, '编辑属性: 网络类型', '0.0.0.0'),
-(124, 1240464331, 1, '编辑属性: 网络类型', '0.0.0.0'),
-(125, 1240464631, 1, '编辑属性: 网络类型', '0.0.0.0'),
-(126, 1240464639, 1, '编辑属性: 扩展卡', '0.0.0.0'),
-(127, 1240464650, 1, '编辑属性: 操作系统', '0.0.0.0'),
-(128, 1240464709, 1, '编辑属性: 通话时间（分）', '0.0.0.0'),
-(129, 1240464720, 1, '编辑属性: 待机时间（小时）', '0.0.0.0'),
-(130, 1240464737, 1, '编辑属性: 上市时间', '0.0.0.0'),
-(131, 1240464748, 1, '编辑属性: 手机颜色', '0.0.0.0'),
-(132, 1240464758, 1, '编辑属性: 基本配件', '0.0.0.0'),
-(133, 1240464770, 1, '编辑属性: 和铉铃声', '0.0.0.0'),
-(134, 1240464783, 1, '编辑属性: 相机像数', '0.0.0.0'),
-(135, 1240464794, 1, '编辑属性: 移动qq', '0.0.0.0'),
-(136, 1240464806, 1, '编辑属性: 感光元件', '0.0.0.0'),
-(137, 1240464816, 1, '编辑属性: GPS', '0.0.0.0'),
-(138, 1240464827, 1, '编辑属性: FM收音机', '0.0.0.0'),
-(139, 1240464853, 1, '编辑属性: FM收音机', '0.0.0.0'),
-(140, 1240464869, 1, '编辑属性: 话机电话薄（条）', '0.0.0.0'),
-(141, 1240464880, 1, '编辑属性: 扩展卡', '0.0.0.0'),
-(142, 1240464896, 1, '编辑属性: 扩展卡', '0.0.0.0'),
-(143, 1240464917, 1, '编辑属性: K-JAVA', '0.0.0.0'),
-(144, 1240464931, 1, '编辑属性: 价格档位', '0.0.0.0'),
-(145, 1240464945, 1, '编辑属性: 手机样式', '0.0.0.0'),
-(146, 1240464959, 1, '编辑属性: Wap 上网', '0.0.0.0'),
-(147, 1240800622, 1, '添加商品分类: 手机类型', '0.0.0.0'),
-(148, 1240800687, 1, '添加商品分类: GSM手机', '0.0.0.0'),
-(149, 1240800745, 1, '添加商品分类: GSM手机', '0.0.0.0'),
-(150, 1240800791, 1, '添加商品分类: 3G手机', '0.0.0.0'),
-(151, 1240800845, 1, '添加商品分类: 双模手机', '0.0.0.0'),
-(152, 1240800877, 1, '编辑商品分类: GSM手机', '0.0.0.0'),
-(153, 1240802922, 1, '添加品牌管理: 摩托罗拉', '0.0.0.0'),
-(154, 1240803062, 1, '编辑品牌管理: 诺基亚', '0.0.0.0'),
-(155, 1240803144, 1, '添加品牌管理: 多普达', '0.0.0.0'),
-(156, 1240803248, 1, '添加品牌管理: 飞利浦', '0.0.0.0'),
-(157, 1240803352, 1, '添加品牌管理: 夏新', '0.0.0.0'),
-(158, 1240803412, 1, '添加品牌管理: 三星', '0.0.0.0'),
-(159, 1240803482, 1, '添加品牌管理: 索爱', '0.0.0.0'),
-(160, 1240803526, 1, '添加品牌管理: LG', '0.0.0.0'),
-(161, 1240803578, 1, '添加品牌管理: 联想', '0.0.0.0'),
-(162, 1240803689, 1, '添加品牌管理: 金立', '0.0.0.0'),
-(163, 1240803736, 1, '添加品牌管理: 恒基伟业', '0.0.0.0'),
-(164, 1240803750, 1, '编辑品牌管理: 恒基伟业', '0.0.0.0'),
-(165, 1240804593, 1, '编辑商品分类: CDMA手机', '0.0.0.0'),
-(166, 1240902890, 1, '添加商品: KD876', '0.0.0.0'),
-(167, 1240904370, 1, '编辑商品: KD876', '0.0.0.0'),
-(168, 1240904461, 1, '编辑商品: KD876', '0.0.0.0'),
-(169, 1240912338, 1, '删除商品类型: 手机配件', '0.0.0.0'),
-(170, 1240912361, 1, '添加商品分类: 手机配件', '0.0.0.0'),
-(171, 1240912385, 1, '添加商品分类: 充电器', '0.0.0.0'),
-(172, 1240912477, 1, '添加商品分类: 耳机', '0.0.0.0'),
-(173, 1240912489, 1, '添加商品分类: 电池', '0.0.0.0'),
-(174, 1241420935, 1, '添加商品分类: 111', '0.0.0.0'),
-(175, 1241420966, 1, '添加商品: 斤', '0.0.0.0'),
-(176, 1241421093, 1, '回收商品: 斤', '0.0.0.0'),
-(177, 1241421104, 1, '删除商品: 斤', '0.0.0.0'),
-(178, 1241421110, 1, '删除商品分类: 111', '0.0.0.0'),
-(179, 1241421127, 1, '编辑商品分类: GSM手机', '0.0.0.0'),
-(180, 1241422082, 1, '添加商品: 诺基亚原装5800耳机', '0.0.0.0'),
-(181, 1241422137, 1, '添加属性: 卡的类型', '0.0.0.0'),
-(182, 1241422163, 1, '添加属性: 卡的大小', '0.0.0.0'),
-(183, 1241422236, 1, '添加属性: 颜色', '0.0.0.0'),
-(184, 1241422272, 1, '编辑属性: 卡的容量', '0.0.0.0'),
-(185, 1241422289, 1, '添加属性: 电池容量', '0.0.0.0'),
-(186, 1241422347, 1, '编辑商品: 诺基亚原装5800耳机', '0.0.0.0'),
-(187, 1241422402, 1, '添加商品: 诺基亚N85原装充电器', '0.0.0.0'),
-(188, 1241422416, 1, '编辑商品: KD876', '0.0.0.0'),
-(189, 1241422518, 1, '添加商品: 索爱原装M2卡读卡器', '0.0.0.0'),
-(190, 1241422573, 1, '添加商品: 胜创KINGMAX内存卡', '0.0.0.0'),
-(191, 1241422615, 1, '编辑商品: 胜创KINGMAX内存卡', '0.0.0.0'),
-(192, 1241422626, 1, '编辑商品: 诺基亚N85原装充电器', '0.0.0.0'),
-(193, 1241422785, 1, '添加商品: 诺基亚N85原装立体声耳机HS-82 查看商品相册 诺基亚N85原装立体声耳机HS-82', '0.0.0.0'),
-(194, 1241425512, 1, '添加商品: 飞利浦9@9v ', '0.0.0.0'),
-(195, 1241425836, 1, '编辑商品: 飞利浦9@9v ', '0.0.0.0'),
-(196, 1241425891, 1, '编辑商品: 飞利浦9@9v ', '0.0.0.0'),
-(197, 1241426819, 1, '添加文章分类: 3G手机资讯', '0.0.0.0'),
-(198, 1241426864, 1, '添加文章: 三星电子宣布将在中国发布15款3G手机', '0.0.0.0'),
-(199, 1241426898, 1, '编辑文章: 三星电子宣布将在中国发布15款3G手机', '0.0.0.0'),
-(200, 1241427051, 1, '添加文章: 薄锐极限 电信3G定制摩托罗拉V10发布', '0.0.0.0'),
-(201, 1241427449, 1, '编辑文章: 薄锐极限 电信3G定制摩托罗拉V10发布', '0.0.0.0'),
-(202, 1241427779, 1, '编辑文章: 诺基亚牵手移动 5款热门TD手机机型推荐', '0.0.0.0'),
-(203, 1241427850, 1, '编辑文章: 诺基亚牵手移动 5款热门TD手机机型推荐', '0.0.0.0'),
-(204, 1241511486, 1, '编辑商品: 飞利浦9@9v', '0.0.0.0'),
-(205, 1241511514, 1, '编辑属性: FM收音机', '0.0.0.0'),
-(206, 1241511871, 1, '添加商品: 诺基亚E66', '0.0.0.0'),
-(207, 1241512315, 1, '编辑商品: 诺基亚E66', '0.0.0.0'),
-(208, 1241512443, 1, '删除商品类型: 手机', '0.0.0.0'),
-(209, 1241512563, 1, '添加属性: 手机制式', '0.0.0.0'),
-(210, 1241512693, 1, '添加属性: 外观样式', '0.0.0.0'),
-(211, 1241512704, 1, '添加属性: 上市时间', '0.0.0.0'),
-(212, 1241512712, 1, '添加属性: 屏幕参数', '0.0.0.0'),
-(213, 1241512720, 1, '添加属性: 摄像功能', '0.0.0.0'),
-(214, 1241512728, 1, '添加属性: 其它功能', '0.0.0.0'),
-(215, 1241512737, 1, '添加属性: 产品配置', '0.0.0.0'),
-(216, 1241512762, 1, '添加属性: 理论通话时间', '0.0.0.0'),
-(217, 1241512772, 1, '添加属性: 理论待机时间', '0.0.0.0'),
-(218, 1241512804, 1, '添加属性: 中文短消息', '0.0.0.0'),
-(219, 1241512813, 1, '添加属性: 存储卡格式', '0.0.0.0'),
-(220, 1241512842, 1, '添加属性: 外壳材质', '0.0.0.0'),
-(221, 1241512868, 1, '添加属性: # 情景模式', '0.0.0.0'),
-(222, 1241512907, 1, '添加属性: 蓝牙接口', '0.0.0.0'),
-(223, 1241512939, 1, '添加属性: GPS', '0.0.0.0'),
-(224, 1241512966, 1, '添加属性: MP3播放器', '0.0.0.0'),
-(225, 1241512977, 1, '添加属性: 视频播放', '0.0.0.0'),
-(226, 1241513003, 1, '添加属性: 内置游戏', '0.0.0.0'),
-(227, 1241513036, 1, '编辑属性: 情景模式', '0.0.0.0'),
-(228, 1241513132, 1, '添加属性: 价位', '0.0.0.0'),
-(229, 1241513210, 1, '添加属性: 颜色', '0.0.0.0'),
-(230, 1241513508, 1, '编辑商品: 飞利浦9@9v', '0.0.0.0'),
-(231, 1241513571, 1, '编辑属性: MP3播放器', '0.0.0.0'),
-(232, 1241513596, 1, '编辑属性: 外壳材质', '0.0.0.0'),
-(233, 1241513630, 1, '编辑商品: 飞利浦9@9v', '0.0.0.0'),
-(234, 1241513750, 1, '编辑属性: MP3播放器', '0.0.0.0'),
-(235, 1241513771, 1, '添加属性: 附加配件', '0.0.0.0'),
-(236, 1241513918, 1, '编辑属性: 像数（万）', '0.0.0.0'),
-(237, 1241513939, 1, '编辑商品: 飞利浦9@9v', '0.0.0.0'),
-(238, 1241513959, 1, '编辑属性: 像数（万）', '0.0.0.0'),
-(239, 1241518314, 1, '编辑属性: 外壳材质', '0.0.0.0'),
-(240, 1241518329, 1, '编辑属性: 价位', '0.0.0.0'),
-(241, 1241946343, 1, '还原数据库备份: 备份时间2009-05-05 10:36:29', '127.0.0.1'),
-(242, 1241965622, 1, '添加商品: 索爱C702c', '127.0.0.1'),
-(243, 1241965816, 1, '添加商品: 索爱C702c', '127.0.0.1'),
-(244, 1241965859, 1, '编辑品牌管理: 摩托罗拉', '127.0.0.1'),
-(245, 1241965978, 1, '添加商品: 摩托罗拉A810', '127.0.0.1'),
-(246, 1241966023, 1, '编辑商品: 摩托罗拉A810', '127.0.0.1'),
-(247, 1241966218, 1, '编辑商品: 摩托罗拉A810', '127.0.0.1'),
-(248, 1241966408, 1, '编辑商品: 摩托罗拉A810', '127.0.0.1'),
-(249, 1241966536, 1, '编辑品牌管理: 诺基亚', '127.0.0.1'),
-(250, 1241966874, 1, '编辑商品: 摩托罗拉A810', '127.0.0.1'),
-(251, 1241966922, 1, '回收商品: 索爱C702c', '127.0.0.1'),
-(252, 1241966951, 1, '还原商品: 索爱C702c', '127.0.0.1'),
-(253, 1241966963, 1, '回收商品: 索爱C702c', '127.0.0.1'),
-(254, 1241967340, 1, '编辑商品: 诺基亚E66', '127.0.0.1'),
-(255, 1241967424, 1, '编辑商品: 诺基亚N85原装立体声耳机HS-82', '127.0.0.1'),
-(256, 1241967465, 1, '编辑商品: 索爱原装M2卡读卡器', '127.0.0.1'),
-(257, 1241967487, 1, '编辑商品: 诺基亚N85原装充电器', '127.0.0.1'),
-(258, 1241967556, 1, '编辑商品: KD876', '127.0.0.1'),
-(259, 1241967667, 1, '编辑商品: 飞利浦9@9v', '127.0.0.1'),
-(260, 1241967762, 1, '添加商品: 诺基亚5320 XpressMusic', '127.0.0.1'),
-(261, 1241968002, 1, '编辑商品: 诺基亚5320 XpressMusic', '127.0.0.1'),
-(262, 1241968058, 1, '编辑商品: 诺基亚5320 XpressMusic', '127.0.0.1'),
-(263, 1241968492, 1, '添加商品: 诺基亚5800XM', '127.0.0.1'),
-(264, 1241968703, 1, '添加商品: 摩托罗拉A810', '127.0.0.1'),
-(265, 1241968949, 1, '添加商品: 恒基伟业G101', '127.0.0.1'),
-(266, 1241969394, 1, '添加商品: 夏新N7', '127.0.0.1'),
-(267, 1241969533, 1, '添加商品: 夏新T5', '127.0.0.1'),
-(268, 1241969541, 1, '回收商品: 夏新T5', '127.0.0.1'),
-(269, 1241970139, 1, '添加商品: 三星SGH-F258', '127.0.0.1'),
-(270, 1241970175, 1, '编辑商品: 三星SGH-F258', '127.0.0.1'),
-(271, 1241970417, 1, '添加商品: 三星BC01', '127.0.0.1'),
-(272, 1241970634, 1, '添加商品: 金立 A30', '127.0.0.1'),
-(273, 1241970743, 1, '编辑商品: 飞利浦9@9v', '127.0.0.1'),
-(274, 1241971076, 1, '添加商品: 多普达Touch HD', '127.0.0.1'),
-(275, 1241971488, 1, '添加商品: 诺基亚N96', '127.0.0.1'),
-(276, 1241971556, 1, '编辑商品: 诺基亚N96', '127.0.0.1'),
-(277, 1241971981, 1, '添加商品: P806', '127.0.0.1'),
-(278, 1241972305, 1, '编辑商品: 飞利浦9@9v', '127.0.0.1'),
-(279, 1241972339, 1, '编辑商品: 恒基伟业G101', '127.0.0.1'),
-(280, 1241972512, 1, '添加商品分类: 充值卡', '127.0.0.1'),
-(281, 1241972554, 1, '添加商品分类: 小灵通/固话充值卡', '127.0.0.1'),
-(282, 1241972598, 1, '添加商品分类: 移动手机充值卡', '127.0.0.1'),
-(283, 1241972634, 1, '添加商品分类: 联通手机充值卡', '127.0.0.1'),
-(284, 1241972709, 1, '添加商品: 小灵通/固话50元充值卡', '127.0.0.1'),
-(285, 1241972789, 1, '添加商品: 小灵通/固话20元充值卡', '127.0.0.1'),
-(286, 1241972894, 1, '添加商品: 联通100元充值卡', '127.0.0.1'),
-(287, 1241972976, 1, '添加商品: 联通50元充值卡', '127.0.0.1'),
-(288, 1241973022, 1, '添加商品: 移动100元充值卡', '127.0.0.1'),
-(289, 1241973114, 1, '添加商品: 移动20元充值卡', '127.0.0.1'),
-(290, 1242105946, 1, '还原数据库备份: 备份时间2009-05-10 16:33:51', '0.0.0.0'),
-(291, 1242106383, 1, '编辑商品: 三星BC01', '0.0.0.0'),
-(292, 1242106490, 1, '编辑商品: 三星BC01', '0.0.0.0'),
-(293, 1242106594, 1, '添加会员账号: ecshop', '0.0.0.0'),
-(294, 1242106663, 1, '添加会员等级: vip', '0.0.0.0'),
-(295, 1242106727, 1, '添加会员等级: 钻石用户', '0.0.0.0'),
-(296, 1242106771, 1, '编辑商品: 诺基亚N96', '0.0.0.0'),
-(297, 1242106836, 1, '编辑商品: 诺基亚5320 XpressMusic', '0.0.0.0'),
-(298, 1242106894, 1, '添加会员账号: vip', '0.0.0.0'),
-(299, 1242106928, 1, '添加会员账号: text', '0.0.0.0'),
-(300, 1242106997, 1, '添加会员账号: zhuangshi', '0.0.0.0'),
-(301, 1242107017, 1, '删除会员账号: zhuangshi', '0.0.0.0'),
-(302, 1242107045, 1, '添加会员账号: zuanshi', '0.0.0.0'),
-(303, 1242107052, 1, '编辑会员账号: vip', '0.0.0.0'),
-(304, 1242107224, 1, '编辑操作日志: ', '0.0.0.0'),
-(305, 1242107360, 1, '添加: 音乐手机', '0.0.0.0'),
-(306, 1242107418, 1, '添加: 音乐手机', '0.0.0.0'),
-(307, 1242107466, 1, '添加: 音乐手机', '0.0.0.0'),
-(308, 1242107517, 1, '添加: 智能手机', '0.0.0.0'),
-(309, 1242107557, 1, '添加: 智能手机', '0.0.0.0'),
-(310, 1242107611, 1, '添加: 智能手机', '0.0.0.0'),
-(311, 1242107825, 1, '添加夺宝奇兵: 夺宝奇兵之诺基亚N96', '0.0.0.0'),
-(312, 1242107987, 1, '添加夺宝奇兵: 夺宝奇兵之夏新N7', '0.0.0.0'),
-(313, 1242108026, 1, '添加红包类型: 用户红包', '0.0.0.0'),
-(314, 1242108084, 1, '添加红包类型: 商品红包', '0.0.0.0'),
-(315, 1242108124, 1, '添加红包类型: 订单红包', '0.0.0.0'),
-(316, 1242108159, 1, '添加红包类型: 线下红包', '0.0.0.0'),
-(317, 1242108754, 1, '添加商品贺卡: 祝福贺卡', '0.0.0.0'),
-(318, 1242109088, 1, '添加团购商品: P806', '0.0.0.0'),
-(319, 1242109198, 1, '编辑商品: 金立 A30', '0.0.0.0'),
-(320, 1242109298, 1, '编辑商品: 金立 A30', '0.0.0.0'),
-(321, 1242109354, 1, '添加批发活动: 金立 A30', '0.0.0.0'),
-(322, 1242109644, 1, '编辑会员等级: 钻石用户', '0.0.0.0'),
-(323, 1242109964, 1, '添加优惠活动: 5.1诺基亚优惠活动', '0.0.0.0'),
-(324, 1242110117, 1, '添加拍卖活动: 拍卖活动——索爱C702c', '0.0.0.0'),
-(325, 1242110412, 1, '添加商品: 摩托罗拉E8 ', '0.0.0.0'),
-(326, 1242110451, 1, '添加: 音乐手机', '0.0.0.0'),
-(327, 1242110566, 1, '添加超值礼包: 摩托罗拉E8 大礼包', '0.0.0.0'),
-(328, 1242110760, 1, '添加商品: 诺基亚N85', '0.0.0.0'),
-(329, 1242110880, 1, '添加超值礼包: 诺基亚N85大礼包', '0.0.0.0'),
-(330, 1242140620, 1, '还原数据库备份: 备份时间2009-05-12 06:48:22', '127.0.0.1'),
-(331, 1242140683, 1, '添加积分可兑换的商品: 24', '127.0.0.1'),
-(332, 1242141551, 1, '安装支付方式: 余额支付', '127.0.0.1'),
-(333, 1242141813, 1, '安装配送方式: 申通快递', '127.0.0.1'),
-(334, 1242141841, 1, '添加配送区域: 申通', '127.0.0.1'),
-(335, 1242141890, 1, '添加配送区域: 1', '127.0.0.1'),
-(336, 1242141897, 1, '安装配送方式: 邮局平邮', '127.0.0.1'),
-(337, 1242141914, 1, '添加配送区域: 邮局', '127.0.0.1'),
-(338, 1242141958, 1, '安装配送方式: 运费到付', '127.0.0.1'),
-(339, 1242142014, 1, '添加配送区域: 运费到付', '127.0.0.1'),
-(340, 1242142081, 1, '安装支付方式: 银行汇款/转帐', '127.0.0.1'),
-(341, 1242142190, 1, '编辑配送区域: 1', '127.0.0.1'),
-(342, 1242142210, 1, '编辑配送区域: 运费到付', '127.0.0.1'),
-(343, 1242142227, 1, '编辑配送区域: 邮局', '127.0.0.1'),
-(344, 1242142503, 1, '编辑红包类型: 商品红包', '127.0.0.1'),
-(345, 1242143005, 1, '编辑团购商品: P806[3]', '127.0.0.1'),
-(346, 1242143557, 1, '编辑商店设置: ', '127.0.0.1'),
-(347, 1242144250, 1, '添加订单: 2009051264945', '127.0.0.1'),
-(348, 1242144268, 1, '编辑订单: 2009051264945,订单总金额由 0.00 变为 3800.00', '127.0.0.1'),
-(349, 1242144348, 1, '编辑订单: 2009051264945', '127.0.0.1'),
-(350, 1242144353, 1, '编辑订单: 2009051264945,订单总金额由 3800.00 变为 3810.00', '127.0.0.1'),
-(351, 1242144356, 1, '编辑订单: 2009051264945', '127.0.0.1'),
-(352, 1242144359, 1, '编辑订单: 2009051264945', '127.0.0.1'),
-(353, 1242144363, 1, '编辑订单: 2009051264945', '127.0.0.1'),
-(354, 1242576182, 1, '安装支付方式: 货到付款', '127.0.0.1'),
-(355, 1242576584, 1, '添加文章分类: 新手上路 ', '127.0.0.1'),
-(356, 1242576615, 1, '添加文章分类: 手机常识 ', '127.0.0.1'),
-(357, 1242576627, 1, '添加文章分类: 配送与支付 ', '127.0.0.1'),
-(358, 1242576634, 1, '添加文章分类: 服务保证 ', '127.0.0.1'),
-(359, 1242576641, 1, '添加文章分类: 联系我们 ', '127.0.0.1'),
-(360, 1242576650, 1, '添加文章分类: 会员 ', '127.0.0.1'),
-(361, 1242576700, 1, '添加文章: 售后流程', '127.0.0.1'),
-(362, 1242576717, 1, '添加文章: 购物流程', '127.0.0.1'),
-(363, 1242576727, 1, '添加文章: 订购方式', '127.0.0.1'),
-(364, 1242576826, 1, '添加文章: 如何分辨原装电池', '127.0.0.1'),
-(365, 1242576911, 1, '添加文章: 如何分辨水货手机 ', '127.0.0.1'),
-(366, 1242576927, 1, '添加文章: 如何享受全国联保', '127.0.0.1'),
-(367, 1242576971, 1, '编辑文章: 如何分辨原装电池', '127.0.0.1'),
-(368, 1242577023, 1, '添加文章: 货到付款区域', '127.0.0.1'),
-(369, 1242577032, 1, '添加文章: 配送支付智能查询 ', '127.0.0.1'),
-(370, 1242577041, 1, '添加文章: 支付方式说明', '127.0.0.1'),
-(371, 1242577080, 1, '编辑文章分类: 会员中心', '127.0.0.1'),
-(372, 1242577127, 1, '添加文章: 资金管理', '127.0.0.1'),
-(373, 1242577178, 1, '添加文章: 我的收藏', '127.0.0.1'),
-(374, 1242577199, 1, '添加文章: 我的订单', '127.0.0.1'),
-(375, 1242577230, 1, '编辑文章: 资金管理', '127.0.0.1'),
-(376, 1242577293, 1, '添加文章: 退换货原则', '127.0.0.1'),
-(377, 1242577308, 1, '添加文章: 售后服务保证 ', '127.0.0.1'),
-(378, 1242577326, 1, '添加文章: 产品质量保证 ', '127.0.0.1'),
-(379, 1242577409, 1, '编辑文章分类: 联系我们 ', '127.0.0.1'),
-(380, 1242577432, 1, '添加文章: 网站故障报告', '127.0.0.1'),
-(381, 1242577448, 1, '添加文章: 选机咨询 ', '127.0.0.1'),
-(382, 1242577459, 1, '添加文章: 投诉与建议 ', '127.0.0.1'),
-(383, 1242577702, 1, '添加文章: 800万像素超强拍照机 LG Viewty Smart再曝光', '127.0.0.1'),
-(384, 1242577731, 1, '编辑商品: KD876', '127.0.0.1'),
-(385, 1242577749, 1, '编辑商品: 三星BC01', '127.0.0.1'),
-(386, 1242577768, 1, '编辑商品: 三星SGH-F258', '127.0.0.1'),
-(387, 1242577791, 1, '编辑商品: 诺基亚N85', '127.0.0.1'),
-(388, 1242577813, 1, '编辑商品: 诺基亚N96', '127.0.0.1'),
-(389, 1242577838, 1, '编辑商品: 诺基亚N96', '127.0.0.1'),
-(390, 1242577864, 1, '编辑商品: 诺基亚E66', '127.0.0.1'),
-(391, 1242578018, 1, '添加文章分类: 本站手机促销', '127.0.0.1'),
-(392, 1242578199, 1, '添加文章: 飞利浦9@9促销', '127.0.0.1'),
-(393, 1242578365, 1, '编辑文章: 飞利浦9@9促销', '127.0.0.1'),
-(394, 1242578676, 1, '添加文章: 诺基亚5320 促销', '127.0.0.1'),
-(395, 1242578826, 1, '添加文章: 促销诺基亚N96', '127.0.0.1'),
-(396, 1242578885, 1, '添加文章分类: 站内快讯', '127.0.0.1'),
-(397, 1242579069, 1, '添加文章: 诺基亚6681手机广告欣赏', '127.0.0.1'),
-(398, 1242579189, 1, '添加文章: 手机游戏下载', '127.0.0.1'),
-(399, 1242579559, 1, '添加文章: 三星SGHU308说明书下载', '127.0.0.1'),
-(400, 1242579587, 1, '编辑文章: 三星SGHU308说明书下载', '127.0.0.1'),
-(401, 1242579622, 1, '编辑文章: 手机游戏下载', '127.0.0.1'),
-(402, 1242580013, 1, '添加文章: 3G知识普及', '127.0.0.1'),
-(403, 1242973211, 1, '还原数据库备份: 备份时间2009-05-17 17:10:28', '0.0.0.0'),
-(404, 1242973252, 1, '编辑商品分类: 联通手机充值卡', '0.0.0.0'),
-(405, 1242973362, 1, '编辑商品: 摩托罗拉A810', '0.0.0.0'),
-(406, 1242973436, 1, '编辑商品: 索爱C702c', '0.0.0.0'),
-(407, 1242973501, 1, '编辑文章分类: 3G资讯', '0.0.0.0'),
-(408, 1242974080, 1, '添加拍卖活动: 拍卖活动——索爱C702c(第2期)', '0.0.0.0'),
-(409, 1242974159, 1, '编辑拍卖活动: 拍卖活动——索爱C702c(第2期)', '0.0.0.0'),
-(410, 1242974327, 1, '添加团购商品: P806', '0.0.0.0'),
-(411, 1242974380, 1, '编辑团购商品: P806[8]', '0.0.0.0'),
-(412, 1242974613, 1, '添加文章: “沃”的世界我做主', '0.0.0.0'),
-(413, 1242976639, 1, '添加用户红包: 1000091405', '0.0.0.0'),
-(414, 1244189181, 1, '编辑商品: 索爱C702c', '0.0.0.0'),
-(415, 1244189344, 1, '编辑文章分类: 手机促销', '0.0.0.0'),
-(416, 1244190576, 1, '编辑文章: 三星SGHU308说明书下载', '0.0.0.0'),
-(417, 1244190791, 1, '编辑文章: 三星SGHU308说明书下载', '0.0.0.0'),
-(418, 1244190825, 1, '编辑文章: 三星SGHU308说明书下载', '0.0.0.0'),
-(419, 1244190882, 1, '编辑文章: 三星SGHU308说明书下载', '0.0.0.0'),
-(420, 1244190952, 1, '编辑文章: 三星SGHU308说明书下载', '0.0.0.0'),
-(421, 1244191015, 1, '编辑文章: 三星SGHU308说明书下载', '0.0.0.0'),
-(422, 1244191031, 1, '编辑文章: 三星SGHU308说明书下载', '0.0.0.0'),
-(423, 1244773301, 1, '添加在线调查: 您从哪里知道我们的网站', '0.0.0.0'),
-(424, 1244773315, 1, '添加在线调查: 论坛', '0.0.0.0'),
-(425, 1244773328, 1, '添加在线调查: 朋友', '0.0.0.0'),
-(426, 1244773345, 1, '添加在线调查: 友情链接', '0.0.0.0'),
-(427, 1245042408, 1, '还原数据库备份: 备份时间2009-06-12 02:23:14', '0.0.0.0'),
-(428, 1245042659, 1, '编辑商品分类: 手机类型', '0.0.0.0'),
-(429, 1245042742, 1, '编辑商品分类: GSM手机', '0.0.0.0'),
-(430, 1245042772, 1, '编辑商品分类: 手机类型', '0.0.0.0'),
-(431, 1245043251, 1, '编辑文章: 三星SGHU308说明书下载', '0.0.0.0'),
-(432, 1245043292, 1, '编辑文章: 三星SGHU308说明书下载', '0.0.0.0'),
-(433, 1245044142, 1, '编辑权限管理: bjgonghuo1', '0.0.0.0'),
-(434, 1245044234, 1, '添加供货商管理: 北京供货商', '0.0.0.0'),
-(435, 1245044248, 1, '添加供货商管理: 上海供货商', '0.0.0.0'),
-(436, 1245044469, 1, '编辑红包类型: 订单红包', '0.0.0.0'),
-(437, 1245044698, 1, '编辑供货商管理: 北京供货商', '0.0.0.0'),
-(438, 1245044706, 1, '编辑供货商管理: 上海供货商', '0.0.0.0'),
-(439, 1245136915, 1, '还原数据库备份: 备份时间2009-06-15 06:54:05', '0.0.0.0'),
-(440, 1245138481, 1, '还原数据库备份: 备份时间2009-06-16 07:47:15', '0.0.0.0'),
-(441, 1245220014, 1, '编辑商品: 诺基亚N85', '0.0.0.0'),
-(442, 1245220040, 1, '编辑商品: 诺基亚N85', '0.0.0.0'),
-(443, 1245220295, 1, '编辑商品: P806', '0.0.0.0'),
-(444, 1245220617, 1, '编辑商品: 诺基亚N96', '0.0.0.0'),
-(445, 1245220821, 1, '编辑商品: 多普达Touch HD', '0.0.0.0'),
-(446, 1245221079, 1, '编辑商品: 金立 A30', '0.0.0.0'),
-(447, 1245221279, 1, '编辑商品: 三星BC01', '0.0.0.0'),
-(448, 1245221460, 1, '编辑商品: 三星SGH-F258', '0.0.0.0'),
-(449, 1245221658, 1, '编辑商品: 夏新N7', '0.0.0.0'),
-(450, 1245221889, 1, '编辑商品: 摩托罗拉A810', '0.0.0.0'),
-(451, 1245222018, 1, '编辑商品: 诺基亚5800XM', '0.0.0.0'),
-(452, 1245222169, 1, '编辑商品: 诺基亚5320 XpressMusic', '0.0.0.0'),
-(453, 1245222267, 1, '回收商品: 摩托罗拉A810', '0.0.0.0'),
-(454, 1245222409, 1, '编辑商品: 索爱C702c', '0.0.0.0'),
-(455, 1245222545, 1, '编辑商品: 诺基亚E66', '0.0.0.0'),
-(456, 1245222658, 1, '编辑商品: 飞利浦9@9v', '0.0.0.0'),
-(457, 1245222832, 1, '编辑商品: KD876', '0.0.0.0'),
-(458, 1245222978, 1, '编辑商店设置: ', '0.0.0.0'),
-(459, 1245223043, 1, '编辑商品分类: 手机类型', '0.0.0.0'),
-(460, 1245223128, 1, '编辑商品分类: GSM手机', '0.0.0.0'),
-(461, 1245223340, 1, '编辑文章: 诺基亚牵手移动 5款热门TD手机机型推荐', '0.0.0.0'),
-(462, 1245223387, 1, '编辑文章: 诺基亚牵手移动 5款热门TD手机机型推荐', '0.0.0.0'),
-(463, 1245223611, 1, '还原数据库备份: 备份时间2009-06-17 07:23:51', '0.0.0.0');
-
--- --------------------------------------------------------
-
---
--- 表的结构 `admin_message`
---
-
-CREATE TABLE IF NOT EXISTS `admin_message` (
-  `message_id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
-  `sender_id` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `receiver_id` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `sent_time` int(11) unsigned NOT NULL DEFAULT '0',
-  `read_time` int(11) unsigned NOT NULL DEFAULT '0',
-  `readed` tinyint(1) unsigned NOT NULL DEFAULT '0',
-  `deleted` tinyint(1) unsigned NOT NULL DEFAULT '0',
-  `title` varchar(150) NOT NULL DEFAULT '',
-  `message` text NOT NULL,
-  PRIMARY KEY (`message_id`),
-  KEY `sender_id` (`sender_id`,`receiver_id`),
-  KEY `receiver_id` (`receiver_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
-
--- --------------------------------------------------------
-
---
--- 表的结构 `admin_user`
---
-
-CREATE TABLE IF NOT EXISTS `admin_user` (
-  `user_id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
-  `user_name` varchar(60) NOT NULL DEFAULT '',
-  `email` varchar(60) NOT NULL DEFAULT '',
-  `password` varchar(32) NOT NULL DEFAULT '',
-  `ec_salt` varchar(10) DEFAULT NULL,
-  `add_time` int(11) NOT NULL DEFAULT '0',
-  `last_login` int(11) NOT NULL DEFAULT '0',
-  `last_ip` varchar(15) NOT NULL DEFAULT '',
-  `action_list` text NOT NULL,
-  `nav_list` text NOT NULL,
-  `lang_type` varchar(50) NOT NULL DEFAULT '',
-  `agency_id` smallint(5) unsigned NOT NULL,
-  `suppliers_id` smallint(5) unsigned DEFAULT '0',
-  `todolist` longtext,
-  `role_id` smallint(5) DEFAULT NULL,
-  `passport_uid` varchar(20) DEFAULT NULL,
-  `yq_create_time` smallint(11) DEFAULT NULL,
-  PRIMARY KEY (`user_id`),
-  KEY `user_name` (`user_name`),
-  KEY `agency_id` (`agency_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=4 ;
-
---
--- 转存表中的数据 `admin_user`
---
-
-INSERT INTO `admin_user` (`user_id`, `user_name`, `email`, `password`, `ec_salt`, `add_time`, `last_login`, `last_ip`, `action_list`, `nav_list`, `lang_type`, `agency_id`, `suppliers_id`, `todolist`, `role_id`, `passport_uid`, `yq_create_time`) VALUES
-(1, 'admin', '', '858c28712d008f06467a9ed74a054db2', '6315', 1464520342, 1464520380, '127.0.0.1', 'all', '商品列表|goods.php?act=list,订单列表|order.php?act=list,用户评论|comment_manage.php?act=list,会员列表|users.php?act=list,商店设置|shop_config.php?act=list_edit,移动版|lead.php?act=list,服务市场|service_market.php', '', 0, 0, NULL, NULL, NULL, NULL),
-(2, 'bjgonghuo1', 'bj@163.com', 'd0c015b6eb9a280f318a4c0510581e7e', NULL, 1245044099, 0, '', '', '商品列表|goods.php?act=list,订单列表|order.php?act=list,用户评论|comment_manage.php?act=list,会员列表|users.php?act=list,商店设置|shop_config.php?act=list_edit', '', 0, 1, '', NULL, NULL, NULL),
-(3, 'shhaigonghuo1', 'shanghai@163.com', '4146fecce77907d264f6bd873f4ea27b', NULL, 1245044202, 0, '', '', '商品列表|goods.php?act=list,订单列表|order.php?act=list,用户评论|comment_manage.php?act=list,会员列表|users.php?act=list,商店设置|shop_config.php?act=list_edit', '', 0, 2, '', NULL, NULL, NULL);
-
--- --------------------------------------------------------
-
---
--- 表的结构 `adsense`
---
-
-CREATE TABLE IF NOT EXISTS `adsense` (
-  `from_ad` smallint(5) NOT NULL DEFAULT '0',
-  `referer` varchar(255) NOT NULL DEFAULT '',
-  `clicks` int(10) unsigned NOT NULL DEFAULT '0',
-  KEY `from_ad` (`from_ad`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
--- --------------------------------------------------------
-
---
--- 表的结构 `ad_custom`
---
-
-CREATE TABLE IF NOT EXISTS `ad_custom` (
-  `ad_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
-  `ad_type` tinyint(1) unsigned NOT NULL DEFAULT '1',
-  `ad_name` varchar(60) DEFAULT NULL,
-  `add_time` int(10) unsigned NOT NULL DEFAULT '0',
-  `content` mediumtext,
-  `url` varchar(255) DEFAULT NULL,
-  `ad_status` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  PRIMARY KEY (`ad_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
-
--- --------------------------------------------------------
-
---
--- 表的结构 `ad_position`
---
-
-CREATE TABLE IF NOT EXISTS `ad_position` (
-  `position_id` tinyint(3) unsigned NOT NULL AUTO_INCREMENT,
-  `position_name` varchar(60) NOT NULL DEFAULT '',
-  `ad_width` smallint(5) unsigned NOT NULL DEFAULT '0',
-  `ad_height` smallint(5) unsigned NOT NULL DEFAULT '0',
-  `position_desc` varchar(255) NOT NULL DEFAULT '',
-  `position_style` text NOT NULL,
-  PRIMARY KEY (`position_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=16 ;
-
---
--- 转存表中的数据 `ad_position`
---
-
-INSERT INTO `ad_position` (`position_id`, `position_name`, `ad_width`, `ad_height`, `position_desc`, `position_style`) VALUES
-(1, 'banner1', 970, 460, '', '<table cellpadding="0" cellspacing="0">\r\n{foreach from=$ads item=ad}\r\n<tr><td>{$ad}</td></tr>\r\n{/foreach}\r\n</table>'),
-(2, 'banner2', 970, 460, '', '<table cellpadding="0" cellspacing="0">\r\n{foreach from=$ads item=ad}\r\n<tr><td>{$ad}</td></tr>\r\n{/foreach}\r\n</table>'),
-(3, 'banner3', 970, 460, '', '<table cellpadding="0" cellspacing="0">\r\n{foreach from=$ads item=ad}\r\n<tr><td>{$ad}</td></tr>\r\n{/foreach}\r\n</table>'),
-(4, '团购广告位', 230, 206, '', '<table cellpadding="0" cellspacing="0">\r\n{foreach from=$ads item=ad}\r\n<tr><td>{$ad}</td></tr>\r\n{/foreach}\r\n</table>'),
-(5, '首页广告1', 210, 206, '', '<table cellpadding="0" cellspacing="0">\r\n{foreach from=$ads item=ad}\r\n<tr><td>{$ad}</td></tr>\r\n{/foreach}\r\n</table>'),
-(6, '首页广告2', 210, 206, '', '<table cellpadding="0" cellspacing="0">\r\n{foreach from=$ads item=ad}\r\n<tr><td>{$ad}</td></tr>\r\n{/foreach}\r\n</table>'),
-(7, '首页广告3', 210, 206, '', '<table cellpadding="0" cellspacing="0">\r\n{foreach from=$ads item=ad}\r\n<tr><td>{$ad}</td></tr>\r\n{/foreach}\r\n</table>'),
-(8, '首页广告4', 210, 206, '', '<table cellpadding="0" cellspacing="0">\r\n{foreach from=$ads item=ad}\r\n<tr><td>{$ad}</td></tr>\r\n{/foreach}\r\n</table>'),
-(9, '1层左侧广告1', 230, 270, '', '<table cellpadding="0" cellspacing="0">\r\n{foreach from=$ads item=ad}\r\n<tr><td>{$ad}</td></tr>\r\n{/foreach}\r\n</table>'),
-(10, '1层左侧广告2', 230, 95, '', '<table cellpadding="0" cellspacing="0">\r\n{foreach from=$ads item=ad}\r\n<tr><td>{$ad}</td></tr>\r\n{/foreach}\r\n</table>'),
-(11, '1层左侧广告3', 230, 95, '', '<table cellpadding="0" cellspacing="0">\r\n{foreach from=$ads item=ad}\r\n<tr><td>{$ad}</td></tr>\r\n{/foreach}\r\n</table>'),
-(12, '1层左侧广告4', 230, 95, '', '<table cellpadding="0" cellspacing="0">\r\n{foreach from=$ads item=ad}\r\n<tr><td>{$ad}</td></tr>\r\n{/foreach}\r\n</table>'),
-(13, '2层左侧广告1', 230, 270, '', '<table cellpadding="0" cellspacing="0">\r\n{foreach from=$ads item=ad}\r\n<tr><td>{$ad}</td></tr>\r\n{/foreach}\r\n</table>'),
-(14, '2层左侧广告2', 230, 270, '', '<table cellpadding="0" cellspacing="0">\r\n{foreach from=$ads item=ad}\r\n<tr><td>{$ad}</td></tr>\r\n{/foreach}\r\n</table>'),
-(15, '3层左侧广告', 230, 555, '', '<table cellpadding="0" cellspacing="0">\r\n{foreach from=$ads item=ad}\r\n<tr><td>{$ad}</td></tr>\r\n{/foreach}\r\n</table>');
-
--- --------------------------------------------------------
-
---
--- 表的结构 `affiliate_log`
---
-
-CREATE TABLE IF NOT EXISTS `affiliate_log` (
-  `log_id` mediumint(8) NOT NULL AUTO_INCREMENT,
-  `order_id` mediumint(8) NOT NULL,
-  `time` int(10) NOT NULL,
-  `user_id` mediumint(8) NOT NULL,
-  `user_name` varchar(60) DEFAULT NULL,
-  `money` decimal(10,2) NOT NULL DEFAULT '0.00',
-  `point` int(10) NOT NULL DEFAULT '0',
-  `separate_type` tinyint(1) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`log_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
-
--- --------------------------------------------------------
-
---
--- 表的结构 `agency`
---
-
-CREATE TABLE IF NOT EXISTS `agency` (
-  `agency_id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
-  `agency_name` varchar(255) NOT NULL,
-  `agency_desc` text NOT NULL,
-  PRIMARY KEY (`agency_id`),
-  KEY `agency_name` (`agency_name`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
-
--- --------------------------------------------------------
-
---
--- 表的结构 `area_region`
---
-
-CREATE TABLE IF NOT EXISTS `area_region` (
-  `shipping_area_id` smallint(5) unsigned NOT NULL DEFAULT '0',
-  `region_id` smallint(5) unsigned NOT NULL DEFAULT '0',
-  PRIMARY KEY (`shipping_area_id`,`region_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
---
--- 转存表中的数据 `area_region`
---
-
-INSERT INTO `area_region` (`shipping_area_id`, `region_id`) VALUES
-(1, 1),
-(2, 1),
-(3, 1),
-(4, 3),
-(4, 4),
-(4, 6),
-(4, 9),
-(4, 30),
-(4, 32);
-
--- --------------------------------------------------------
-
---
--- 表的结构 `article`
---
-
-CREATE TABLE IF NOT EXISTS `article` (
-  `article_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
-  `cat_id` smallint(5) NOT NULL DEFAULT '0',
-  `title` varchar(150) NOT NULL DEFAULT '',
-  `content` longtext NOT NULL,
-  `author` varchar(30) NOT NULL DEFAULT '',
-  `author_email` varchar(60) NOT NULL DEFAULT '',
-  `keywords` varchar(255) NOT NULL DEFAULT '',
-  `article_type` tinyint(1) unsigned NOT NULL DEFAULT '2',
-  `is_open` tinyint(1) unsigned NOT NULL DEFAULT '1',
-  `add_time` int(10) unsigned NOT NULL DEFAULT '0',
-  `file_url` varchar(255) NOT NULL DEFAULT '',
-  `open_type` tinyint(1) unsigned NOT NULL DEFAULT '0',
-  `link` varchar(255) NOT NULL DEFAULT '',
-  `description` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`article_id`),
-  KEY `cat_id` (`cat_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=36 ;
-
---
--- 转存表中的数据 `article`
---
-
-INSERT INTO `article` (`article_id`, `cat_id`, `title`, `content`, `author`, `author_email`, `keywords`, `article_type`, `is_open`, `add_time`, `file_url`, `open_type`, `link`, `description`) VALUES
-(1, 2, '免责条款', '', '', '', '', 0, 1, 1464520342, '', 0, '', NULL),
-(2, 2, '隐私保护', '', '', '', '', 0, 1, 1464520342, '', 0, '', NULL),
-(3, 2, '咨询热点', '', '', '', '', 0, 1, 1464520342, '', 0, '', NULL),
-(4, 2, '联系我们', '', '', '', '', 0, 1, 1464520342, '', 0, '', NULL),
-(5, 2, '公司简介', '', '', '', '', 0, 1, 1464520342, '', 0, '', NULL),
-(6, -1, '用户协议', '', '', '', '', 0, 1, 1464520342, '', 0, '', NULL),
-(7, 4, '三星电子宣布将在中国发布15款3G手机', '<p>全球领先的电子产品及第二大移动通信终端制造商三星电子今天在北京宣布，为全面支持中国开展3G移动通信业务，将在3G服务正式商用之际，向中国市场推出 15款3G手机。这些产品分别支持中国三大无线运营商的各种3G服务，并已经得到运营商的合作认可。凭借在电子和通信领域的整体技术实力和对消费者的准确 把握，三星电子已经开始全面发力中国的3G移动通信市场。<br />\n<br />\n&nbsp;&nbsp;&nbsp;&nbsp;2009年1月，中国政府宣布正式启动3G移动通信服务。并根据中国的实际情况，决定由三大运营商分别采用全部三种3G网络制式，&nbsp;即以中国自主知识产权为核心的TD-SCDMA，以欧洲为主要市场的WCDMA和源自北美的CDMA2000技术。<br />\n<br />\n&nbsp;&nbsp;&nbsp;&nbsp;多 年来，三星电子秉承&ldquo;做中国人民喜爱的企业，贡献于中国社会的企业&rdquo;的企业理念，准确地把握了中国社会的发展和市场的需求，推出了一系列深受中国消费者喜 爱的电子产品。为了配合中国推进具有自主知识产权的3G移动通信标准TD-SCDMA，&nbsp;三星电子从2000年开始在中国设立了通信技术研究院，&nbsp;开始进 行TD-SCDMA技术的研究。作为最早承诺支持中国3G标准的手机制造企业，三星电子已经先后投入了上亿元的研究费用，&nbsp;组建了几百人的研发团队。推出 的TD-SCDMA制式的产品，不仅通过了各级权威部门的试验和检测，也经历了2008年北京奥运会的现场考验。此次为中国移动定制的TD-SCDMA手 机，包括了满足高端商务需求的双待产品B7702C，以及数字电视手机、多媒体手机和时尚手机。<br />\n<br />\n&nbsp;&nbsp;&nbsp;&nbsp;作为世界第二大手机制造企业，三 星电子已经在全球3G市场积累了多年的技术和市场经验。最新的统计表明，在完全采用WCDMA标准的欧洲，三星电子的市场份额已经排名第二。在为中国联通 准备的产品中，不仅包括能够支持HSDPA的高端多媒体手机S7520U，也涵盖了能够支持高速上网、在线电影、在线音乐等适合不同消费需求的各种产品。<br />\n<br />\n&nbsp;&nbsp;&nbsp;&nbsp;而 在主要采用CDMA2000技术的北美市场，三星电子也取得了市场份额的第一名。即将陆续上市的支持中国电信3G服务的EVDO产品，有高端商务手机 W709。该机能够支持EVDO/GSM的双网双待功能，含800万像素拍摄系统。其他产品还包括音乐手机M609，双模手机W239，以及时尚设计的 F539等。<br />\n<br />\n&nbsp;&nbsp;&nbsp;&nbsp;作为世界上少数能够提供支持三种3G标准的终端厂商，三星电子正利用其在通信、半导体、显示器以及数字多媒体等方面 的优势，加快产品数字融合的进程。除上述3G手机产品外，三星电子也于近期推出了用于3G网络的上网卡和网络笔记本电脑。三星电子专务、无线事业部大中华 区高级副总裁卢基学先生说，&ldquo;上述15款新品，&nbsp;只是我们二季度新产品的一部分。随着中国3G移动通信市场的不断扩大，三星还将推出更多适合中国市场的终 端产品，以满足消费者对于通信和数字产品的不同需求。三星也将积极配合运营商业务的发展计划，加快技术和应用的研发。中国3G的移动通信市场前景将是非常 明亮的。&rdquo;</p>', '', '', '', 0, 1, 1241426864, '', 0, 'http://', NULL),
-(8, 4, '诺基亚牵手移动 5款热门TD手机机型推荐', '<table width="100%" cellspacing="0" cellpadding="4" align="center" class="tableborder">\r\n<tbody>\r\n<tr>\r\n<td width="180" valign="top" class="altbg4">&nbsp;</td>\r\n<td height="100%" valign="top" class="altbg3">\r\n<table cellspacing="0" cellpadding="0" border="0" style="padding: 5px; table-layout: fixed; width: 973px; height: 2195px;">\r\n<tbody>\r\n<tr>\r\n<td valign="top">\r\n<div class="bbs_content clearfix">随着5月17日电信日的来临，自从09年初网民对于3G方面关注越来越多，目前国内3G网络主要有中国移动TD-SCDMA，中国联通WCDMA以及 中国电信的CDMA2000这三种制式。到底是哪一种网络制式能让消费者满意，相信好多消费者都难以判断。<br />\r\n<br />\r\n而作为3G网络最主要的组 成部分-手持终端（手机） ，相信也是好多消费者关注的焦点。目前，中国移动TD-SCDMA手机机型频频爆出，其中不乏亮点产品，像联想联想 Ophone、诺基亚、多普达 Magic等，下面就让笔者与大家一起来了解TD-SCDMA网络制式下的几款强势机型吧。<br />\r\n<br />\r\n诺基亚TD-SCDMA手机　型号：待定　参考报价：尚未上市<br />\r\n<br />\r\n随着国内3G网络发展速度加快及众多手机厂商纷纷跟进，诺基亚终于推出TD-SCDMA手机，这款诺基亚的首台TD-SCDMA测试手机型号目前仍无法 得知，但从键盘及菜单设计来看，我们可以是知道其并没有采用S60操作系统，只是配备了S40系统，机身直板造型与早期热卖的6300有几分相像。<br />\r\n<br />\r\n<p><img width="450" alt="" src="http://dstatic.esqimg.com/4812278/1.jpg" style="display: block;" /></p>\r\n<br />\r\n<br />\r\n图为：诺基亚TD-SCDMA手机<br />\r\n<br />\r\n虽然没有更多的参数资料，但是从曝光的图片我们可以知道这款诺基亚TD-SCDMA手机必定配备了QVGA分辨率的屏幕以及320万像素的摄像头，而标准的MP3以及蓝牙等功能自然不会缺少，在功能方面不会比以往的S40手机逊色。<br />\r\n<br />\r\n<p><img width="450" alt="" src="http://dstatic.esqimg.com/4812279/2.jpg" style="display: block;" /></p>\r\n<br />\r\n<br />\r\n图为：诺基亚TD-SCDMA手机<br />\r\n<br />\r\n这款诺基亚的TD手机最大的卖点便是提供了对TD-HSDPA技术的支持，最大的功能特色便是该技术被看为是TD网络下一步的演进技术，能够同时适用于 WCDMA和TD-SCDMA两种不同的网络支持，能够很好的支持非对称的数据业务，也就是说这款诺基亚手机的用户即便在全球漫游都能够使用到3G网络。 而其机身前置的摄像头也更是证实了其3G手机的身份。<br />\r\n<br />\r\n<p><img width="450" alt="" src="http://dstatic.esqimg.com/4812280/3.jpg" style="display: block;" /></p>\r\n<p><br />\r\n<br />\r\n图为：诺基亚TD-SCDMA手机<br />\r\n<br />\r\n从目前曝光的测试情况来看，通过这款诺基亚TD手机连接网络，其下载速度能够稳定在1.3Mbps左右，不过根据国内有些媒体的报道，诺基亚官方已经证实将于今天下半年配合运营商中国移动对出自己的第一款TD-SCDMA制式的S60手机，大家要拭目以待了。</p>\r\n<p>&nbsp;</p>\r\n图为：诺基亚TD-SCDMA手机<br />\r\n<br />\r\n最后较为耐人寻味的便是目前有业内人士指出目前曝光的的诺基亚TD手机其实是去年夏季就出现过的 TD测试手机，但是随着诺基亚拥有部分股份的TD芯片厂商&ldquo;凯明&rdquo;的倒闭，这款机型也就被取消了。尽管对于目前这款诺基亚的TD测试手机的身份尚无官方的 消息，但是诺基亚将推出TD手机遗失毫无悬念的事情了，相信大家也希望在TD制式下能够有更多的手机可以选择。</div>\r\n</td>\r\n</tr>\r\n</tbody>\r\n</table>\r\n</td>\r\n</tr>\r\n</tbody>\r\n</table>\r\n<p>&nbsp;</p>', '', '', '', 0, 1, 1241427051, '', 0, 'http://', NULL),
-(9, 5, '售后流程', '', '', '', '', 0, 1, 1242576700, '', 0, 'http://', NULL),
-(10, 5, '购物流程', '', '', '', '', 0, 1, 1242576717, '', 0, 'http://', NULL),
-(11, 5, '订购方式', '', '', '', '', 0, 1, 1242576727, '', 0, 'http://', NULL),
-(12, 6, '如何分辨原装电池', '<p><font size="2">一般在购买时主要是依靠观察外观特征的方法来鉴别电池，而原装电池一般应具有以下一些特征：&nbsp;<br />\n<br />\n1、 电池外观整齐，外表面有一定的粗糙度且手感舒适，内表面手感光滑，灯光下能看见细密的纵向划痕&nbsp;<br />\n<br />\n2、 生产厂家字样应该轮廓清晰，且防伪标志亮度高，看上去有立体感，电池标贴 字迹清晰，有与电池类型相一致的电池件号<br />\n3、 电池标贴采用二次印刷技术，在一定光线下从斜面看，条形码部分的颜色比其他部分要黑，且用手触摸有凹凸感<br />\n<br />\n4、 原装电池电极与手机电池片宽度相等，电池电极下方标有&ldquo; + &rdquo;、&ldquo; - &rdquo;标志，电池电极片之间的隔离材料与外壳材料一致，但不是一体<br />\n<br />\n5、 原装电池装入手机时手感舒适，安装自如，电池按压部分卡位适当而且牢固<br />\n<br />\n6、 原装电池的金属触点采用优质的铜片，只有在正面看时才会有反光，而从其它角度看的话，都是比较暗淡的</font></p>', '', '', '', 1, 1, 1242576826, '', 0, 'http://', NULL),
-(15, 7, '货到付款区域', '', '', '', '', 0, 1, 1242577023, '', 0, 'http://', NULL),
-(16, 7, '配送支付智能查询 ', '', '', '', '', 0, 1, 1242577032, '', 0, 'http://', NULL),
-(17, 7, '支付方式说明', '', '', '', '', 0, 1, 1242577041, '', 0, 'http://', NULL),
-(18, 10, '资金管理', '', '', '', '', 0, 1, 1242577127, '', 0, 'user.php?act=account_log', NULL),
-(19, 10, '我的收藏', '', '', '', '', 0, 1, 1242577178, '', 0, 'user.php?act=collection_list', NULL),
-(20, 10, '我的订单', '', '', '', '', 0, 1, 1242577199, '', 0, 'user.php?act=order_list', NULL),
-(21, 8, '退换货原则', '', '', '', '服务', 0, 1, 1242577293, '', 0, 'http://', NULL),
-(22, 8, '售后服务保证 ', '', '', '', '售后', 0, 1, 1242577308, '', 0, 'http://', NULL),
-(23, 8, '产品质量保证 ', '', '', '', '质量', 1, 1, 1242577326, '', 0, 'http://', NULL),
-(24, 9, '网站故障报告', '', '', '', '', 0, 1, 1242577432, '', 0, 'http://', NULL),
-(25, 9, '选机咨询 ', '', '', '', '', 0, 1, 1242577448, '', 0, 'http://', NULL),
-(26, 9, '投诉与建议 ', '', '', '', '', 0, 1, 1242577459, '', 0, 'http://', NULL),
-(27, 4, '800万像素超强拍照机 LG Viewty Smart再曝光', '', '', '', '', 0, 1, 1242577702, '', 0, 'http://news.imobile.com.cn/index-a-view-id-66790.html', NULL),
-(28, 11, '飞利浦9@9促销', '<p>&nbsp;</p>\r\n<div class="boxCenterList RelaArticle" id="com_v">\r\n<p align="left">作为一款性价比极高的入门级<font size="3" color="#ff0000"><strong>商务手机</strong></font>，飞利浦<a href="mailto:9@9v">Xenium&nbsp; 9@9v</a>三围大小为105&times;44&times;15.8mm，机身重量仅为<strong><font size="3" color="#ff0000">75g</font></strong>，装配了一块低规格1.75英寸128&times;160像素65000色CSTN显示屏。身正面采用月银色功能键区与屏幕数字键区相分隔，键盘设计较为<font size="3"><strong><font color="#ff0000">别</font><font color="#ff0000">致</font></strong></font>，中部导航键区采用钛金色的&ldquo;腰带&rdquo;彰显出浓郁的商务气息。</p>\r\n<p align="left">&nbsp;</p>\r\n<p align="left">此款手机采用<strong><font size="3" color="#ff0000">触摸屏</font></strong>设计，搭配精致的手写笔，可支持手写中文和英文两个版本。增强的内置系统还能识别潦草字迹，确保在移动中和匆忙时输入文字的识别率。手写指令功能还支持特定图案的瞬间调用，独特的手写记事本功能，可以在触摸屏上随意绘制个性化的图案并进行<strong><font size="3" color="#ff0000">记事提醒</font></strong>，让商务应用更加随意。</p>\r\n<p align="left">&nbsp;</p>\r\n<p align="left">&nbsp;作为入门级为数不多支持<strong><font size="3" color="#ff0000">双卡功能</font></strong>的手机，可以同时插入两张SIM卡，通过菜单随意切换，只需开启漫游自动切换模式，<a href="mailto:9@9V">9@9V</a>在该模式下能够判断网络情况，自动切换适合的手机号。</p>\r\n<p align="left">&nbsp;</p>\r\n<p align="left">&nbsp;</p>\r\n</div>\r\n<p>&nbsp;</p>', '', '', '', 0, 1, 1242578199, '', 0, 'http://', NULL),
-(29, 11, '诺基亚5320 促销', '<p>&nbsp;</p>\r\n<div id="com_v" class="boxCenterList RelaArticle">\r\n<p>诺基亚5320XpressMusic音乐手机采用XpressMusic系列常见的黑红、黑蓝配色方案，而材质方便则选用的是经过<strong><font size="3" color="#ff0000">抛光处理</font></strong>的工程塑料；三围/体重为，为108&times;46&times;15mm/<strong><font size="3" color="#ff0000">90g</font></strong>，手感舒适。</p>\r\n<p>&nbsp;</p>\r\n<p>诺基亚5320采用的是一块可视面积为2.0英寸的<font size="3" color="#ff0000"><strong>1600万色</strong></font>屏幕，分辨率是常见的240&times;320像素（QVGA）。虽然屏幕不是特别大，但效果非常精细，色彩还原不错。</p>\r\n<p>&nbsp;</p>\r\n<p>手机背面，诺基亚为5320XM配备一颗<strong><font size="3" color="#ff0000">200W像素</font></strong>的摄像头，并且带有<strong><font size="3" color="#ff0000">两个LED的补光灯</font></strong>，可以实现拍照、摄像功能，并能通过彩信、邮件方式发送给朋友。</p>\r\n<p>&nbsp;</p>\r\n</div>\r\n<p>&nbsp;</p>', '', '', '', 1, 1, 1242578676, '', 0, 'http://', NULL),
-(30, 11, '促销诺基亚N96', '<p>&nbsp;</p>\r\n<div class="boxCenterList RelaArticle" id="com_v">\r\n<p>诺基亚N96采用了<strong><font size="3" color="#ff0000">双向滑盖</font></strong>设计，机身整体呈灰黑色，沉稳、大气，机身材质采用了高强度的塑料材质，手机背面采用了抛光面板的设计风格。N96三维体积103*55*20mm，重量为125g。屏幕方面，诺基亚N96配备一块<strong><font size="3" color="#ff0000">2.8英寸</font></strong>的屏幕，支持<strong><font size="3" color="#ff0000">1670万色</font></strong>显示，分辨率达到QVGA（320&times;240）水准。</p>\r\n<p>&nbsp;<img src="http://img2.zol.com.cn/product/21/896/ceN6LBMCid3X6.jpg" alt="" /></p>\r\n<p>&nbsp;</p>\r\n<p>诺基亚N96设置有专门的<strong><font size="3" color="#ff0000">音乐播放键</font></strong>和标准的3.5毫米音频插口，支持多格式音乐播放。内置了<strong><font size="3" color="#ff0000">多媒体播放器</font></strong>，支持FM调频收音机等娱乐功能。N96手机支持<strong><font size="3" color="#ff0000">N-Gage游戏平台</font></strong>，内置包括<font size="3" color="#ff0000"><strong>《PinBall》完整版</strong></font>在内的四款N-Gage游戏，除了手机本身内置的游戏，还可以从N-Gage的网站下载或者购买最新的游戏，而且可以在论坛里和其他玩家一起讨论。</p>\r\n<p>&nbsp;</p>\r\n</div>\r\n<p>&nbsp;<img src="http://img2.zol.com.cn/product/21/898/cekkw57qJjSI.jpg" alt="" /></p>', '', '', '', 1, 1, 1242578826, '', 0, 'http://', NULL),
-(13, 6, '如何分辨水货手机 ', '<p>\n<div class="artibody">\n<p><font size="2"><strong>1、&nbsp;什么是水货？</strong><br />\n提及水货手机，按照行业内的说法，可以将水货手机分成三类：A类、B类和C类。 </font></p>\n<p><font size="2">A类水货手机是指由国外、港澳台等地区在没有经过正常海关渠道的情况下进入国内市场的产品，就是我们常说的走私货， 与行货的主要差异是在输入法上，这类手机都是英文输入法或者是港澳台地区的繁体中文输入法。这类手机其最主要的目的是为了逃避国家关税或者因为该种产品曾 经过不正当改装而不能够通过正常渠道入关，质量一般没有大的问题。但由于逃避关税本身就是违法的，所以购买这类手机的用户根本得不到任何售后保障服务； </font></p>\n<p><font size="2">B类水货手机就是走私者将手机的系统软件由英文版升级至中文版后，偷运到内地，然后贴上非法渠道购买的入网标志，作为行货手机充数。 </font></p>\n<p><font size="2">C类水货手机则是那些由其他型号机改装、更换芯片等等方法做假&ldquo;生产&rdquo;出来的，或者就是从各地购买手机的部件，自己组装然后再贴上非法购买的入网标志。 </font></p>\n<p><font size="2">水货手机虽然不排除它是原厂正货的可能，但通过市场调研发现，绝大多数水货手机都是改版的次货，而且产品基本没有受国内厂商的保修许可。</font></p>\n<p><font size="2"><strong>2、水货有哪些？</strong>水货有两种，一种俗称港行，也称作水行，这种产品原本是在香港 及周边地区销售的，但是经过非法途径进入大陆地区销售。另一种是欧版水改机，也称作欧版，水改等，此种产品以英文改版机为主，通过刷改机内软件达到英文改 中文的目的，原来这类产品是销往欧美地区的，由于和大陆地区有相当大的价格差，所以通过走私进入中国市场。</font></p>\n<p><font size="2"><strong>3、水货手机的危害</strong><br />\n1、售后服务无保障 <br />\n手机作为精密类电子产品，软件、硬件方面都有可能产生不同的问题。购买正规渠道的手机，一旦出现问题，只要将问题反映给厂商客户服务中心并静候佳音就 可以了。大多数走私手机的贩卖点规模较小，根本没有资金和技术能力建立起自己的维修网点，因此他们往往制定非常苛刻的保修条件，将国家明令的一年保修期缩 短为三个月，并加入完全对走私手机经销商有利的诸如&ldquo;认为摔打&rdquo;等概念难以界定的排除条件(众所周知，手机很有可能发生摔撞事件)，是确确实实的霸王条 款。规定时间内手机出了故障，走私手机经销商会通过曲解条款尽可能地开脱保修责任。即使他们愿意承担保修服务，也需将手机发往广州、深圳等地，委托他人维 修。一来路途漫长，二来经手人繁多，小问题&ldquo;修&rdquo;成了大问题。最终走私手机经销商会以无法维修为由劝客户自行去当地正规客服维修。至于维修费用，他们自然 也不愿意出了。<br />\n<br />\n2、产品本身质量不过关<br />\n&nbsp;&nbsp;&nbsp; 现在很多奸商为了谋取暴利，经常使用C类的翻修或者组装手机冒充A类水货手机进行销售。作为消费者来说面对和正规行货之间巨大的价格差异，他们无法分辨想要购买的手机是否象销售商说的那样质量过硬，在销售商的巧舌如簧下只能眼看自己的钱包&ldquo;减肥&rdquo;。 </font></p>\n<p><font size="2">但是这类翻修或者组装的水货手机往往为了降低成本，其采用的配件往往也是不合格产品，甚至也是伪劣产品，可以想象由这样产品组装起来的手机的质量究竟可以好到那里去。目前在经常看到手机电池爆炸伤人的事件的报道，究其原因也是消费者购买了这些组装的水货手机。</font></p>\n<p><font size="2">而且不光这类手机硬件存在问题，包括手机使用的软件。由于组装的水货硬件规格根本无法保证和原场产品一致，手机使用的软件也会造成和手机硬件的冲突。频繁死机就是家常便饭，更有甚者会造成经常性的电话本丢失，无法联系到好友。</font></p>\n<p><br />\n<font size="2"><strong>4、如何分辨行、水货手机？</strong><br />\n1、看手机上是否贴有信息产业部&ldquo;进网许可&rdquo;标志。水货与正品的入网标志稍微有一点不同：真的入网标志一般都是针式打印机打印的，数字清晰，颜色较浅，仔细看有针打的凹痕；假的入网标志一般是普通喷墨打印机打印的，数字不很清晰，颜色较深，没有凹痕。 </font></p>\n<p><font size="2">2、检查手机的配置，包括中文说明书、电池、充电器等，如果是厂家原配，一般均贴有厂家的激光防伪标志。原厂配置的 中文说明书通常印刷精美，并与其他语言的说明书及相关产品资料的印刷质量、格式、风格等保持一致。不是原厂家配置的中文说明书通常印刷质量低劣，常出现错 别字，甚至字迹模糊。正品手机的包装盒中均附带有原厂合格证、原厂条码卡、原厂保修卡，而水货则没有。 </font></p>\n<p><font size="2">3、确认经销商的保修条例是否与厂家一致，在购买手机时应索要发票和保修卡。 </font></p>\n<p><font size="2">4、电子串号是否一致也是验证是否水货手机的重要途径。首先在手机上按&ldquo;*#06#&rdquo;，一般会在手机上显示15个数 字，这就是本手机的IMEI码。然后打开手机的电池盖，在手机里有一张贴纸，上面也有一个IMEI码，这个码应该同手机上显示的IMEI码完全一致。然后 再检查手机的外包装盒上的贴纸，上面也应该有一个IMEI码，这个码也应该同手机上显示的IMEI码完全一致。如果此三个码有不一致的地方，这个手机就有 问题。</font></p>\n</div>\n<p>&nbsp;</p>\n</p>', '', '', '', 0, 1, 1242576911, '', 0, 'http://', NULL),
-(14, 6, '如何享受全国联保', '', '', '', '', 0, 1, 1242576927, '', 0, 'http://', NULL),
-(31, 12, '诺基亚6681手机广告欣赏', '<object>\n<param value="always" name="allowScriptAccess" />\n<param value="transparent" name="wmode" />\n<param value="http://6.cn/player.swf?flag=0&amp;vid=nZNyu3nGNWWYjmtPQDY9nQ" name="movie" /><embed width="480" height="385" src="http://6.cn/player.swf?flag=0&amp;vid=nZNyu3nGNWWYjmtPQDY9nQ" allowscriptaccess="always" wmode="transparent" type="application/x-shockwave-flash"></embed></object>', '', '', '', 0, 1, 1242579069, '', 0, 'http://', NULL),
-(32, 12, '手机游戏下载', '<p>三星SGHU308说明书下载，点击相关链接下载</p>', '', '', '', 1, 1, 1242579189, '', 0, 'http://soft.imobile.com.cn/index-a-list_softs-cid-1.html', NULL),
-(33, 12, '三星SGHU308说明书下载', '<p>三星SGHU308说明书下载</p>', '', '', '', 1, 1, 1242579559, 'data/article/1245043292228851198.rar', 2, 'http://', NULL),
-(34, 12, '3G知识普及', '<p>\n<h2>3G知识普及</h2>\n<div class="t_msgfont" id="postmessage_8792145"><font color="black">3G，全称为3rd Generation，中文含义就是指第三代数字通信。<br />\n</font><br />\n<font color="black">　　1995年问世的第一代<span class="t_tag" onclick="tagshow(event)" href="http://mbbs.enet.com.cn/tag.php?name=%C4%A3%C4%E2">模拟</span>制式<span class="t_tag" onclick="tagshow(event)" href="http://mbbs.enet.com.cn/tag.php?name=%CA%D6%BB%FA">手机</span>（1G）只能进行<span class="t_tag" onclick="tagshow(event)" href="http://mbbs.enet.com.cn/tag.php?name=%D3%EF%D2%F4">语音</span>通话；<br />\n</font><br />\n<font color="black">　　1996到1997年出现的第二代GSM、TDMA等数字制式手机（2G）便增加了接收数据的功能，如接收电子邮件或网页；<br />\n</font><br />\n<font color="black">　　3G不是2009年诞生的，它是上个世纪的产物，而早在2007年国外就已经产生4G了，而<span class="t_tag" onclick="tagshow(event)" href="http://mbbs.enet.com.cn/tag.php?name=%D6%D0%B9%FA">中国</span>也于2008年成功开发出<span class="t_tag" onclick="tagshow(event)" href="http://mbbs.enet.com.cn/tag.php?name=%D6%D0%B9%FA">中国</span>4G，其网络传输的速度可达到每秒钟2G，也就相当于下一部电影只要一秒钟。在上世纪90年末的日韩电影如《我的野蛮女友》中，女主角使用的可以让对方看见自己的视频<span class="t_tag" onclick="tagshow(event)" href="http://mbbs.enet.com.cn/tag.php?name=%B5%E7%BB%B0">电话</span>，就是属于3G技术的重要运用之一。日韩等国3G的运用是上世纪末期的事。而目前国外有些地区已经试运行3.5G甚至4G网络。<br />\n</font><br />\n<font color="black">　 </font><font color="black">（以下为误导）2009年问世的第三代（3G）与 前两代的主要区别是在传输声音和数据的速度上的提升，它能够在全球范围内更好地实现无缝漫游，并处理图像、音乐、视频流等多种媒体形式，提供包括网页浏 览、电话会议、电子商务等多种信息服务，同时也要考虑与已有第二代系统的良好兼容性。为了提供这种服务，无线网络必须能够支持不同的数据传输速度，也就是 说在室内、室外和行车的环境中能够分别支持至少2Mbps（兆比特／每秒）、384kbps（千比特／每秒）以及144kbps的传输速度。（此数值根据 网络环境会发生变化)。<br />\n</font><br />\n<font color="black">　　3G标准，国际电信联盟(ITU)目前一共确定了全球四大3G标准，它们分别是WCDMA、CDMA2000和TD-SCDMA和WiMAX。</font><br />\n<br />\n<font color="black">3G标准　　国际电信联盟（ITU）在2000年5月确定W-CDMA、CDMA2000、TD-SCDMA以 及WiMAX四大主流无线接口标准，写入3G技术指导性文件《2000年国际移动通讯计划》（简称IMT&mdash;2000）。 CDMA是Code Division Multiple Access (码分多址)的缩写，是第三代移动通信系统的技术基础。第一代移动通信系统采用频分多址(FDMA)的模拟调制方式，这种系统的主要缺点是频谱利用率低， 信令干扰话音业务。第二代移动通信系统主要采用时分多址(TDMA)的数字调制方式，提高了系统容量，并采用独立信道传送信令，使系统性能大大改善，但 TDMA的系统容量仍然有限，越区切换性能仍不完善。CDMA系统以其频率规划简单、系统容量大、频率复用系数高、抗多径能力强、通信质量好、软容量、软 切换等特点显示出巨大的发展潜力。下面分别介绍一下3G的几种标准：<br />\n</font><br />\n<br />\n<font color="black">　　 </font><br />\n<font color="black">(1) W-CDMA</font><font color="black"><br />\n</font><br />\n<br />\n<font color="black">　　也称为WCDMA，全称为Wideband CDMA，也称为CDMA Direct Spread，意为宽频分码多重存取，这是基于GSM网发展出来的3G技术规范，是欧洲提出的宽带CDMA技术，它与日本提出的宽带CDMA技术基本相 同，目前正在进一步融合。W-CDMA的支持者主要是以GSM系统为主的欧洲厂商，日本公司也或多或少参与其中，包括欧美的爱立信、阿尔卡特、<span class="t_tag" onclick="tagshow(event)" href="http://mbbs.enet.com.cn/tag.php?name=%C5%B5%BB%F9%D1%C7">诺基亚</span>、 朗讯、北电，以及日本的NTT、富士通、夏普等厂商。 该标准提出了GSM(2G)-GPRS-EDGE-WCDMA(3G)的演进策略。这套系统能够架设在现有的GSM网络上，对于系统提供商而言可以较轻易 地过渡，但是GSM系统相当普及的亚洲对这套新技术的接受度预料会相当高。因此W-CDMA具有先天的市场优势。<br />\n</font><br />\n<br />\n<font color="black">　　 </font><br />\n<font color="black">(2)CDMA2000</font><font color="black"><br />\n</font><br />\n<br />\n<font color="black">　　CDMA2000是由窄带CDMA(CDMA IS95)技术发展而来的宽带CDMA技术，也称为CDMA Multi-Carrier，它是由美国高通北美公司为主导提出，<span class="t_tag" onclick="tagshow(event)" href="http://mbbs.enet.com.cn/tag.php?name=%C4%A6%CD%D0%C2%DE%C0%AD">摩托罗拉</span>、Lucent 和后来加入的韩国三星都有参与，韩国现在成为该标准的主导者。这套系统是从窄频CDMAOne数字标准衍生出来的，可以从原有的CDMAOne结构直接升 级到3G，建设成本低廉。但目前使用CDMA的地区只有日、韩和北美，所以CDMA2000的支持者不如W-CDMA多。不过CDMA2000的研发技术 却是目前各标准中进度最快的，许多3G手机已经率先面世。该标准提出了从CDMA IS95(2G)-CDMA20001x-CDMA20003x(3G)的演进策略。CDMA20001x被称为2.5代移动通信技术。 CDMA20003x与CDMA20001x的主要区别在于应用了多路载波技术，通过采用三载波使带宽提高。目前<span class="t_tag" onclick="tagshow(event)" href="http://mbbs.enet.com.cn/tag.php?name=%D6%D0%B9%FA%B5%E7%D0%C5">中国电信</span>正在采用这一方案向3G过渡，并已建成了CDMA IS95网络。<br />\n</font><br />\n<br />\n<font color="black">　　 </font><br />\n<font color="black">(3)TD-SCDMA</font><font color="black"><br />\n</font><br />\n<br />\n<font color="black">　　全称为Time Division - Synchronous CDMA(时分<span class="t_tag" onclick="tagshow(event)" href="http://mbbs.enet.com.cn/tag.php?name=%CD%AC%B2%BD">同步</span>CDMA)，该标准是由中国大陆独自制定的3G标准，1999年6月29日，中国原邮电部电信科学技术研究院（大唐电信）向ITU提出。该标准将智能无线、<span class="t_tag" onclick="tagshow(event)" href="http://mbbs.enet.com.cn/tag.php?name=%CD%AC%B2%BD">同步</span>CDMA和<span class="t_tag" onclick="tagshow(event)" href="http://mbbs.enet.com.cn/tag.php?name=%C8%ED%BC%FE">软件</span>无 线电等当今国际领先技术融于其中，在频谱利用率、对业务支持具有灵活性、频率灵活性及成本等方面的独特优势。另外，由于中国内的庞大的市场，该标准受到各 大主要电信设备厂商的重视，全球一半以上的设备厂商都宣布可以支持TD&mdash;SCDMA标准。 该标准提出不经过2.5代的中间环节，直接向3G过渡，非常适用于GSM系统向3G升级。<br />\n</font><br />\n<br />\n<font color="black">　　 </font><br />\n<font color="black">(4)WiMAX</font><font color="black"><br />\n</font><br />\n<br />\n<font color="black">　　WiMAX 的全名是微波存取全球互通(Worldwide Interoperability for Microwave Access)，又称为802&middot;16无线城域网，是又一种为企业和家庭用户提供&ldquo;最后一英里&rdquo;的宽带无线连接方案。将此技术与需要授权或免授权的微波设备 相结合之后，由于成本较低，将扩大宽带无线市场，改善企业与服务供应商的认知度。2007年10月19日，国际电信联盟在日内瓦举行的无线通信全体会议 上，经过多数国家投票通过，WiMAX正式被批准成为继WCDMA、CDMA2000和TD-SCDMA之后的第四个全球3G标准。</font></div>\n</p>', '', '', '', 0, 1, 1242580013, '', 0, 'http://', NULL),
-(35, 4, '“沃”的世界我做主', '<p><strong>导语：<br />\n<br />\n</strong>&nbsp;&nbsp;&nbsp;&nbsp;今年5月17日，是每年一度的世界电信日。同时，也是值得中国人民高兴的日子。昨天，中国联通企业品牌下的全品牌业务&ldquo;沃&rdquo;开始试商用，这也就意味着继中国移动、中国电信之后，国内第三种3G网络将要走入我们的生活，为我们带来更加快速便捷的通信服务。<br />\n<br />\n&nbsp;&nbsp;&nbsp;&nbsp;沃，意味着此品牌将为用户提供一个丰盈的平台，为个人客户、家庭客户、集团客户和企业服务提供全面的支撑，它代表着中国联通全新的服务理念和创新的品牌精神，在3G时代，为客户提供精彩的信息化服务。<br />\n<br />\n&nbsp;&nbsp;&nbsp;&nbsp;下面小编为各位介绍几款各大手机品牌专为&ldquo;沃&rdquo;打造的定制机型，为您迎接&ldquo;沃&rdquo;的到来做好充分准备。</p>\n<p><strong>诺基亚6210si<br />\n<br />\n</strong>&nbsp;&nbsp;&nbsp;&nbsp;诺基亚6210s大家肯定不陌生，经典的滑盖导航手机。其实6210si 与6210s外观、参数、硬件配置几乎完全一样，只不过在6210s的基础上，增加了对WCDMA网络的支持，成为中国联通定制手机。6210si采用诺 基亚经典的滑盖机身设计，机身面板为钢琴烤漆材质，高贵优雅。机身背板则为磨砂外观工程塑料材质，美观的同时增加了手机与手掌间的摩擦系数，防止使用中手 机滑落。</p>\n<p><strong>摩托罗拉A3100<br />\n</strong><br />\n&nbsp;&nbsp;&nbsp;&nbsp;作为摩托罗拉旗下为中国联通定制的A3100，它有着经典的鹅卵石造型， 大气稳重。从最初的U6，到U9再到A3100，鹅卵石的辉煌依旧。A3100有着高贵的血统，钢琴烤漆黑色面板，金属拉丝机身以及 Windows&nbsp;Mobile&nbsp;6.1&nbsp;Professional操作系统，都告诉我们它绝对是一部不可多得的好手机。</p>\n<p><br />\n<strong>三星S7520U<br />\n</strong><br />\n&nbsp;&nbsp;&nbsp;&nbsp;三星S7520U外观造型时尚，镜面设计以及超薄的 98.4&times;55&times;11.6mm金属机身，更适合女性朋友使用。通观机身，最显眼的就要数这3.0英寸的超大触摸屏幕了，400x240的WQGVA级别分 辨率，能够比QVGA级别屏幕显示更为细腻，细节表现力更强。500万像素摄像头说明了该机还是一名拍照能手，捕捉精彩瞬间不在话下。</p>', '', '', '', 0, 0, 1242974613, '', 0, 'http://', NULL);
-
--- --------------------------------------------------------
-
---
--- 表的结构 `article_cat`
---
-
-CREATE TABLE IF NOT EXISTS `article_cat` (
-  `cat_id` smallint(5) NOT NULL AUTO_INCREMENT,
-  `cat_name` varchar(255) NOT NULL DEFAULT '',
-  `cat_type` tinyint(1) unsigned NOT NULL DEFAULT '1',
-  `keywords` varchar(255) NOT NULL DEFAULT '',
-  `cat_desc` varchar(255) NOT NULL DEFAULT '',
-  `sort_order` tinyint(3) unsigned NOT NULL DEFAULT '50',
-  `show_in_nav` tinyint(1) unsigned NOT NULL DEFAULT '0',
-  `parent_id` smallint(5) unsigned NOT NULL DEFAULT '0',
-  PRIMARY KEY (`cat_id`),
-  KEY `cat_type` (`cat_type`),
-  KEY `sort_order` (`sort_order`),
-  KEY `parent_id` (`parent_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=13 ;
-
---
--- 转存表中的数据 `article_cat`
---
-
-INSERT INTO `article_cat` (`cat_id`, `cat_name`, `cat_type`, `keywords`, `cat_desc`, `sort_order`, `show_in_nav`, `parent_id`) VALUES
-(1, '系统分类', 2, '', '系统保留分类', 50, 0, 0),
-(2, '网店信息', 3, '', '网店信息分类', 50, 0, 1),
-(3, '网店帮助分类', 4, '', '网店帮助分类', 50, 0, 1),
-(4, '3G资讯', 1, '', '', 50, 0, 0),
-(5, '新手上路 ', 5, '', '', 50, 0, 3),
-(6, '手机常识 ', 5, '', '手机常识 ', 50, 0, 3),
-(7, '配送与支付 ', 5, '', '配送与支付 ', 50, 0, 3),
-(8, '服务保证 ', 5, '', '', 50, 0, 3),
-(9, '联系我们 ', 5, '', '联系我们 ', 50, 0, 3),
-(10, '会员中心', 5, '', '', 50, 0, 3),
-(11, '手机促销', 1, '', '', 50, 0, 0),
-(12, '站内快讯', 1, '', '', 50, 0, 0);
-
--- --------------------------------------------------------
-
---
--- 表的结构 `attribute`
---
-
-CREATE TABLE IF NOT EXISTS `attribute` (
-  `attr_id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
-  `cat_id` smallint(5) unsigned NOT NULL DEFAULT '0',
-  `attr_name` varchar(60) NOT NULL DEFAULT '',
-  `attr_input_type` tinyint(1) unsigned NOT NULL DEFAULT '1',
-  `attr_type` tinyint(1) unsigned NOT NULL DEFAULT '1',
-  `attr_values` text NOT NULL,
-  `attr_index` tinyint(1) unsigned NOT NULL DEFAULT '0',
-  `sort_order` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `is_linked` tinyint(1) unsigned NOT NULL DEFAULT '0',
-  `attr_group` tinyint(1) unsigned NOT NULL DEFAULT '0',
-  PRIMARY KEY (`attr_id`),
-  KEY `cat_id` (`cat_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=211 ;
-
---
--- 转存表中的数据 `attribute`
---
-
-INSERT INTO `attribute` (`attr_id`, `cat_id`, `attr_name`, `attr_input_type`, `attr_type`, `attr_values`, `attr_index`, `sort_order`, `is_linked`, `attr_group`) VALUES
-(1, 1, '作者', 0, 0, '', 0, 0, 0, 0),
-(2, 1, '出版社', 0, 0, '', 0, 0, 0, 0),
-(3, 1, '图书书号/ISBN', 0, 0, '', 0, 0, 0, 0),
-(4, 1, '出版日期', 0, 0, '', 0, 0, 0, 0),
-(5, 1, '开本', 0, 0, '', 0, 0, 0, 0),
-(6, 1, '图书页数', 0, 0, '', 0, 0, 0, 0),
-(7, 1, '图书装订', 1, 0, '平装\r\n黑白', 0, 0, 0, 0),
-(8, 1, '图书规格', 0, 0, '', 0, 0, 0, 0),
-(9, 1, '版次', 0, 0, '', 0, 0, 0, 0),
-(10, 1, '印张', 0, 0, '', 0, 0, 0, 0),
-(11, 1, '字数', 0, 0, '', 0, 0, 0, 0),
-(12, 1, '所属分类', 0, 0, '', 0, 0, 0, 0),
-(13, 2, '中文片名', 0, 0, '', 0, 0, 0, 0),
-(14, 2, '英文片名', 0, 0, '', 0, 0, 0, 0),
-(15, 2, '商品别名', 0, 0, '', 0, 0, 0, 0),
-(16, 2, '介质/格式', 1, 0, 'HDCD\r\nDTS\r\nDVD\r\nDVD9\r\nVCD\r\nCD\r\nTAPE\r\nLP', 0, 0, 0, 0),
-(17, 2, '片装数', 0, 0, '', 0, 0, 0, 0),
-(18, 2, '国家地区', 0, 0, '', 0, 0, 0, 0),
-(19, 2, '语种', 1, 0, '中文\r\n英文\r\n法文\r\n西班牙文', 0, 0, 0, 0),
-(20, 2, '导演/指挥', 0, 0, '', 0, 0, 0, 0),
-(21, 2, '主唱', 0, 0, '', 0, 0, 0, 0),
-(22, 2, '所属类别', 1, 0, '古典\r\n流行\r\n摇滚\r\n乡村\r\n民谣\r\n爵士\r\n蓝调\r\n电子\r\n舞曲\r\n国乐\r\n民族\r\n怀旧\r\n经典\r\n人声\r\n合唱\r\n发烧\r\n试音\r\n儿童\r\n胎教\r\n轻音乐\r\n世界音乐\r\n庆典音乐\r\n影视音乐\r\n新世纪音乐\r\n大自然音乐', 0, 0, 0, 0),
-(23, 2, '长度', 0, 0, '', 0, 0, 0, 0),
-(24, 2, '歌词', 1, 0, '有\r\n无', 0, 0, 0, 0),
-(25, 2, '碟片代码', 0, 0, '', 0, 0, 0, 0),
-(26, 2, 'ISRC码', 0, 0, '', 0, 0, 0, 0),
-(27, 2, '发行公司', 0, 0, '', 0, 0, 0, 0),
-(28, 2, '出版', 0, 0, '', 0, 0, 0, 0),
-(29, 2, '出版号', 0, 0, '', 0, 0, 0, 0),
-(30, 2, '引进号', 0, 0, '', 0, 0, 0, 0),
-(31, 2, '版权号', 0, 0, '', 0, 0, 0, 0),
-(32, 3, '中文片名', 0, 0, '', 0, 0, 0, 0),
-(33, 3, '英文片名', 0, 0, '', 0, 0, 0, 0),
-(34, 3, '商品别名', 0, 0, '', 0, 0, 0, 0),
-(35, 3, '介质/格式', 1, 0, 'HDCD\r\nDTS\r\nDVD\r\nDVD9\r\nVCD', 0, 0, 0, 0),
-(36, 3, '碟片类型', 1, 0, '单面\r\n双层', 0, 0, 0, 0),
-(37, 3, '片装数', 0, 0, '', 0, 0, 0, 0),
-(38, 3, '国家地区', 0, 0, '', 0, 0, 0, 0),
-(39, 3, '语种/配音', 1, 0, '中文\r\n英文\r\n法文\r\n西班牙文', 0, 0, 0, 0),
-(40, 3, '字幕', 0, 0, '', 0, 0, 0, 0),
-(41, 3, '色彩', 0, 0, '', 0, 0, 0, 0),
-(42, 3, '中文字幕', 1, 0, '有\r\n无', 0, 0, 0, 0),
-(43, 3, '导演', 0, 0, '', 0, 0, 0, 0),
-(44, 3, '表演者', 0, 0, '', 0, 0, 0, 0),
-(45, 3, '所属类别', 1, 0, '爱情\r\n偶像\r\n生活\r\n社会\r\n科幻\r\n神话\r\n武侠\r\n动作\r\n惊险\r\n恐怖\r\n传奇\r\n人物\r\n侦探\r\n警匪\r\n历史\r\n军事\r\n戏剧\r\n舞台\r\n经典\r\n名著\r\n喜剧\r\n情景\r\n动漫\r\n卡通\r\n儿童\r\n伦理激情', 0, 0, 0, 0),
-(46, 3, '年份', 0, 0, '', 0, 0, 0, 0),
-(47, 3, '音频格式', 0, 0, '', 0, 0, 0, 0),
-(48, 3, '区码', 0, 0, '', 0, 0, 0, 0),
-(49, 3, '碟片代码', 0, 0, '', 0, 0, 0, 0),
-(50, 3, 'ISRC码', 0, 0, '', 0, 0, 0, 0),
-(51, 3, '发行公司', 0, 0, '', 0, 0, 0, 0),
-(52, 3, '出版 ', 0, 0, '', 0, 0, 0, 0),
-(53, 3, '出版号', 0, 0, '', 0, 0, 0, 0),
-(54, 3, '引进号', 0, 0, '', 0, 0, 0, 0),
-(55, 3, '版权号', 0, 0, '', 0, 0, 0, 0),
-(56, 4, '网络制式', 0, 0, '', 0, 0, 0, 0),
-(57, 4, '支持频率/网络频率', 0, 0, '', 0, 0, 0, 0),
-(58, 4, '尺寸体积', 1, 0, '   ', 0, 0, 0, 0),
-(59, 4, '外观样式/手机类型', 1, 0, '翻盖\r\n滑盖\r\n直板\r\n折叠\r\n手写', 0, 0, 0, 0),
-(60, 4, '主屏参数/内屏参数', 0, 0, '', 0, 0, 0, 0),
-(61, 4, '副屏参数/外屏参数', 0, 0, '', 0, 0, 0, 0),
-(62, 4, '清晰度', 0, 0, '', 0, 0, 0, 0),
-(63, 4, '色数/灰度', 1, 0, '   ', 0, 0, 0, 0),
-(64, 4, '长度', 0, 0, '', 0, 0, 0, 0),
-(65, 4, '宽度', 0, 0, '', 0, 0, 0, 0),
-(66, 4, '厚度', 0, 0, '', 0, 0, 0, 0),
-(67, 4, '屏幕材质', 0, 0, '', 0, 0, 0, 0),
-(68, 4, '内存容量', 0, 0, '', 0, 0, 0, 0),
-(69, 4, '操作系统', 0, 0, '', 0, 0, 0, 0),
-(70, 4, '通话时间', 0, 0, '', 0, 0, 0, 0),
-(71, 4, '待机时间', 0, 0, '', 0, 0, 0, 0),
-(72, 4, '标准配置', 0, 0, '', 0, 0, 0, 0),
-(73, 4, 'WAP上网', 0, 0, '', 0, 0, 0, 0),
-(74, 4, '数据业务', 0, 0, '', 0, 0, 0, 0),
-(75, 4, '天线位置', 1, 0, '内置\r\n外置', 0, 0, 0, 0),
-(76, 4, '随机配件', 0, 0, '', 0, 0, 0, 0),
-(77, 4, '铃声', 0, 0, '', 0, 0, 0, 0),
-(78, 4, '摄像头', 0, 0, '', 0, 0, 0, 0),
-(79, 4, '彩信/彩e', 1, 0, '支持\r\n不支持', 0, 0, 0, 0),
-(80, 4, '红外/蓝牙', 0, 0, '', 0, 0, 0, 0),
-(81, 4, '价格等级', 1, 0, '高价机\r\n中价机\r\n低价机', 0, 0, 0, 0),
-(82, 5, '型号', 0, 0, '', 0, 0, 0, 0),
-(83, 5, '详细规格', 0, 0, '', 0, 0, 0, 0),
-(84, 5, '笔记本尺寸', 0, 0, '', 0, 0, 0, 0),
-(85, 5, '处理器类型', 0, 0, '', 0, 0, 0, 0),
-(86, 5, '处理器最高主频', 0, 0, '', 0, 0, 0, 0),
-(87, 5, '二级缓存', 0, 0, '', 0, 0, 0, 0),
-(88, 5, '系统总线', 0, 0, '', 0, 0, 0, 0),
-(89, 5, '主板芯片组', 0, 0, '', 0, 0, 0, 0),
-(90, 5, '内存容量', 0, 0, '', 0, 0, 0, 0),
-(91, 5, '内存类型', 0, 0, '', 0, 0, 0, 0),
-(92, 5, '硬盘', 0, 0, '', 0, 0, 0, 0),
-(93, 5, '屏幕尺寸', 0, 0, '', 0, 0, 0, 0),
-(94, 5, '显示芯片', 0, 0, '', 0, 0, 0, 0),
-(95, 5, '标称频率', 0, 0, '', 0, 0, 0, 0),
-(96, 5, '显卡显存', 0, 0, '', 0, 0, 0, 0),
-(97, 5, '显卡类型', 0, 0, '', 0, 0, 0, 0),
-(98, 5, '光驱类型', 0, 0, '', 0, 0, 0, 0),
-(99, 5, '电池容量', 0, 0, '', 0, 0, 0, 0),
-(100, 5, '其他配置', 0, 0, '', 0, 0, 0, 0),
-(101, 6, '类型', 0, 0, '', 0, 0, 0, 0),
-(102, 6, '最大像素/总像素  ', 0, 0, '', 0, 0, 0, 0),
-(103, 6, '有效像素', 1, 0, '  ', 0, 0, 0, 0),
-(104, 6, '光学变焦倍数', 0, 0, '', 0, 0, 0, 0),
-(105, 6, '数字变焦倍数', 0, 0, '', 0, 0, 0, 0),
-(106, 6, '操作模式', 0, 0, '', 0, 0, 0, 0),
-(107, 6, '显示屏类型', 0, 0, '', 0, 0, 0, 0),
-(108, 6, '显示屏尺寸', 0, 0, '', 0, 0, 0, 0),
-(109, 6, '感光器件', 0, 0, '', 0, 0, 0, 0),
-(110, 6, '感光器件尺寸', 0, 0, '', 0, 0, 0, 0),
-(111, 6, '最高分辨率', 0, 0, '', 0, 0, 0, 0),
-(112, 6, '图像分辨率', 0, 0, '', 0, 0, 0, 0),
-(113, 6, '传感器类型', 0, 0, '', 0, 0, 0, 0),
-(114, 6, '传感器尺寸', 0, 0, '', 0, 0, 0, 0),
-(115, 6, '镜头', 0, 0, '', 0, 0, 0, 0),
-(116, 6, '光圈', 0, 0, '', 0, 0, 0, 0),
-(117, 6, '焦距', 0, 0, '', 0, 0, 0, 0),
-(118, 6, '旋转液晶屏', 1, 0, '支持\r\n不支持', 0, 0, 0, 0),
-(119, 6, '存储介质', 0, 0, '', 0, 0, 0, 0),
-(120, 6, '存储卡', 1, 0, '  记录媒体\r\n存储卡容量', 0, 0, 0, 0),
-(121, 6, '影像格式', 1, 0, '    静像\r\n动画', 0, 0, 0, 0),
-(122, 6, '曝光控制', 0, 0, '', 0, 0, 0, 0),
-(123, 6, '曝光模式', 0, 0, '', 0, 0, 0, 0),
-(124, 6, '曝光补偿', 0, 0, '', 0, 0, 0, 0),
-(125, 6, '白平衡', 0, 0, '', 0, 0, 0, 0),
-(126, 6, '连拍', 0, 0, '', 0, 0, 0, 0),
-(127, 6, '快门速度', 0, 0, '', 0, 0, 0, 0),
-(128, 6, '闪光灯', 1, 0, '内置\r\n外置', 0, 0, 0, 0),
-(129, 6, '拍摄范围', 1, 0, '  ', 0, 0, 0, 0),
-(130, 6, '自拍定时器', 0, 0, '', 0, 0, 0, 0),
-(131, 6, 'ISO感光度', 0, 0, '', 0, 0, 0, 0),
-(132, 6, '测光模式', 0, 0, '', 0, 0, 0, 0),
-(133, 6, '场景模式', 0, 0, '', 0, 0, 0, 0),
-(134, 6, '短片拍摄', 0, 0, '', 0, 0, 0, 0),
-(135, 6, '外接接口', 0, 0, '', 0, 0, 0, 0),
-(136, 6, '电源', 0, 0, '', 0, 0, 0, 0),
-(137, 6, '电池使用时间', 0, 0, '', 0, 0, 0, 0),
-(138, 6, '外形尺寸', 0, 0, '', 0, 0, 0, 0),
-(139, 6, '标配软件', 0, 0, '', 0, 0, 0, 0),
-(140, 6, '标准配件', 0, 0, '', 0, 0, 0, 0),
-(141, 6, '兼容操作系统', 0, 0, '', 0, 0, 0, 0),
-(142, 7, '编号', 0, 0, '', 0, 0, 0, 0),
-(143, 7, '类型', 0, 0, '', 0, 0, 0, 0),
-(144, 7, '外型尺寸', 0, 0, '', 0, 0, 0, 0),
-(145, 7, '最大像素数', 0, 0, '', 0, 0, 0, 0),
-(146, 7, '光学变焦倍数', 0, 0, '', 0, 0, 0, 0),
-(147, 7, '数字变焦倍数', 0, 0, '', 0, 0, 0, 0),
-(148, 7, '显示屏尺寸及类型', 0, 0, '', 0, 0, 0, 0),
-(149, 7, '感光器件', 0, 0, '', 0, 0, 0, 0),
-(150, 7, '感光器件尺寸', 0, 0, '', 0, 0, 0, 0),
-(151, 7, '感光器件数量', 0, 0, '', 0, 0, 0, 0),
-(152, 7, '像素范围', 0, 0, '', 0, 0, 0, 0),
-(153, 7, '传感器数量', 0, 0, '', 0, 0, 0, 0),
-(154, 7, '传感器尺寸', 0, 0, '', 0, 0, 0, 0),
-(155, 7, '水平清晰度', 0, 0, '', 0, 0, 0, 0),
-(156, 7, '取景器', 0, 0, '', 0, 0, 0, 0),
-(157, 7, '数码效果', 0, 0, '', 0, 0, 0, 0),
-(158, 7, '镜头性能', 0, 0, '', 0, 0, 0, 0),
-(159, 7, '对焦方式', 0, 0, '', 0, 0, 0, 0),
-(160, 7, '曝光控制', 0, 0, '', 0, 0, 0, 0),
-(161, 7, '其他接口', 0, 0, '', 0, 0, 0, 0),
-(162, 7, '随机存储', 0, 0, '', 0, 0, 0, 0),
-(163, 7, '电池类型', 0, 0, '', 0, 0, 0, 0),
-(164, 7, '电池供电时间', 0, 0, '', 0, 0, 0, 0),
-(165, 8, '产地', 0, 0, '', 0, 0, 0, 0),
-(166, 8, '产品规格/容量', 0, 0, '', 0, 0, 0, 0),
-(167, 8, '主要原料', 0, 0, '', 0, 0, 0, 0),
-(168, 8, '所属类别', 1, 0, '彩妆\r\n化妆工具\r\n护肤品\r\n香水', 0, 0, 0, 0),
-(169, 8, '使用部位', 0, 0, '', 0, 0, 0, 0),
-(170, 8, '适合肤质', 1, 0, '油性\r\n中性\r\n干性', 0, 0, 0, 0),
-(171, 8, '适用人群', 1, 0, '女性\r\n男性', 0, 0, 0, 0),
-(172, 9, '上市日期', 1, 0, '2008年01月\r\n2008年02月\r\n2008年03月\r\n2008年04月\r\n2008年05月\r\n2008年06月\r\n2008年07月\r\n2008年08月\r\n2008年09月\r\n2008年10月\r\n2008年11月\r\n2008年12月\r\n2007年01月\r\n2007年02月\r\n2007年03月\r\n2007年04月\r\n2007年05月\r\n2007年06月\r\n2007年07月\r\n2007年08月\r\n2007年09月\r\n2007年10月\r\n2007年11月\r\n2007年12月', 1, 0, 0, 0),
-(173, 9, '手机制式', 1, 0, 'GSM,850,900,1800,1900\r\nGSM,900,1800,1900,2100\r\nCDMA\r\n双模（GSM,900,1800,CDMA 1X）\r\n3G(GSM,900,1800,1900,TD-SCDMA )', 1, 1, 1, 0),
-(174, 9, '理论通话时间', 0, 0, '', 0, 2, 0, 0),
-(175, 9, '理论待机时间', 0, 0, '', 0, 3, 0, 0),
-(176, 9, '铃声', 0, 0, '', 0, 4, 0, 0),
-(177, 9, '铃声格式', 0, 0, '', 0, 5, 0, 0),
-(178, 9, '外观样式', 1, 0, '翻盖\r\n滑盖\r\n直板\r\n折叠', 1, 6, 1, 0),
-(179, 9, '中文短消息', 0, 0, '', 0, 7, 0, 0),
-(180, 9, '存储卡格式', 0, 0, '', 0, 0, 0, 0),
-(181, 9, '内存容量', 0, 0, '', 2, 0, 0, 0),
-(182, 9, '操作系统', 0, 0, '', 0, 0, 0, 0),
-(183, 9, 'K-JAVA', 0, 0, '', 0, 0, 0, 0),
-(184, 9, '尺寸体积', 0, 0, '', 0, 0, 0, 0),
-(185, 9, '颜色', 1, 1, '黑色\r\n白色\r\n蓝色\r\n金色\r\n粉色\r\n银色\r\n灰色\r\n深李色\r\n黑红色\r\n黑蓝色\r\n白紫色', 1, 0, 0, 0),
-(186, 9, '屏幕颜色', 1, 0, '1600万\r\n262144万', 1, 0, 1, 1),
-(187, 9, '屏幕材质', 1, 0, 'TFT', 0, 0, 0, 1),
-(188, 9, '屏幕分辨率', 1, 0, '320×240 像素\r\n240×400 像素\r\n240×320 像素\r\n176x220 像素', 1, 0, 0, 1),
-(189, 9, '屏幕大小', 0, 0, '', 0, 0, 0, 1),
-(190, 9, '中文输入法', 0, 0, '', 0, 0, 0, 2),
-(191, 9, '情景模式', 0, 0, '', 0, 0, 0, 2),
-(192, 9, '网络链接', 0, 0, '', 0, 0, 0, 2),
-(193, 9, '蓝牙接口', 0, 0, '', 0, 0, 0, 0),
-(194, 9, '数据线接口', 0, 0, '', 0, 0, 0, 2),
-(195, 9, '电子邮件', 0, 0, '', 0, 0, 0, 2),
-(196, 9, '闹钟', 0, 0, '', 0, 35, 0, 4),
-(197, 9, '办公功能', 0, 0, '', 0, 0, 0, 4),
-(198, 9, '数码相机', 0, 0, '', 1, 0, 0, 3),
-(199, 9, '像素', 0, 0, '', 0, 0, 0, 3),
-(200, 9, '传感器', 0, 0, '', 0, 0, 0, 0),
-(201, 9, '变焦模式', 0, 0, '', 0, 0, 0, 3),
-(202, 9, '视频拍摄', 0, 0, '', 0, 0, 0, 3),
-(203, 9, 'MP3播放器', 0, 0, '', 0, 0, 0, 3),
-(204, 9, '视频播放', 0, 0, '', 0, 0, 0, 3),
-(205, 9, 'CPU频率', 0, 0, '', 0, 0, 0, 0),
-(206, 9, '收音机', 0, 0, '', 0, 0, 0, 3),
-(207, 9, '耳机接口', 0, 0, '', 0, 0, 0, 3),
-(208, 9, '闪光灯', 0, 0, '', 0, 0, 0, 3),
-(209, 9, '浏览器', 0, 0, '', 0, 0, 0, 2),
-(210, 9, '配件', 1, 2, '线控耳机\r\n蓝牙耳机\r\n数据线', 0, 0, 0, 0);
-
--- --------------------------------------------------------
-
---
--- 表的结构 `auction_log`
---
-
-CREATE TABLE IF NOT EXISTS `auction_log` (
-  `log_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
-  `act_id` mediumint(8) unsigned NOT NULL,
-  `bid_user` mediumint(8) unsigned NOT NULL,
-  `bid_price` decimal(10,2) unsigned NOT NULL,
-  `bid_time` int(10) unsigned NOT NULL,
-  PRIMARY KEY (`log_id`),
-  KEY `act_id` (`act_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
-
---
--- 转存表中的数据 `auction_log`
---
-
-INSERT INTO `auction_log` (`log_id`, `act_id`, `bid_user`, `bid_price`, `bid_time`) VALUES
-(1, 4, 1, 170.00, 1242144083);
-
--- --------------------------------------------------------
-
---
--- 表的结构 `auto_manage`
---
-
-CREATE TABLE IF NOT EXISTS `auto_manage` (
-  `item_id` mediumint(8) NOT NULL,
-  `type` varchar(10) NOT NULL,
-  `starttime` int(10) NOT NULL,
-  `endtime` int(10) NOT NULL,
-  PRIMARY KEY (`item_id`,`type`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
--- --------------------------------------------------------
-
---
--- 表的结构 `back_goods`
---
-
-CREATE TABLE IF NOT EXISTS `back_goods` (
-  `rec_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
-  `back_id` mediumint(8) unsigned DEFAULT '0',
-  `goods_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `product_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `product_sn` varchar(60) DEFAULT NULL,
-  `goods_name` varchar(120) DEFAULT NULL,
-  `brand_name` varchar(60) DEFAULT NULL,
-  `goods_sn` varchar(60) DEFAULT NULL,
-  `is_real` tinyint(1) unsigned DEFAULT '0',
-  `send_number` smallint(5) unsigned DEFAULT '0',
-  `goods_attr` text,
-  PRIMARY KEY (`rec_id`),
-  KEY `back_id` (`back_id`),
-  KEY `goods_id` (`goods_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
-
--- --------------------------------------------------------
-
---
--- 表的结构 `back_order`
---
-
-CREATE TABLE IF NOT EXISTS `back_order` (
-  `back_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
-  `delivery_sn` varchar(20) NOT NULL,
-  `order_sn` varchar(20) NOT NULL,
-  `order_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `invoice_no` varchar(50) DEFAULT NULL,
-  `add_time` int(10) unsigned DEFAULT '0',
-  `shipping_id` tinyint(3) unsigned DEFAULT '0',
-  `shipping_name` varchar(120) DEFAULT NULL,
-  `user_id` mediumint(8) unsigned DEFAULT '0',
-  `action_user` varchar(30) DEFAULT NULL,
-  `consignee` varchar(60) DEFAULT NULL,
-  `address` varchar(250) DEFAULT NULL,
-  `country` smallint(5) unsigned DEFAULT '0',
-  `province` smallint(5) unsigned DEFAULT '0',
-  `city` smallint(5) unsigned DEFAULT '0',
-  `district` smallint(5) unsigned DEFAULT '0',
-  `sign_building` varchar(120) DEFAULT NULL,
-  `email` varchar(60) DEFAULT NULL,
-  `zipcode` varchar(60) DEFAULT NULL,
-  `tel` varchar(60) DEFAULT NULL,
-  `mobile` varchar(60) DEFAULT NULL,
-  `best_time` varchar(120) DEFAULT NULL,
-  `postscript` varchar(255) DEFAULT NULL,
-  `how_oos` varchar(120) DEFAULT NULL,
-  `insure_fee` decimal(10,2) unsigned DEFAULT '0.00',
-  `shipping_fee` decimal(10,2) unsigned DEFAULT '0.00',
-  `update_time` int(10) unsigned DEFAULT '0',
-  `suppliers_id` smallint(5) DEFAULT '0',
-  `status` tinyint(1) unsigned NOT NULL DEFAULT '0',
-  `return_time` int(10) unsigned DEFAULT '0',
-  `agency_id` smallint(5) unsigned DEFAULT '0',
-  PRIMARY KEY (`back_id`),
-  KEY `user_id` (`user_id`),
-  KEY `order_id` (`order_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
-
--- --------------------------------------------------------
-
---
--- 表的结构 `bonus_type`
---
-
-CREATE TABLE IF NOT EXISTS `bonus_type` (
-  `type_id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
-  `type_name` varchar(60) NOT NULL DEFAULT '',
-  `type_money` decimal(10,2) NOT NULL DEFAULT '0.00',
-  `send_type` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `min_amount` decimal(10,2) unsigned NOT NULL DEFAULT '0.00',
-  `max_amount` decimal(10,2) unsigned NOT NULL DEFAULT '0.00',
-  `send_start_date` int(11) NOT NULL DEFAULT '0',
-  `send_end_date` int(11) NOT NULL DEFAULT '0',
-  `use_start_date` int(11) NOT NULL DEFAULT '0',
-  `use_end_date` int(11) NOT NULL DEFAULT '0',
-  `min_goods_amount` decimal(10,2) unsigned NOT NULL DEFAULT '0.00',
-  PRIMARY KEY (`type_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=5 ;
-
---
--- 转存表中的数据 `bonus_type`
---
-
-INSERT INTO `bonus_type` (`type_id`, `type_name`, `type_money`, `send_type`, `min_amount`, `max_amount`, `send_start_date`, `send_end_date`, `use_start_date`, `use_end_date`, `min_goods_amount`) VALUES
-(1, '用户红包', 2.00, 0, 0.00, 0.00, 1242057600, 1244736000, 1242057600, 1250006400, 500.00),
-(2, '商品红包', 10.00, 1, 0.00, 0.00, 1241971200, 1250352000, 1242057600, 1250006400, 500.00),
-(3, '订单红包', 20.00, 2, 1500.00, 0.00, 1242057600, 1309363200, 1242057600, 1257955200, 800.00),
-(4, '线下红包', 5.00, 3, 0.00, 0.00, 1242057600, 1244736000, 1242057600, 1255449600, 360.00);
-
--- --------------------------------------------------------
-
---
--- 表的结构 `booking_goods`
---
-
-CREATE TABLE IF NOT EXISTS `booking_goods` (
-  `rec_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
-  `user_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `email` varchar(60) NOT NULL DEFAULT '',
-  `link_man` varchar(60) NOT NULL DEFAULT '',
-  `tel` varchar(60) NOT NULL DEFAULT '',
-  `goods_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `goods_desc` varchar(255) NOT NULL DEFAULT '',
-  `goods_number` smallint(5) unsigned NOT NULL DEFAULT '0',
-  `booking_time` int(10) unsigned NOT NULL DEFAULT '0',
-  `is_dispose` tinyint(1) unsigned NOT NULL DEFAULT '0',
-  `dispose_user` varchar(30) NOT NULL DEFAULT '',
-  `dispose_time` int(10) unsigned NOT NULL DEFAULT '0',
-  `dispose_note` varchar(255) NOT NULL DEFAULT '',
-  PRIMARY KEY (`rec_id`),
-  KEY `user_id` (`user_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=3 ;
-
---
--- 转存表中的数据 `booking_goods`
---
-
-INSERT INTO `booking_goods` (`rec_id`, `user_id`, `email`, `link_man`, `tel`, `goods_id`, `goods_desc`, `goods_number`, `booking_time`, `is_dispose`, `dispose_user`, `dispose_time`, `dispose_note`) VALUES
-(1, 1, 'ecshop@ecshop.com', '刘先生', '13986765412', 19, '可以补货吗？\n我想要一个', 1, 1242142762, 0, '', 0, ''),
-(2, 3, 'text@ecshop.com', '叶先生', '13588104710', 17, '什么时候有货', 1, 1242143592, 0, '', 0, '');
-
--- --------------------------------------------------------
-
---
--- 表的结构 `brand`
---
-
-CREATE TABLE IF NOT EXISTS `brand` (
-  `brand_id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
-  `brand_name` varchar(60) NOT NULL DEFAULT '',
-  `brand_logo` varchar(80) NOT NULL DEFAULT '',
-  `brand_desc` text NOT NULL,
-  `site_url` varchar(255) NOT NULL DEFAULT '',
-  `sort_order` tinyint(3) unsigned NOT NULL DEFAULT '50',
-  `is_show` tinyint(1) unsigned NOT NULL DEFAULT '1',
-  PRIMARY KEY (`brand_id`),
-  KEY `is_show` (`is_show`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=16 ;
-
---
--- 转存表中的数据 `brand`
---
-
-INSERT INTO `brand` (`brand_id`, `brand_name`, `brand_logo`, `brand_desc`, `site_url`, `sort_order`, `is_show`) VALUES
-(4, '飞利浦', '1240803247838195732.gif', '官方咨询电话：4008800008\n售后网点：http://www.philips.com.cn/service/mustservice/index.page ', 'http://www.philips.com.cn ', 50, 1),
-(5, '夏新', '1240803352280856940.gif', '官方咨询电话：4008875777\n售后网点：http://www.amobile.com.cn/service_fwyzc.asp ', 'http://www.amobile.com.cn', 50, 1),
-(15, '仓品', '', '', 'http://', 50, 1);
-
--- --------------------------------------------------------
-
---
--- 表的结构 `callback_status`
---
-
-CREATE TABLE IF NOT EXISTS `callback_status` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `msg_id` varchar(50) DEFAULT '',
-  `type` varchar(100) DEFAULT NULL,
-  `status` enum('true','false','running') DEFAULT 'false',
-  `type_id` varchar(50) DEFAULT NULL,
-  `date_time` int(11) DEFAULT NULL,
-  `data` text,
-  `disabled` enum('true','false') DEFAULT 'false',
-  `times` tinyint(4) DEFAULT '0',
-  `method` varchar(100) NOT NULL,
-  `http_type` varchar(20) NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `ind_type_type_id` (`type`,`type_id`) USING BTREE,
-  KEY `date_time` (`date_time`),
-  KEY `ind_status` (`status`) USING BTREE
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
-
--- --------------------------------------------------------
-
---
--- 表的结构 `card`
---
-
-CREATE TABLE IF NOT EXISTS `card` (
-  `card_id` tinyint(3) unsigned NOT NULL AUTO_INCREMENT,
-  `card_name` varchar(120) NOT NULL DEFAULT '',
-  `card_img` varchar(255) NOT NULL DEFAULT '',
-  `card_fee` decimal(6,2) unsigned NOT NULL DEFAULT '0.00',
-  `free_money` decimal(6,2) unsigned NOT NULL DEFAULT '0.00',
-  `card_desc` varchar(255) NOT NULL DEFAULT '',
-  PRIMARY KEY (`card_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
-
---
--- 转存表中的数据 `card`
---
-
-INSERT INTO `card` (`card_id`, `card_name`, `card_img`, `card_fee`, `free_money`, `card_desc`) VALUES
-(1, '祝福贺卡', '1242108754847457261.jpg', 5.00, 1000.00, '把您的祝福带给您身边的人');
-
--- --------------------------------------------------------
-
---
--- 表的结构 `cart`
---
-
-CREATE TABLE IF NOT EXISTS `cart` (
-  `rec_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
-  `user_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `session_id` char(32) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
-  `goods_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `goods_sn` varchar(60) NOT NULL DEFAULT '',
-  `product_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `goods_name` varchar(120) NOT NULL DEFAULT '',
-  `market_price` decimal(10,2) unsigned NOT NULL DEFAULT '0.00',
-  `goods_price` decimal(10,2) NOT NULL DEFAULT '0.00',
-  `goods_number` smallint(5) unsigned NOT NULL DEFAULT '0',
-  `goods_attr` text NOT NULL,
-  `is_real` tinyint(1) unsigned NOT NULL DEFAULT '0',
-  `extension_code` varchar(30) NOT NULL DEFAULT '',
-  `parent_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `rec_type` tinyint(1) unsigned NOT NULL DEFAULT '0',
-  `is_gift` smallint(5) unsigned NOT NULL DEFAULT '0',
-  `is_shipping` tinyint(1) unsigned NOT NULL DEFAULT '0',
-  `can_handsel` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `goods_attr_id` varchar(255) NOT NULL DEFAULT '',
-  PRIMARY KEY (`rec_id`),
-  KEY `session_id` (`session_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=43 ;
-
--- --------------------------------------------------------
-
---
--- 表的结构 `category`
---
-
-CREATE TABLE IF NOT EXISTS `category` (
-  `cat_id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
-  `cat_name` varchar(90) NOT NULL DEFAULT '',
-  `keywords` varchar(255) NOT NULL DEFAULT '',
-  `cat_desc` varchar(255) NOT NULL DEFAULT '',
-  `parent_id` smallint(5) unsigned NOT NULL DEFAULT '0',
-  `sort_order` tinyint(1) unsigned NOT NULL DEFAULT '50',
-  `template_file` varchar(50) NOT NULL DEFAULT '',
-  `measure_unit` varchar(15) NOT NULL DEFAULT '',
-  `show_in_nav` tinyint(1) NOT NULL DEFAULT '0',
-  `style` varchar(150) NOT NULL,
-  `is_show` tinyint(1) unsigned NOT NULL DEFAULT '1',
-  `grade` tinyint(4) NOT NULL DEFAULT '0',
-  `filter_attr` varchar(255) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`cat_id`),
-  KEY `parent_id` (`parent_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=33 ;
-
---
--- 转存表中的数据 `category`
---
-
-INSERT INTO `category` (`cat_id`, `cat_name`, `keywords`, `cat_desc`, `parent_id`, `sort_order`, `template_file`, `measure_unit`, `show_in_nav`, `style`, `is_show`, `grade`, `filter_attr`) VALUES
-(1, '手机类型', '', '', 0, 50, '', '', 0, '', 1, 5, '172,185,178'),
-(26, '家用电器', '', '', 0, 1, '', '', 1, '', 1, 0, ''),
-(3, '小型手机', '', '', 1, 50, '', '臺', 0, '', 1, 4, '185,189,173,178'),
-(4, '3G手机', '', '', 1, 50, '', '', 0, '', 1, 0, '28'),
-(6, '手机', '', '', 0, 50, '', '', 0, '', 1, 0, ''),
-(29, '家用空调', '', '', 27, 50, '', '', 0, '', 1, 0, ''),
-(8, '耳机', '', '', 6, 50, '', '', 0, '', 1, 0, '0'),
-(9, '电池', '', '', 6, 50, '', '', 0, '', 1, 0, '0'),
-(27, '大家电', '', '', 26, 50, '', '', 0, '', 1, 0, ''),
-(12, '充值卡', '', '', 0, 50, '', '', 0, '', 1, 0, '0'),
-(28, '平板电脑', '', '', 27, 50, '', '', 0, '', 1, 0, ''),
-(16, '服装', '', '', 0, 50, '', '', 1, '', 1, 0, '0'),
-(30, '家电配件', '', '', 27, 50, '', '', 0, '', 1, 0, ''),
-(18, '智能硬件', '', '', 0, 3, '', '', 0, '', 1, 0, ''),
-(19, '配件', '', '', 0, 50, '', '', 0, '', 1, 0, ''),
-(20, '保护壳', '', '', 19, 50, '', '', 0, '', 1, 0, ''),
-(25, '数码时尚', '', '', 0, 2, '', '', 1, '', 1, 0, ''),
-(22, '移动电源', '', '', 0, 6, '', '', 1, '', 1, 0, ''),
-(24, '数码时尚', '', '', 19, 7, '', '', 0, '', 1, 0, ''),
-(31, '洗衣机', '', '', 27, 50, '', '', 0, '', 1, 0, ''),
-(32, '冰箱', '', '', 27, 50, '', '', 0, '', 1, 0, '');
-
--- --------------------------------------------------------
-
---
--- 表的结构 `cat_recommend`
---
-
-CREATE TABLE IF NOT EXISTS `cat_recommend` (
-  `cat_id` smallint(5) NOT NULL,
-  `recommend_type` tinyint(1) NOT NULL,
-  PRIMARY KEY (`cat_id`,`recommend_type`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
---
--- 转存表中的数据 `cat_recommend`
---
-
-INSERT INTO `cat_recommend` (`cat_id`, `recommend_type`) VALUES
-(3, 1),
-(3, 2),
-(3, 3),
-(5, 1),
-(5, 2),
-(5, 3),
-(12, 1),
-(12, 2),
-(12, 3),
-(13, 3),
-(14, 2),
-(14, 3),
-(15, 1),
-(15, 2);
-
--- --------------------------------------------------------
-
---
--- 表的结构 `coincidence`
---
-
-CREATE TABLE IF NOT EXISTS `coincidence` (
-  `type_id` varchar(100) NOT NULL,
-  `type` varchar(20) NOT NULL,
-  `time` int(11) DEFAULT NULL,
-  PRIMARY KEY (`type_id`,`type`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
--- --------------------------------------------------------
-
---
--- 表的结构 `collect_goods`
---
-
-CREATE TABLE IF NOT EXISTS `collect_goods` (
-  `rec_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
-  `user_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `goods_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `add_time` int(11) unsigned NOT NULL DEFAULT '0',
-  `is_attention` tinyint(1) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`rec_id`),
-  KEY `user_id` (`user_id`),
-  KEY `goods_id` (`goods_id`),
-  KEY `is_attention` (`is_attention`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
-
--- --------------------------------------------------------
-
---
--- 表的结构 `comment`
---
-
-CREATE TABLE IF NOT EXISTS `comment` (
-  `comment_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `comment_type` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `id_value` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `email` varchar(60) NOT NULL DEFAULT '',
-  `user_name` varchar(60) NOT NULL DEFAULT '',
-  `content` text NOT NULL,
-  `comment_rank` tinyint(1) unsigned NOT NULL DEFAULT '0',
-  `add_time` int(10) unsigned NOT NULL DEFAULT '0',
-  `ip_address` varchar(15) NOT NULL DEFAULT '',
-  `status` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `parent_id` int(10) unsigned NOT NULL DEFAULT '0',
-  `user_id` int(10) unsigned NOT NULL DEFAULT '0',
-  PRIMARY KEY (`comment_id`),
-  KEY `parent_id` (`parent_id`),
-  KEY `id_value` (`id_value`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=7 ;
-
---
--- 转存表中的数据 `comment`
---
-
-INSERT INTO `comment` (`comment_id`, `comment_type`, `id_value`, `email`, `user_name`, `content`, `comment_rank`, `add_time`, `ip_address`, `status`, `parent_id`, `user_id`) VALUES
-(4, 0, 60, 'ecshop@ecshop.com', 'ecshop', '商品非常好用，超级喜欢', 5, 1462949841, '180.169.8.10', 0, 0, 1),
-(5, 0, 59, 'ecshop@ecshop.com', 'ecshop', '非常喜欢此商品，感觉太棒了', 5, 1462949877, '180.169.8.10', 0, 0, 1),
-(6, 0, 59, 'ecshop@ecshop.com', 'ecshop', '样子非常不错，超级喜欢', 5, 1462949929, '180.169.8.10', 0, 0, 1);
-
--- --------------------------------------------------------
-
---
--- 表的结构 `crons`
---
-
-CREATE TABLE IF NOT EXISTS `crons` (
-  `cron_id` tinyint(3) unsigned NOT NULL AUTO_INCREMENT,
-  `cron_code` varchar(20) NOT NULL,
-  `cron_name` varchar(120) NOT NULL,
-  `cron_desc` text,
-  `cron_order` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `cron_config` text NOT NULL,
-  `thistime` int(10) NOT NULL DEFAULT '0',
-  `nextime` int(10) NOT NULL,
-  `day` tinyint(2) NOT NULL,
-  `week` varchar(1) NOT NULL,
-  `hour` varchar(2) NOT NULL,
-  `minute` varchar(255) NOT NULL,
-  `enable` tinyint(1) NOT NULL DEFAULT '1',
-  `run_once` tinyint(1) NOT NULL DEFAULT '0',
-  `allow_ip` varchar(100) NOT NULL DEFAULT '',
-  `alow_files` varchar(255) NOT NULL,
-  PRIMARY KEY (`cron_id`),
-  KEY `nextime` (`nextime`),
-  KEY `enable` (`enable`),
-  KEY `cron_code` (`cron_code`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
-
--- --------------------------------------------------------
-
---
--- 表的结构 `delivery_goods`
---
-
-CREATE TABLE IF NOT EXISTS `delivery_goods` (
-  `rec_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
-  `delivery_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `goods_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `product_id` mediumint(8) unsigned DEFAULT '0',
-  `product_sn` varchar(60) DEFAULT NULL,
-  `goods_name` varchar(120) DEFAULT NULL,
-  `brand_name` varchar(60) DEFAULT NULL,
-  `goods_sn` varchar(60) DEFAULT NULL,
-  `is_real` tinyint(1) unsigned DEFAULT '0',
-  `extension_code` varchar(30) DEFAULT NULL,
-  `parent_id` mediumint(8) unsigned DEFAULT '0',
-  `send_number` smallint(5) unsigned DEFAULT '0',
-  `goods_attr` text,
-  PRIMARY KEY (`rec_id`),
-  KEY `delivery_id` (`delivery_id`,`goods_id`),
-  KEY `goods_id` (`goods_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
-
--- --------------------------------------------------------
-
---
--- 表的结构 `delivery_order`
---
-
-CREATE TABLE IF NOT EXISTS `delivery_order` (
-  `delivery_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
-  `delivery_sn` varchar(20) NOT NULL,
-  `order_sn` varchar(20) NOT NULL,
-  `order_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `invoice_no` varchar(50) DEFAULT NULL,
-  `add_time` int(10) unsigned DEFAULT '0',
-  `shipping_id` tinyint(3) unsigned DEFAULT '0',
-  `shipping_name` varchar(120) DEFAULT NULL,
-  `user_id` mediumint(8) unsigned DEFAULT '0',
-  `action_user` varchar(30) DEFAULT NULL,
-  `consignee` varchar(60) DEFAULT NULL,
-  `address` varchar(250) DEFAULT NULL,
-  `country` smallint(5) unsigned DEFAULT '0',
-  `province` smallint(5) unsigned DEFAULT '0',
-  `city` smallint(5) unsigned DEFAULT '0',
-  `district` smallint(5) unsigned DEFAULT '0',
-  `sign_building` varchar(120) DEFAULT NULL,
-  `email` varchar(60) DEFAULT NULL,
-  `zipcode` varchar(60) DEFAULT NULL,
-  `tel` varchar(60) DEFAULT NULL,
-  `mobile` varchar(60) DEFAULT NULL,
-  `best_time` varchar(120) DEFAULT NULL,
-  `postscript` varchar(255) DEFAULT NULL,
-  `how_oos` varchar(120) DEFAULT NULL,
-  `insure_fee` decimal(10,2) unsigned DEFAULT '0.00',
-  `shipping_fee` decimal(10,2) unsigned DEFAULT '0.00',
-  `update_time` int(10) unsigned DEFAULT '0',
-  `suppliers_id` smallint(5) DEFAULT '0',
-  `status` tinyint(1) unsigned NOT NULL DEFAULT '0',
-  `agency_id` smallint(5) unsigned DEFAULT '0',
-  PRIMARY KEY (`delivery_id`),
-  KEY `user_id` (`user_id`),
-  KEY `order_id` (`order_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
-
--- --------------------------------------------------------
-
---
--- 表的结构 `email_list`
---
-
-CREATE TABLE IF NOT EXISTS `email_list` (
-  `id` mediumint(8) NOT NULL AUTO_INCREMENT,
-  `email` varchar(60) NOT NULL,
-  `stat` tinyint(1) NOT NULL DEFAULT '0',
-  `hash` varchar(10) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
-
--- --------------------------------------------------------
-
---
--- 表的结构 `email_sendlist`
---
-
-CREATE TABLE IF NOT EXISTS `email_sendlist` (
-  `id` mediumint(8) NOT NULL AUTO_INCREMENT,
-  `email` varchar(100) NOT NULL,
-  `template_id` mediumint(8) NOT NULL,
-  `email_content` text NOT NULL,
-  `error` tinyint(1) NOT NULL DEFAULT '0',
-  `pri` tinyint(10) NOT NULL,
-  `last_send` int(10) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
-
--- --------------------------------------------------------
-
---
--- 表的结构 `error_log`
---
-
-CREATE TABLE IF NOT EXISTS `error_log` (
-  `id` int(10) NOT NULL AUTO_INCREMENT,
-  `info` varchar(255) NOT NULL,
-  `file` varchar(100) NOT NULL,
-  `time` int(10) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `time` (`time`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
-
--- --------------------------------------------------------
-
---
--- 表的结构 `exchange_goods`
---
-
-CREATE TABLE IF NOT EXISTS `exchange_goods` (
-  `goods_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `exchange_integral` int(10) unsigned NOT NULL DEFAULT '0',
-  `is_exchange` tinyint(1) unsigned NOT NULL DEFAULT '0',
-  `is_hot` tinyint(1) unsigned NOT NULL DEFAULT '0',
-  PRIMARY KEY (`goods_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
---
--- 转存表中的数据 `exchange_goods`
---
-
-INSERT INTO `exchange_goods` (`goods_id`, `exchange_integral`, `is_exchange`, `is_hot`) VALUES
-(24, 17000, 1, 0),
-(19, 80000, 1, 0);
-
--- --------------------------------------------------------
-
---
--- 表的结构 `favourable_activity`
---
-
-CREATE TABLE IF NOT EXISTS `favourable_activity` (
-  `act_id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
-  `act_name` varchar(255) NOT NULL,
-  `start_time` int(10) unsigned NOT NULL,
-  `end_time` int(10) unsigned NOT NULL,
-  `user_rank` varchar(255) NOT NULL,
-  `act_range` tinyint(3) unsigned NOT NULL,
-  `act_range_ext` varchar(255) NOT NULL,
-  `min_amount` decimal(10,2) unsigned NOT NULL,
-  `max_amount` decimal(10,2) unsigned NOT NULL,
-  `act_type` tinyint(3) unsigned NOT NULL,
-  `act_type_ext` decimal(10,2) unsigned NOT NULL,
-  `gift` text NOT NULL,
-  `sort_order` tinyint(3) unsigned NOT NULL DEFAULT '50',
-  PRIMARY KEY (`act_id`),
-  KEY `act_name` (`act_name`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
-
---
--- 转存表中的数据 `favourable_activity`
---
-
-INSERT INTO `favourable_activity` (`act_id`, `act_name`, `start_time`, `end_time`, `user_rank`, `act_range`, `act_range_ext`, `min_amount`, `max_amount`, `act_type`, `act_type_ext`, `gift`, `sort_order`) VALUES
-(1, '5.1诺基亚优惠活动', 1241107200, 1253030400, '1,2', 2, '1', 500.00, 5000.00, 2, 95.00, 'a:0:{}', 50);
-
--- --------------------------------------------------------
-
---
--- 表的结构 `feedback`
---
-
-CREATE TABLE IF NOT EXISTS `feedback` (
-  `msg_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
-  `parent_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `user_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `user_name` varchar(60) NOT NULL DEFAULT '',
-  `user_email` varchar(60) NOT NULL DEFAULT '',
-  `msg_title` varchar(200) NOT NULL DEFAULT '',
-  `msg_type` tinyint(1) unsigned NOT NULL DEFAULT '0',
-  `msg_status` tinyint(1) unsigned NOT NULL DEFAULT '0',
-  `msg_content` text NOT NULL,
-  `msg_time` int(10) unsigned NOT NULL DEFAULT '0',
-  `message_img` varchar(255) NOT NULL DEFAULT '0',
-  `order_id` int(11) unsigned NOT NULL DEFAULT '0',
-  `msg_area` tinyint(1) unsigned NOT NULL DEFAULT '0',
-  PRIMARY KEY (`msg_id`),
-  KEY `user_id` (`user_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
-
---
--- 转存表中的数据 `feedback`
---
-
-INSERT INTO `feedback` (`msg_id`, `parent_id`, `user_id`, `user_name`, `user_email`, `msg_title`, `msg_type`, `msg_status`, `msg_content`, `msg_time`, `message_img`, `order_id`, `msg_area`) VALUES
-(1, 0, 1, 'ecshop', 'ecshop@ecshop.com', '三星SGH-F258什么时候到', 4, 0, '三星SGH-F258什么时候有货', 1242107197, '', 0, 0);
-
--- --------------------------------------------------------
-
---
--- 表的结构 `friend_link`
---
-
-CREATE TABLE IF NOT EXISTS `friend_link` (
-  `link_id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
-  `link_name` varchar(255) NOT NULL DEFAULT '',
-  `link_url` varchar(255) NOT NULL DEFAULT '',
-  `link_logo` varchar(255) NOT NULL DEFAULT '',
-  `show_order` tinyint(3) unsigned NOT NULL DEFAULT '50',
-  PRIMARY KEY (`link_id`),
-  KEY `show_order` (`show_order`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=4 ;
-
---
--- 转存表中的数据 `friend_link`
---
-
-INSERT INTO `friend_link` (`link_id`, `link_name`, `link_url`, `link_logo`, `show_order`) VALUES
-(1, 'ECSHOP 网上商店管理系统', 'http://www.ecshop.com/', 'http://www.ecshop.com/images/logo/ecshop_logo.gif', 50),
-(2, '买否网', 'http://www.maifou.net/', '', 51),
-(3, '免费开独立网店', 'http://www.wdwd.com/', '', 52);
-
--- --------------------------------------------------------
-
---
--- 表的结构 `goods`
---
-
-CREATE TABLE IF NOT EXISTS `goods` (
-  `goods_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
-  `cat_id` smallint(5) unsigned NOT NULL DEFAULT '0',
-  `goods_sn` varchar(60) NOT NULL DEFAULT '',
-  `goods_name` varchar(120) NOT NULL DEFAULT '',
-  `goods_name_style` varchar(60) NOT NULL DEFAULT '+',
-  `click_count` int(10) unsigned NOT NULL DEFAULT '0',
-  `brand_id` smallint(5) unsigned NOT NULL DEFAULT '0',
-  `provider_name` varchar(100) NOT NULL DEFAULT '',
-  `goods_number` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `goods_weight` decimal(10,3) unsigned NOT NULL DEFAULT '0.000',
-  `market_price` decimal(10,2) unsigned NOT NULL DEFAULT '0.00',
-  `virtual_sales` smallint(5) unsigned NOT NULL DEFAULT '0',
-  `shop_price` decimal(10,2) unsigned NOT NULL DEFAULT '0.00',
-  `promote_price` decimal(10,2) unsigned NOT NULL DEFAULT '0.00',
-  `promote_start_date` int(11) unsigned NOT NULL DEFAULT '0',
-  `promote_end_date` int(11) unsigned NOT NULL DEFAULT '0',
-  `warn_number` tinyint(3) unsigned NOT NULL DEFAULT '1',
-  `keywords` varchar(255) NOT NULL DEFAULT '',
-  `goods_brief` varchar(255) NOT NULL DEFAULT '',
-  `goods_desc` text NOT NULL,
-  `goods_thumb` varchar(255) NOT NULL DEFAULT '',
-  `goods_img` varchar(255) NOT NULL DEFAULT '',
-  `original_img` varchar(255) NOT NULL DEFAULT '',
-  `is_real` tinyint(3) unsigned NOT NULL DEFAULT '1',
-  `extension_code` varchar(30) NOT NULL DEFAULT '',
-  `is_on_sale` tinyint(1) unsigned NOT NULL DEFAULT '1',
-  `is_alone_sale` tinyint(1) unsigned NOT NULL DEFAULT '1',
-  `is_shipping` tinyint(1) unsigned NOT NULL DEFAULT '0',
-  `integral` int(10) unsigned NOT NULL DEFAULT '0',
-  `add_time` int(10) unsigned NOT NULL DEFAULT '0',
-  `sort_order` smallint(4) unsigned NOT NULL DEFAULT '100',
-  `is_delete` tinyint(1) unsigned NOT NULL DEFAULT '0',
-  `is_best` tinyint(1) unsigned NOT NULL DEFAULT '0',
-  `is_new` tinyint(1) unsigned NOT NULL DEFAULT '0',
-  `is_hot` tinyint(1) unsigned NOT NULL DEFAULT '0',
-  `is_promote` tinyint(1) unsigned NOT NULL DEFAULT '0',
-  `bonus_type_id` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `last_update` int(10) unsigned NOT NULL DEFAULT '0',
-  `goods_type` smallint(5) unsigned NOT NULL DEFAULT '0',
-  `seller_note` varchar(255) NOT NULL DEFAULT '',
-  `give_integral` int(11) NOT NULL DEFAULT '-1',
-  `rank_integral` int(11) NOT NULL DEFAULT '-1',
-  `suppliers_id` smallint(5) unsigned DEFAULT NULL,
-  `is_check` tinyint(1) unsigned DEFAULT NULL,
-  PRIMARY KEY (`goods_id`),
-  KEY `goods_sn` (`goods_sn`),
-  KEY `cat_id` (`cat_id`),
-  KEY `last_update` (`last_update`),
-  KEY `brand_id` (`brand_id`),
-  KEY `goods_weight` (`goods_weight`),
-  KEY `promote_end_date` (`promote_end_date`),
-  KEY `promote_start_date` (`promote_start_date`),
-  KEY `goods_number` (`goods_number`),
-  KEY `sort_order` (`sort_order`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=73 ;
-
---
--- 转存表中的数据 `goods`
---
-
-INSERT INTO `goods` (`goods_id`, `cat_id`, `goods_sn`, `goods_name`, `goods_name_style`, `click_count`, `brand_id`, `provider_name`, `goods_number`, `goods_weight`, `market_price`, `virtual_sales`, `shop_price`, `promote_price`, `promote_start_date`, `promote_end_date`, `warn_number`, `keywords`, `goods_brief`, `goods_desc`, `goods_thumb`, `goods_img`, `original_img`, `is_real`, `extension_code`, `is_on_sale`, `is_alone_sale`, `is_shipping`, `integral`, `add_time`, `sort_order`, `is_delete`, `is_best`, `is_new`, `is_hot`, `is_promote`, `bonus_type_id`, `last_update`, `goods_type`, `seller_note`, `give_integral`, `rank_integral`, `suppliers_id`, `is_check`) VALUES
-(1, 4, 'ECS000000', 'KD876', '+', 8, 0, '', 1, 0.110, 1665.60, 0, 1388.00, 0.00, 0, 0, 1, 'LG 3g 876 支持 双模 2008年04月 灰色 GSM,850,900,1800,1900', '', '<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 很多朋友都已经抢先体验了3G网络的可视通话、高速上网等功能。LG KD876手机<span style="font-size: x-large;"><span style="color: rgb(255, 0, 0);"><strong>支持TD-SCDMA/GSM双模单待</strong></span></span>，便于测试初期GSM网络和TD网络之间的切换和共享。</p>\r\n<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; LG KD876手机整体采用银色塑料材质，<strong><span style="font-size: x-large;"><span style="color: rgb(255, 0, 0);">特殊的旋转屏设计是本机的亮点</span></span></strong>，而机身背部的300万像素摄像头也是首发的六款TD-SCDMA手机中配置最高的。LG KD876手机屏幕下方设置有外键盘，该键盘由左/右软键、通话/挂机键、返回键、五维摇杆组成，摇杆灵敏度很高，定位准确。KD876的内键盘由标准12个电话键和三个功能键、一个内置摄像头组成。三个功能键分别为视频通话、MP3、和菜单键，所有按键的手感都比较一般，键程适中，当由于按键排列过于紧密，快速发短信时很容易误按，用户在使用时一定要多加注意。LG KD876手机机身周边的接口设计非常简洁，手机的厚度主要来自屏幕旋转轴的长度，如果舍弃旋屏设计的话，估计<span style="font-size: x-large;"><strong><span style="color: rgb(255, 0, 0);">厚度可以做到10mm以下</span></strong></span>。</p>', 'images/200905/thumb_img/1_thumb_G_1240902890710.jpg', 'images/200905/goods_img/1_G_1240902890755.jpg', 'images/200905/source_img/1_G_1240902890895.gif', 1, '', 1, 1, 0, 13, 1240902890, 100, 0, 1, 1, 0, 0, 0, 1462950817, 9, '', -1, -1, NULL, NULL),
-(4, 8, 'ECS000004', '诺基亚N85原装充电器', '+', 0, 0, '', 17, 0.000, 69.60, 0, 58.00, 0.00, 0, 0, 1, '', '', '', 'images/200905/thumb_img/4_thumb_G_1241422402467.jpg', 'images/200905/goods_img/4_G_1241422402722.jpg', 'images/200905/source_img/4_G_1241422402919.jpg', 1, '', 1, 0, 0, 0, 1241422402, 100, 0, 0, 0, 0, 0, 0, 1242110662, 6, '', -1, -1, NULL, NULL),
-(8, 3, 'ECS000008', '飞利浦9@9v', '+', 12, 4, '', 0, 0.075, 478.79, 0, 399.00, 385.00, 1241366400, 1417276800, 1, '双模 2008年春 黑色 直板 中低档', '', '<p align="left">作为一款性价比极高的入门级<font size="3" color="#ff0000"><strong>商务手机</strong></font>，飞利浦<a href="mailto:9@9v">Xenium&nbsp; 9@9v</a>三围大小为105&times;44&times;15.8mm，机身重量仅为<strong><font size="3" color="#ff0000">75g</font></strong>，装配了一块低规格1.75英寸128&times;160像素65000色CSTN显示屏。身正面采用月银色功能键区与屏幕数字键区相分隔，键盘设计较为<font size="3"><strong><font color="#ff0000">别</font><font color="#ff0000">致</font></strong></font>，中部导航键区采用钛金色的&ldquo;腰带&rdquo;彰显出浓郁的商务气息。</p>\r\n<p align="left">&nbsp;</p>\r\n<p align="left">此款手机采用<strong><font size="3" color="#ff0000">触摸屏</font></strong>设计，搭配精致的手写笔，可支持手写中文和英文两个版本。增强的内置系统还能识别潦草字迹，确保在移动中和匆忙时输入文字的识别率。手写指令功能还支持特定图案的瞬间调用，独特的手写记事本功能，可以在触摸屏上随意绘制个性化的图案并进行<strong><font size="3" color="#ff0000">记事提醒</font></strong>，让商务应用更加随意。</p>\r\n<p align="left">&nbsp;</p>\r\n<p align="left">&nbsp;作为入门级为数不多支持<strong><font size="3" color="#ff0000">双卡功能</font></strong>的手机，可以同时插入两张SIM卡，通过菜单随意切换，只需开启漫游自动切换模式，<a href="mailto:9@9V">9@9V</a>在该模式下能够判断网络情况，自动切换适合的手机号。</p>\r\n<p align="left">&nbsp;</p>\r\n<p align="left">&nbsp;</p>', 'images/200905/thumb_img/8_thumb_G_1241425513488.jpg', 'images/200905/goods_img/8_G_1241425513055.jpg', 'images/200905/source_img/8_G_1241425513518.jpg', 1, '', 1, 1, 0, 3, 1241425512, 100, 0, 1, 1, 0, 1, 0, 1462950816, 9, '', -1, -1, NULL, NULL),
-(9, 3, 'ECS000009', '诺基亚E66', '+', 28, 0, '', 2, 0.121, 2757.60, 0, 2298.00, 0.00, 0, 0, 1, 'SMS EMS MMS 短消息群发 语音 阅读器 SMS,EMS,MMS,短消息群发语音合成信息阅读器 黑色 白色 滑盖', '', '<p>在机身材质方面，诺基亚E66大量采用金属材质，刨光的金属表面光泽动人，背面的点状效果规则却又不失变化，时尚感总是在不经意间诠释出来，并被人们所感知。E66机身尺寸为<span style="color: rgb(255, 0, 0);"><span style="font-size: larger;"><strong>107.5&times;49.5&times;13.6毫米，重量为121克</strong></span></span>，滑盖的造型竟然比E71还要轻一些。</p>\r\n<p>&nbsp;</p>\r\n<div>诺基亚E66机身正面是<span style="color: rgb(255, 0, 0);"><span style="font-size: larger;"><strong>一块2.4英寸1600万色QVGA分辨率（240&times;320像素）液晶显示屏</strong></span></span>。屏幕上方拥有光线感应元件，能够自适应周 围环境光调节屏幕亮度；屏幕下方是方向功能键区。打开滑盖，可以看到传统的数字键盘，按键的大小、手感、间隔以及键程适中，手感非常舒适。</div>\r\n<div>&nbsp;</div>\r\n<div>诺基亚为E66配备了一颗320万像素自动对焦摄像头，带有LED 闪光灯，支持多种拍照尺寸选择。</div>\r\n<p>&nbsp;</p>', 'images/200905/thumb_img/9_thumb_G_1241511871555.jpg', 'images/200905/goods_img/9_G_1241511871574.jpg', 'images/200905/source_img/9_G_1241511871550.jpg', 1, '', 1, 1, 0, 22, 1241511871, 100, 0, 1, 1, 0, 0, 0, 1462950815, 9, '', -1, -1, NULL, NULL),
-(35, 19, 'ECS000035', '体重秤', '+', 0, 0, '', 1, 0.000, 16.80, 0, 14.00, 0.00, 0, 0, 1, '', '', '', 'images/201605/thumb_img/35_thumb_G_1462851036709.jpg', 'images/201605/goods_img/35_G_1462851036470.jpg', 'images/201605/source_img/35_G_1462851036185.jpg', 1, '', 1, 1, 0, 0, 1462851036, 100, 0, 0, 0, 0, 0, 0, 1462948751, 0, '', -1, -1, 0, NULL),
-(69, 24, 'ECS000069', '平衡车', '+', 3, 15, '', 1, 0.000, 2398.79, 0, 1999.00, 0.00, 0, 0, 1, '', '', '<p><img src="/images/upload/Image/3_1.jpg" width="1311" height="656" alt="" />&nbsp;</p>', 'images/201605/thumb_img/69_thumb_G_1462955300971.jpg', 'images/201605/goods_img/69_G_1462955300173.jpg', 'images/201605/source_img/69_G_1462955300153.jpg', 1, '', 1, 1, 0, 19, 1462955300, 100, 0, 0, 0, 1, 0, 0, 1462956299, 0, '', -1, -1, 0, NULL),
-(70, 24, 'ECS000070', '炫彩翻页保护套', '+', 3, 15, '', 1, 0.000, 46.80, 0, 39.00, 0.00, 0, 0, 1, '', '', '<p><img src="/images/upload/Image/4_1.jpg" width="1226" height="1068" alt="" />&nbsp;</p>', 'images/201605/thumb_img/70_thumb_G_1462955414561.jpg', 'images/201605/goods_img/70_G_1462955414630.jpg', 'images/201605/source_img/70_G_1462955414637.jpg', 1, '', 1, 1, 0, 0, 1462955414, 100, 0, 0, 0, 1, 0, 0, 1462956059, 0, '', -1, -1, 0, NULL),
-(72, 24, 'ECS000072', '智能相机', '+', 3, 15, '', 20, 0.000, 178.79, 0, 149.00, 0.00, 0, 0, 1, '', '', '<p>&nbsp;<img src="http://cbu2.test.shopex123.com/images//20160510/5984c3f800d7ef3c.jpg" alt="" /></p>', 'images/201605/thumb_img/72_thumb_G_1462956048008.jpg', 'images/201605/goods_img/72_G_1462956048145.jpg', 'images/201605/source_img/72_G_1462956048413.jpg', 1, '', 1, 1, 0, 1, 1462956048, 100, 0, 0, 0, 0, 0, 0, 1462956070, 0, '', -1, -1, 0, NULL),
-(14, 4, 'ECS000014', '诺基亚5800XM', '+', 7, 0, '', 1, 0.000, 3150.00, 0, 2625.00, 0.00, 0, 0, 1, 'GSM 64和弦 2009年2月 320万摄像头 GPS 直板 工程塑料 支持 2008年10月 黑色', '', '', 'images/200905/thumb_img/14_thumb_G_1241968492116.jpg', 'images/200905/goods_img/14_G_1241968492932.jpg', 'images/200905/source_img/14_G_1241968492305.jpg', 1, '', 1, 1, 0, 26, 1241968492, 100, 0, 0, 0, 0, 0, 0, 1462950813, 9, '', -1, -1, NULL, NULL),
-(64, 24, 'ECS000064', '运动相机', '+', 6, 15, '', 1, 0.000, 478.79, 0, 399.00, 0.00, 0, 0, 1, '', '', '<p>&nbsp;<img src="/images/upload/Image/7f10afef2984ad18.jpg" width="1102" height="463" alt="" /></p>', 'images/201605/thumb_img/64_thumb_G_1462952811633.jpg', 'images/201605/goods_img/64_G_1462952811554.jpg', 'images/201605/source_img/64_G_1462952811926.jpg', 1, '', 1, 1, 0, 3, 1462952811, 100, 0, 0, 0, 1, 0, 0, 1462956062, 11, '', -1, -1, 0, NULL),
-(63, 24, 'ECS000063', '自拍杆', '+', 7, 15, '', 0, 0.000, 49.00, 0, 49.00, 0.00, 0, 0, 1, '', '', '<p>&nbsp;<img src="http://cbu2.test.shopex123.com/images//20160510/4f04b67e7a2035bd.jpg" alt="" /></p>', 'images/201605/thumb_img/63_thumb_G_1462953395609.jpg', 'images/201605/goods_img/63_G_1462953395397.jpg', 'images/201605/source_img/63_G_1462953395626.jpg', 1, '', 1, 1, 0, 0, 1462952749, 100, 0, 0, 0, 1, 0, 0, 1462956063, 12, '', -1, -1, 0, NULL),
-(61, 24, 'ECS000061', '视频', '+', 4, 15, '', 20, 0.000, 24.24, 0, 20.20, 0.00, 0, 0, 1, '', '', '<p>&nbsp;<img src="http://cbu2.test.shopex123.com/images//20160510/f60016cd295b0206.jpg" alt="" /></p>', 'images/201605/thumb_img/61_thumb_G_1462952376889.jpg', 'images/201605/goods_img/61_G_1462952376993.jpg', 'images/201605/source_img/61_G_1462952376155.jpg', 1, '', 1, 1, 0, 0, 1462952376, 100, 0, 0, 0, 0, 0, 0, 1462952466, 0, '', -1, -1, 0, NULL),
-(62, 24, 'ECS000062', '随身风扇', '+', 3, 15, '', 20, 0.000, 23.88, 0, 19.90, 0.00, 0, 0, 1, '', '', '<p><img src="http://cbu2.test.shopex123.com/images//20160510/271725cdf1d3a7a3.jpg" alt="" /></p>', 'images/201605/thumb_img/62_thumb_G_1462952557730.jpg', 'images/201605/goods_img/62_G_1462952557657.jpg', 'images/201605/source_img/62_G_1462952557842.jpg', 1, '', 1, 1, 0, 0, 1462952557, 100, 0, 0, 0, 0, 0, 0, 1462952601, 0, '', -1, -1, 0, NULL),
-(32, 3, 'ECS000032', '诺基亚N85', '+', 24, 0, '', 4, 0.000, 3612.00, 0, 3010.00, 2750.00, 1243756800, 1417248000, 1, '2008年10月 GSM,850,900,1800,1900 黑色', '', '<p>诺基亚N85参数</p><div>&nbsp;</div><div><table width="100%" cellspacing="1" cellpadding="0" border="0" bgcolor="#c5d7ed"><tbody><tr><td bgcolor="#f1f7fc" colspan="2"><p><b>基本参数</b></p></td></tr><tr><td width="100" valign="center" bgcolor="#ffffff" align="left">手机昵称</td><td width="450" bgcolor="#ffffff">N85</td></tr><tr><td width="100" valign="center" bgcolor="#ffffff" align="left">上市日期</td><td width="450" bgcolor="#ffffff">2008年10月</td></tr><tr><td width="100" valign="center" bgcolor="#ffffff" align="left">手机类型</td><td width="450" bgcolor="#ffffff">3G手机；拍照手机；智能手机</td></tr><tr><td width="100" valign="center" bgcolor="#ffffff" align="left">手机制式</td><td width="450" bgcolor="#ffffff">GSM</td></tr><tr><td width="100" valign="center" bgcolor="#ffffff" align="left">支持频段</td><td width="450" bgcolor="#ffffff">GSM850/900/1800/1900MHz</td></tr><tr><td width="100" valign="center" bgcolor="#ffffff" align="left">数据传输</td><td width="450" bgcolor="#ffffff">GPRS、EDGE</td></tr><tr><td width="100" valign="center" bgcolor="#ffffff" align="left">屏幕材质</td><td width="450" bgcolor="#ffffff">AMOLED</td></tr><tr><td width="100" valign="center" bgcolor="#ffffff" align="left">屏幕色彩</td><td width="450" bgcolor="#ffffff">1600万色</td></tr><tr><td width="100" valign="center" bgcolor="#ffffff" align="left">主屏尺寸</td><td width="450" bgcolor="#ffffff">2.6英寸</td></tr><tr><td width="100" valign="center" bgcolor="#ffffff" align="left">主屏参数</td><td width="450" bgcolor="#ffffff">QVGA 320&times;240像素</td></tr><tr><td width="100" valign="center" bgcolor="#ffffff" align="left">铃音描述</td><td width="450" bgcolor="#ffffff">可选MP3、WAV、AAC或和弦Midi铃声等格式</td></tr><tr><td width="100" valign="center" bgcolor="#ffffff" align="left">操作系统</td><td width="450" bgcolor="#ffffff">Symbian OS v9.3操作系统与S60 v3.2平台的组合</td></tr><tr><td width="100" valign="center" bgcolor="#ffffff" align="left">机身内存</td><td width="450" bgcolor="#ffffff">74MB 内部动态存储空间<br />            78MB 内置NAND闪存</td></tr><tr><td width="100" valign="center" bgcolor="#ffffff" align="left">存储卡</td><td width="450" bgcolor="#ffffff">支持MicroSD(T-Flash)卡扩展最大至8GB</td></tr><tr><td width="100" valign="center" bgcolor="#ffffff" align="left">电池规格</td><td width="450" bgcolor="#ffffff">1200毫安时锂电池</td></tr><tr><td width="100" valign="center" bgcolor="#ffffff" align="left">标配</td><td width="450" bgcolor="#ffffff">诺基亚 N85<br />            诺基亚电池（BL-5K）<br />            诺基亚旅行充电器（AC-10）<br />            诺基亚视频数据线（CA-75U）<br />            诺基亚数据线（CA-101）<br />            诺基亚音乐耳机（HS-45、AD-54）<br />            诺基亚 8 GB microSD 卡（MU-43）<br />            《用户手册》<br />            《快速入门》</td></tr><tr><td width="100" valign="center" bgcolor="#ffffff" align="left">理论通话时间</td><td width="450" bgcolor="#ffffff">6.9 小时</td></tr><tr><td width="100" valign="center" bgcolor="#ffffff" align="left">理论待机时间</td><td width="450" bgcolor="#ffffff">363 小时</td></tr><tr><td bgcolor="#f1f7fc" colspan="2"><p><b>产品外形</b></p></td></tr><tr><td width="100" valign="center" bgcolor="#ffffff" align="left">外观设计</td><td width="450" bgcolor="#ffffff">双向滑盖</td></tr><tr><td width="100" valign="center" bgcolor="#ffffff" align="left">产品尺寸</td><td width="450" bgcolor="#ffffff">103&times;50&times;16mm<br />            体积：76 立方厘米</td></tr><tr><td width="100" valign="center" bgcolor="#ffffff" align="left">手机重量</td><td width="450" bgcolor="#ffffff">128克</td></tr><tr><td width="100" valign="center" bgcolor="#ffffff" align="left">产品天线</td><td width="450" bgcolor="#ffffff">内置</td></tr><tr><td bgcolor="#f1f7fc" colspan="2"><p><b>拍照功能</b></p></td></tr><tr><td width="550" valign="center" bgcolor="#ffffff" align="left" style="padding: 8px 0px;" colspan="2"><table cellspacing="1" cellpadding="0" border="0" align="left"><tbody><tr><td width="100" style="padding: 5px 0px 5px 10px;"><table width="100%" cellspacing="1" cellpadding="0" border="0" bgcolor="#c5d7ed"><tbody><tr><td width="100%" bgcolor="#f1f7fc" align="middle" style="padding: 2px; font-weight: bold;">定时器</td></tr></tbody></table></td><td width="100" style="padding: 5px 0px 5px 10px;">&nbsp;</td></tr></tbody></table></td></tr><tr><td width="100" valign="center" bgcolor="#ffffff" align="left">摄像头</td><td width="450" bgcolor="#ffffff">内置</td></tr><tr><td width="100" valign="center" bgcolor="#ffffff" align="left">摄像头像素</td><td width="450" bgcolor="#ffffff">500万像素</td></tr><tr><td width="100" valign="center" bgcolor="#ffffff" align="left">连拍功能</td><td width="450" bgcolor="#ffffff">支持</td></tr><tr><td width="100" valign="center" bgcolor="#ffffff" align="left">LED闪光灯</td><td width="450" bgcolor="#ffffff">双LED 闪光灯</td></tr><tr><td width="100" valign="center" bgcolor="#ffffff" align="left">数码变焦</td><td width="450" bgcolor="#ffffff">20 倍数码变焦</td></tr><tr><td width="100" valign="center" bgcolor="#ffffff" align="left">拍摄模式</td><td width="450" bgcolor="#ffffff">静止、连拍、自动定时器、摄像</td></tr><tr><td width="100" valign="center" bgcolor="#ffffff" align="left">照片特效</td><td width="450" bgcolor="#ffffff">正常、怀旧、黑白、负片、逼真</td></tr><tr><td width="100" valign="center" bgcolor="#ffffff" align="left">拍照描述</td><td width="450" bgcolor="#ffffff">支持最大2592&times;1944分辨率照片拍摄<br />            支持JPEG、Exif格式<br />            白平衡模式：自动、阳光、阴天、白炽灯、荧光灯<br />            感光度模式：高、中、低、自动</td></tr><tr><td width="100" valign="center" bgcolor="#ffffff" align="left">视频拍摄</td><td width="450" bgcolor="#ffffff">最高支持640 x 480 像素（VGA）、30 帧/秒</td></tr><tr><td bgcolor="#f1f7fc" colspan="2"><p><b>娱乐功能</b></p></td></tr><tr><td width="550" valign="center" bgcolor="#ffffff" align="left" style="padding: 8px 0px;" colspan="2"><table cellspacing="1" cellpadding="0" border="0" align="left"><tbody><tr><td width="100" style="padding: 5px 0px 5px 10px;"><table width="100%" cellspacing="1" cellpadding="0" border="0" bgcolor="#c5d7ed"><tbody><tr><td width="100%" bgcolor="#f1f7fc" align="middle" style="padding: 2px; font-weight: bold;">收音机</td></tr></tbody></table></td><td width="100" style="padding: 5px 0px 5px 10px;"><table width="100%" cellspacing="1" cellpadding="0" border="0" bgcolor="#c5d7ed"><tbody><tr><td width="100%" bgcolor="#f1f7fc" align="middle" style="padding: 2px; font-weight: bold;">TV-OUT</td></tr></tbody></table></td><td width="100" style="padding: 5px 0px 5px 10px;"><table width="100%" cellspacing="1" cellpadding="0" border="0" bgcolor="#c5d7ed"><tbody><tr><td width="100%" bgcolor="#f1f7fc" align="middle" style="padding: 2px; font-weight: bold;">录音功能</td></tr></tbody></table></td><td width="100" style="padding: 5px 0px 5px 10px;"><table width="100%" cellspacing="1" cellpadding="0" border="0" bgcolor="#c5d7ed"><tbody><tr><td width="100%" bgcolor="#f1f7fc" align="middle" style="padding: 2px; font-weight: bold;">电子书</td></tr></tbody></table></td><td width="100" style="padding: 5px 0px 5px 10px;">&nbsp;</td></tr></tbody></table></td></tr><tr><td width="100" valign="center" bgcolor="#ffffff" align="left">视频播放</td><td width="450" bgcolor="#ffffff">内置RealPlayer播放器, 支持MPEG4、H.264/AVC、H.263/3GP、RealVideo等视频格式全屏播放</td></tr><tr><td width="100" valign="center" bgcolor="#ffffff" align="left">音乐播放</td><td width="450" bgcolor="#ffffff">内置播放器, 支持mp3、.wma、.aac、eAAC、eAAC+格式</td></tr><tr><td width="100" valign="center" bgcolor="#ffffff" align="left">游戏</td><td width="450" bgcolor="#ffffff">内置</td></tr><tr><td width="100" valign="center" bgcolor="#ffffff" align="left">Java功能</td><td width="450" bgcolor="#ffffff">支持Java MIDP 2.0 CLDC 1.1</td></tr><tr><td width="100" valign="center" bgcolor="#ffffff" align="left">Flash功能</td><td width="450" bgcolor="#ffffff">第3.0版Flash lite播放器</td></tr><tr><td bgcolor="#f1f7fc" colspan="2"><p><b>数据功能</b></p></td></tr><tr><td width="550" valign="center" bgcolor="#ffffff" align="left" style="padding: 8px 0px;" colspan="2"><table cellspacing="1" cellpadding="0" border="0" align="left"><tbody><tr><td width="100" style="padding: 5px 0px 5px 10px;"><table width="100%" cellspacing="1" cellpadding="0" border="0" bgcolor="#c5d7ed"><tbody><tr><td width="100%" bgcolor="#f1f7fc" align="middle" style="padding: 2px; font-weight: bold;">蓝牙功能</td></tr></tbody></table></td><td width="100" style="padding: 5px 0px 5px 10px;">&nbsp;</td></tr></tbody></table></td></tr><tr><td width="100" valign="center" bgcolor="#ffffff" align="left">数据线接口</td><td width="450" bgcolor="#ffffff">USB数据线 3.5mm立体声耳机插孔</td></tr><tr><td bgcolor="#f1f7fc" colspan="2"><p><b>基本功能</b></p></td></tr><tr><td width="550" valign="center" bgcolor="#ffffff" align="left" style="padding: 8px 0px;" colspan="2"><table cellspacing="1" cellpadding="0" border="0" align="left"><tbody><tr><td width="100" style="padding: 5px 0px 5px 10px;"><table width="100%" cellspacing="1" cellpadding="0" border="0" bgcolor="#c5d7ed"><tbody><tr><td width="100%" bgcolor="#f1f7fc" align="middle" style="padding: 2px; font-weight: bold;">短信(SMS)</td></tr></tbody></table></td><td width="100" style="padding: 5px 0px 5px 10px;"><table width="100%" cellspacing="1" cellpadding="0" border="0" bgcolor="#c5d7ed"><tbody><tr><td width="100%" bgcolor="#f1f7fc" align="middle" style="padding: 2px; font-weight: bold;">彩信(MMS)</td></tr></tbody></table></td><td width="100" style="padding: 5px 0px 5px 10px;"><table width="100%" cellspacing="1" cellpadding="0" border="0" bgcolor="#c5d7ed"><tbody><tr><td width="100%" bgcolor="#f1f7fc" align="middle" style="padding: 2px; font-weight: bold;">免提通话</td></tr></tbody></table></td><td width="100" style="padding: 5px 0px 5px 10px;"><table width="100%" cellspacing="1" cellpadding="0" border="0" bgcolor="#c5d7ed"><tbody><tr><td width="100%" bgcolor="#f1f7fc" align="middle" style="padding: 2px; font-weight: bold;">情景模式</td></tr></tbody></table></td><td width="100" style="padding: 5px 0px 5px 10px;"><table width="100%" cellspacing="1" cellpadding="0" border="0" bgcolor="#c5d7ed"><tbody><tr><td width="100%" bgcolor="#f1f7fc" align="middle" style="padding: 2px; font-weight: bold;">闹钟功能</td></tr></tbody></table></td></tr><tr><td width="100" style="padding: 5px 0px 5px 10px;"><table width="100%" cellspacing="1" cellpadding="0" border="0" bgcolor="#c5d7ed"><tbody><tr><td width="100%" bgcolor="#f1f7fc" align="middle" style="padding: 2px; font-weight: bold;">日历功能</td></tr></tbody></table></td><td width="100" style="padding: 5px 0px 5px 10px;">&nbsp;</td></tr></tbody></table></td></tr><tr><td width="100" valign="center" bgcolor="#ffffff" align="left">输入方式</td><td width="450" bgcolor="#ffffff">键盘</td></tr><tr><td width="100" valign="center" bgcolor="#ffffff" align="left">通话记录</td><td width="450" bgcolor="#ffffff">未接来电+已接来电+已拨电话记录</td></tr><tr><td width="100" valign="center" bgcolor="#ffffff" align="left">通讯录</td><td width="450" bgcolor="#ffffff">S60标准化名片式通讯录</td></tr><tr><td bgcolor="#f1f7fc" colspan="2"><p><b>网络功能</b></p></td></tr><tr><td width="550" valign="center" bgcolor="#ffffff" align="left" style="padding: 8px 0px;" colspan="2"><table cellspacing="1" cellpadding="0" border="0" align="left"><tbody><tr><td width="100" style="padding: 5px 0px 5px 10px;"><table width="100%" cellspacing="1" cellpadding="0" border="0" bgcolor="#c5d7ed"><tbody><tr><td width="100%" bgcolor="#f1f7fc" align="middle" style="padding: 2px; font-weight: bold;">电子邮件</td></tr></tbody></table></td><td width="100" style="padding: 5px 0px 5px 10px;"><table width="100%" cellspacing="1" cellpadding="0" border="0" bgcolor="#c5d7ed"><tbody><tr><td width="100%" bgcolor="#f1f7fc" align="middle" style="padding: 2px; font-weight: bold;">WWW浏览器</td></tr></tbody></table></td><td width="100" style="padding: 5px 0px 5px 10px;"><table width="100%" cellspacing="1" cellpadding="0" border="0" bgcolor="#c5d7ed"><tbody><tr><td width="100%" bgcolor="#f1f7fc" align="middle" style="padding: 2px; font-weight: bold;">WAP浏览器</td></tr></tbody></table></td><td width="100" style="padding: 5px 0px 5px 10px;">&nbsp;</td></tr></tbody></table></td></tr><tr><td bgcolor="#f1f7fc" colspan="2"><p><b>商务功能</b></p></td></tr><tr><td width="550" valign="center" bgcolor="#ffffff" align="left" style="padding: 8px 0px;" colspan="2"><table cellspacing="1" cellpadding="0" border="0" align="left"><tbody><tr><td width="100" style="padding: 5px 0px 5px 10px;"><table width="100%" cellspacing="1" cellpadding="0" border="0" bgcolor="#c5d7ed"><tbody><tr><td width="100%" bgcolor="#f1f7fc" align="middle" style="padding: 2px; font-weight: bold;">飞行模式</td></tr></tbody></table></td><td width="100" style="padding: 5px 0px 5px 10px;"><table width="100%" cellspacing="1" cellpadding="0" border="0" bgcolor="#c5d7ed"><tbody><tr><td width="100%" bgcolor="#f1f7fc" align="middle" style="padding: 2px; font-weight: bold;">语音拨号</td></tr></tbody></table></td><td width="100" style="padding: 5px 0px 5px 10px;"><table width="100%" cellspacing="1" cellpadding="0" border="0" bgcolor="#c5d7ed"><tbody><tr><td width="100%" bgcolor="#f1f7fc" align="middle" style="padding: 2px; font-weight: bold;">备忘录</td></tr></tbody></table></td><td width="100" style="padding: 5px 0px 5px 10px;"><table width="100%" cellspacing="1" cellpadding="0" border="0" bgcolor="#c5d7ed"><tbody><tr><td width="100%" bgcolor="#f1f7fc" align="middle" style="padding: 2px; font-weight: bold;">日程表</td></tr></tbody></table></td><td width="100" style="padding: 5px 0px 5px 10px;"><table width="100%" cellspacing="1" cellpadding="0" border="0" bgcolor="#c5d7ed"><tbody><tr><td width="100%" bgcolor="#f1f7fc" align="middle" style="padding: 2px; font-weight: bold;">世界时间</td></tr></tbody></table></td></tr><tr><td width="100" style="padding: 5px 0px 5px 10px;">&nbsp;</td></tr></tbody></table></td></tr><tr><td bgcolor="#f1f7fc" colspan="2"><p><b>其他功能</b></p></td></tr><tr><td width="550" valign="center" bgcolor="#ffffff" align="left" style="padding: 8px 0px;" colspan="2"><table cellspacing="1" cellpadding="0" border="0" align="left"><tbody><tr><td width="100" style="padding: 5px 0px 5px 10px;"><table width="100%" cellspacing="1" cellpadding="0" border="0" bgcolor="#c5d7ed"><tbody><tr><td width="100%" bgcolor="#f1f7fc" align="middle" style="padding: 2px; font-weight: bold;">GPS功能</td></tr></tbody></table></td><td width="100" style="padding: 5px 0px 5px 10px;"><table width="100%" cellspacing="1" cellpadding="0" border="0" bgcolor="#c5d7ed"><tbody><tr><td width="100%" bgcolor="#f1f7fc" align="middle" style="padding: 2px; font-weight: bold;">电子词典</td></tr></tbody></table></td><td width="100" style="padding: 5px 0px 5px 10px;"><table width="100%" cellspacing="1" cellpadding="0" border="0" bgcolor="#c5d7ed"><tbody><tr><td width="100%" bgcolor="#f1f7fc" align="middle" style="padding: 2px; font-weight: bold;">待机图片</td></tr></tbody></table></td><td width="100" style="padding: 5px 0px 5px 10px;"><table width="100%" cellspacing="1" cellpadding="0" border="0" bgcolor="#c5d7ed"><tbody><tr><td width="100%" bgcolor="#f1f7fc" align="middle" style="padding: 2px; font-weight: bold;">计算器</td></tr></tbody></table></td><td width="100" style="padding: 5px 0px 5px 10px;"><table width="100%" cellspacing="1" cellpadding="0" border="0" bgcolor="#c5d7ed"><tbody><tr><td width="100%" bgcolor="#f1f7fc" align="middle" style="padding: 2px; font-weight: bold;">来电铃声识别</td></tr></tbody></table></td></tr><tr><td width="100" style="padding: 5px 0px 5px 10px;"><table width="100%" cellspacing="1" cellpadding="0" border="0" bgcolor="#c5d7ed"><tbody><tr><td width="100%" bgcolor="#f1f7fc" align="middle" style="padding: 2px; font-weight: bold;">来电图片识别</td></tr></tbody></table></td><td width="100" style="padding: 5px 0px 5px 10px;"><table width="100%" cellspacing="1" cellpadding="0" border="0" bgcolor="#c5d7ed"><tbody><tr><td width="100%" bgcolor="#f1f7fc" align="middle" style="padding: 2px; font-weight: bold;">来电防火墙</td></tr></tbody></table></td><td width="100" style="padding: 5px 0px 5px 10px;"><table width="100%" cellspacing="1" cellpadding="0" border="0" bgcolor="#c5d7ed"><tbody><tr><td width="100%" bgcolor="#f1f7fc" align="middle" style="padding: 2px; font-weight: bold;">动画屏保</td></tr></tbody></table></td><td width="100" style="padding: 5px 0px 5px 10px;"><table width="100%" cellspacing="1" cellpadding="0" border="0" bgcolor="#c5d7ed"><tbody><tr><td width="100%" bgcolor="#f1f7fc" align="middle" style="padding: 2px; font-weight: bold;">图形菜单</td></tr></tbody></table></td><td width="100" style="padding: 5px 0px 5px 10px;"><table width="100%" cellspacing="1" cellpadding="0" border="0" bgcolor="#c5d7ed"><tbody><tr><td width="100%" bgcolor="#f1f7fc" align="middle" style="padding: 2px; font-weight: bold;">秒表</td></tr></tbody></table></td></tr><tr><td width="100" style="padding: 5px 0px 5px 10px;"><table width="100%" cellspacing="1" cellpadding="0" border="0" bgcolor="#c5d7ed"><tbody><tr><td width="100%" bgcolor="#f1f7fc" align="middle" style="padding: 2px; font-weight: bold;">单位换算</td></tr></tbody></table></td><td width="100" style="padding: 5px 0px 5px 10px;"><table width="100%" cellspacing="1" cellpadding="0" border="0"><tbody><tr><td width="100%" align="middle" style="padding: 2px; float: none;">&nbsp;</td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table></div><p>&nbsp;</p>', 'images/200905/thumb_img/32_thumb_G_1242110760196.jpg', 'images/200905/goods_img/32_G_1242110760868.jpg', 'images/200905/source_img/32_G_1242110760437.jpg', 1, '', 1, 1, 0, 30, 1242110760, 100, 0, 0, 1, 0, 1, 0, 1462950812, 9, '', -1, -1, 0, NULL),
-(68, 24, 'ECS000068', '透明超薄软胶保护套', '+', 4, 15, '', 1, 0.000, 22.80, 0, 19.00, 0.00, 0, 0, 1, '', '', '<p><img src="/images/upload/Image/2_1.jpg" width="1240" height="869" alt="" />&nbsp;</p>', 'images/201605/thumb_img/68_thumb_G_1462955204381.jpg', 'images/201605/goods_img/68_G_1462955204977.jpg', 'images/201605/source_img/68_G_1462955204991.jpg', 1, '', 1, 1, 0, 0, 1462955204, 100, 0, 0, 0, 1, 0, 0, 1462956062, 0, '', -1, -1, 0, NULL),
-(36, 18, 'ECS000036', '路由器', '+', 0, 0, '', 1, 0.000, 178.79, 0, 149.00, 0.00, 0, 0, 1, '', '', '', 'images/201605/thumb_img/36_thumb_G_1462851087913.jpg', 'images/201605/goods_img/36_G_1462851087064.jpg', 'images/201605/source_img/36_G_1462851087201.jpg', 1, '', 1, 1, 0, 1, 1462851087, 100, 0, 0, 0, 0, 0, 0, 1462948887, 0, '', -1, -1, 0, NULL),
-(37, 19, 'ECS000037', 'Note3 钢化玻璃膜(0.33mm) ', '+', 2, 15, '', 1, 0.000, 19.00, 0, 19.00, 0.00, 0, 0, 1, '', '', '', 'images/201605/thumb_img/37_thumb_G_1462852086266.jpg', 'images/201605/goods_img/37_G_1462852086030.jpg', 'images/201605/source_img/37_G_1462852086626.jpg', 1, '', 1, 1, 0, 0, 1462852086, 100, 0, 0, 0, 0, 0, 0, 1462948878, 0, '', -1, -1, 0, NULL),
-(38, 19, 'ECS000038', '圈铁耳机', '+', 2, 15, '', 1, 0.000, 118.80, 0, 99.00, 0.00, 0, 0, 1, '', '', '', 'images/201605/thumb_img/38_thumb_G_1462951652474.jpg', 'images/201605/goods_img/38_G_1462951652287.jpg', 'images/201605/source_img/38_G_1462951652405.jpg', 1, '', 1, 1, 0, 0, 1462852185, 100, 0, 0, 0, 0, 0, 0, 1462951652, 0, '', -1, -1, 0, NULL),
-(39, 19, 'ECS000039', '移动电源 10000mAh 高配版', '+', 1, 15, '', 1, 0.000, 178.79, 0, 149.00, 0.00, 0, 0, 1, '', '', '', 'images/201605/thumb_img/39_thumb_G_1462852326734.jpg', 'images/201605/goods_img/39_G_1462852326708.jpg', 'images/201605/source_img/39_G_1462852326569.jpg', 1, '', 1, 1, 0, 1, 1462852326, 100, 0, 0, 0, 0, 0, 0, 1462948797, 0, '', -1, -1, 0, NULL),
-(40, 19, 'ECS000040', ' 炫彩翻页保护套', '+', 2, 15, '', 1, 0.000, 39.00, 0, 39.00, 0.00, 0, 0, 1, '', '', '', 'images/201605/thumb_img/40_thumb_G_1462852478804.jpg', 'images/201605/goods_img/40_G_1462852478331.jpg', 'images/201605/source_img/40_G_1462852478647.jpg', 1, '', 1, 1, 0, 0, 1462852478, 100, 0, 0, 0, 0, 0, 0, 1462948859, 0, '', -1, -1, 0, NULL),
-(41, 19, 'ECS000041', '蓝牙耳机', '+', 1, 15, '', 1, 0.000, 94.80, 0, 79.00, 0.00, 0, 0, 1, '', '', '', 'images/201605/thumb_img/41_thumb_G_1462951739925.jpg', 'images/201605/goods_img/41_G_1462951739858.jpg', 'images/201605/source_img/41_G_1462951739827.jpg', 1, '', 1, 1, 0, 0, 1462852621, 100, 0, 0, 0, 0, 0, 0, 1462951739, 0, '', -1, -1, 0, NULL),
-(42, 16, 'ECS000042', '短袖T恤 米兔大游行', '+', 0, 0, '', 1, 0.000, 46.80, 0, 39.00, 0.00, 0, 0, 1, '', '', '', 'images/201605/thumb_img/42_thumb_G_1462852622356.jpg', 'images/201605/goods_img/42_G_1462852622613.jpg', 'images/201605/source_img/42_G_1462852622905.jpg', 1, '', 1, 1, 0, 0, 1462852622, 100, 0, 0, 0, 0, 0, 0, 1462948781, 0, '', -1, -1, 0, NULL),
-(43, 16, 'ECS000043', '短袖T恤 摇滚星球', '+', 0, 0, '', 1, 0.000, 46.80, 0, 39.00, 0.00, 0, 0, 1, '', '', '', 'images/201605/thumb_img/43_thumb_G_1462852740405.jpg', 'images/201605/goods_img/43_G_1462852740043.jpg', 'images/201605/source_img/43_G_1462852740973.jpg', 1, '', 1, 1, 0, 0, 1462852674, 100, 0, 0, 0, 0, 0, 0, 1462948773, 0, '', -1, -1, 0, NULL),
-(44, 16, 'ECS000044', '短袖POLO衫 女款', '+', 1, 0, '', 1, 0.000, 70.80, 0, 59.00, 0.00, 0, 0, 1, '', '', '', 'images/201605/thumb_img/44_thumb_G_1462854145205.jpg', 'images/201605/goods_img/44_G_1462854145484.jpg', 'images/201605/source_img/44_G_1462854145205.jpg', 1, '', 1, 1, 0, 0, 1462852818, 100, 0, 0, 0, 0, 0, 0, 1462948765, 0, '', -1, -1, 0, NULL),
-(45, 19, 'ECS000045', '自拍杆', '+', 4, 15, '', 1, 0.000, 58.80, 0, 49.00, 0.00, 0, 0, 1, '', '', '', 'images/201605/thumb_img/45_thumb_G_1462852876726.jpg', 'images/201605/goods_img/45_G_1462852876401.jpg', 'images/201605/source_img/45_G_1462852876959.jpg', 1, '', 1, 1, 0, 0, 1462852839, 100, 0, 0, 0, 0, 0, 0, 1462948758, 0, '', -1, -1, 0, NULL),
-(46, 16, 'ECS000046', 'V领短袖T恤 女款', '+', 0, 0, '', 1, 0.000, 46.80, 0, 39.00, 0.00, 0, 0, 1, '', '', '', 'images/201605/thumb_img/46_thumb_G_1462852854005.jpg', 'images/201605/goods_img/46_G_1462852854671.jpg', 'images/201605/source_img/46_G_1462852854698.jpg', 1, '', 1, 1, 0, 0, 1462852854, 100, 0, 0, 0, 0, 0, 0, 1462948979, 0, '', -1, -1, 0, NULL),
-(47, 16, 'ECS000047', '极简都市双肩包', '+', 0, 0, '', 1, 0.000, 178.79, 0, 149.00, 0.00, 0, 0, 1, '', '', '', 'images/201605/thumb_img/47_thumb_G_1462852887996.jpg', 'images/201605/goods_img/47_G_1462852887140.jpg', 'images/201605/source_img/47_G_1462852887382.jpg', 1, '', 1, 1, 0, 1, 1462852887, 100, 0, 0, 0, 0, 0, 0, 1462948987, 0, '', -1, -1, 0, NULL),
-(48, 16, 'ECS000048', '学院风简约双肩包', '+', 1, 0, '', 1, 0.000, 70.80, 0, 59.00, 0.00, 0, 0, 1, '', '', '', 'images/201605/thumb_img/48_thumb_G_1462852915482.jpg', 'images/201605/goods_img/48_G_1462852915946.jpg', 'images/201605/source_img/48_G_1462852915332.jpg', 1, '', 1, 1, 0, 0, 1462852915, 100, 0, 0, 0, 0, 0, 0, 1462853206, 0, '', -1, -1, 0, NULL),
-(49, 19, 'ECS000049', '随身风扇', '+', 2, 0, '', 1, 0.000, 23.88, 0, 19.90, 0.00, 0, 0, 1, '', '', '', 'images/201605/thumb_img/49_thumb_G_1462852939697.jpg', 'images/201605/goods_img/49_G_1462852939406.jpg', 'images/201605/source_img/49_G_1462852939577.jpg', 1, '', 1, 1, 0, 0, 1462852939, 100, 0, 0, 0, 0, 0, 0, 1462953248, 0, '', -1, -1, 0, NULL),
-(50, 19, 'ECS000050', '移动电源16000mAh', '+', 2, 15, '', 1, 0.000, 154.79, 0, 129.00, 0.00, 0, 0, 1, '', '', '', 'images/201605/thumb_img/50_thumb_G_1462852961640.jpg', 'images/201605/goods_img/50_G_1462852961232.jpg', 'images/201605/source_img/50_G_1462852961568.jpg', 1, '', 1, 1, 0, 1, 1462852961, 100, 0, 0, 0, 0, 0, 0, 1462948940, 0, '', -1, -1, 0, NULL),
-(51, 19, 'ECS000051', '鼠标垫', '+', 3, 0, '', 1, 0.000, 5.88, 0, 4.90, 0.00, 0, 0, 1, '', '', '', 'images/201605/thumb_img/51_thumb_G_1462852967936.jpg', 'images/201605/goods_img/51_G_1462852967543.jpg', 'images/201605/source_img/51_G_1462852967694.jpg', 1, '', 1, 1, 0, 0, 1462852967, 100, 0, 0, 0, 0, 0, 0, 1462953228, 0, '', -1, -1, 0, NULL),
-(52, 8, 'ECS000052', '活塞耳机 三大升级 全新听歌神器', '+', 0, 15, '', 1, 0.000, 99.00, 0, 69.00, 0.00, 0, 0, 1, '', '', '', 'images/201605/thumb_img/52_thumb_G_1462951604146.jpg', 'images/201605/goods_img/52_G_1462951604094.jpg', 'images/201605/source_img/52_G_1462951604873.jpg', 1, '', 1, 1, 0, 0, 1462853039, 100, 0, 0, 0, 0, 0, 0, 1462952608, 0, '', -1, -1, 0, NULL),
-(53, 8, 'ECS000053', '活塞耳机 标准版', '+', 2, 15, '', 1, 0.000, 34.80, 0, 29.00, 0.00, 0, 0, 1, '', '', '', 'images/201605/thumb_img/53_thumb_G_1462951586603.jpg', 'images/201605/goods_img/53_G_1462951586918.jpg', 'images/201605/source_img/53_G_1462951586806.jpg', 1, '', 1, 1, 0, 0, 1462853130, 100, 0, 0, 0, 0, 0, 0, 1462951586, 0, '', -1, -1, 0, NULL),
-(54, 6, 'ECS000054', '插线板', '+', 0, 15, '', 1, 0.000, 58.80, 0, 49.00, 0.00, 0, 0, 1, '', '', '', 'images/201605/thumb_img/54_thumb_G_1462853264300.jpg', 'images/201605/goods_img/54_G_1462853264188.jpg', 'images/201605/source_img/54_G_1462853264278.jpg', 1, '', 1, 1, 0, 0, 1462853264, 100, 0, 0, 0, 0, 0, 0, 1462952652, 0, '', -1, -1, 0, NULL),
-(55, 22, 'ECS000055', '移动电源10000mAh', '+', 0, 15, '', 1, 0.000, 82.80, 0, 69.00, 0.00, 0, 0, 1, '', '', '', 'images/201605/thumb_img/55_thumb_G_1462853376632.jpg', 'images/201605/goods_img/55_G_1462853376630.jpg', 'images/201605/source_img/55_G_1462853376496.jpg', 1, '', 1, 1, 0, 0, 1462853376, 100, 0, 0, 0, 0, 0, 0, 1462956052, 0, '', -1, -1, 0, NULL),
-(58, 20, 'ECS000058', '手机3高配版 超薄钢化玻璃膜(0.22mm) ', '+', 7, 15, '', 1, 0.000, 34.80, 0, 29.00, 0.00, 0, 0, 1, '', '', '', 'images/201605/thumb_img/58_thumb_G_1462854555007.jpg', 'images/201605/goods_img/58_G_1462854555626.jpg', 'images/201605/source_img/58_G_1462854555917.jpg', 1, '', 1, 1, 0, 0, 1462854555, 100, 0, 0, 0, 0, 0, 0, 1462956051, 0, '', -1, -1, 0, NULL),
-(59, 6, 'ECS000059', ' 标准高透贴膜(2片装) ', '+', 4, 15, '', 1, 0.000, 22.80, 0, 19.00, 0.00, 0, 0, 1, '', '', '', 'images/201605/thumb_img/59_thumb_G_1462854683029.jpg', 'images/201605/goods_img/59_G_1462854683071.jpg', 'images/201605/source_img/59_G_1462854683549.jpg', 1, '', 1, 1, 0, 0, 1462854683, 100, 0, 0, 0, 0, 0, 0, 1462956051, 0, '', -1, -1, 0, NULL),
-(60, 6, 'ECS000060', '指环式防滑手机支架', '+', 14, 15, '', 1, 0.000, 15.00, 0, 12.50, 0.00, 0, 0, 1, '', '', '', 'images/201605/thumb_img/60_thumb_G_1462854857483.jpg', 'images/201605/goods_img/60_G_1462854857550.jpg', 'images/201605/source_img/60_G_1462854857625.jpg', 1, '', 1, 1, 0, 0, 1462854857, 100, 0, 0, 0, 0, 0, 0, 1462956050, 0, '', -1, -1, 0, NULL);
-
--- --------------------------------------------------------
-
---
--- 表的结构 `goods_activity`
---
-
-CREATE TABLE IF NOT EXISTS `goods_activity` (
-  `act_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
-  `act_name` varchar(255) NOT NULL,
-  `act_desc` text NOT NULL,
-  `act_type` tinyint(3) unsigned NOT NULL,
-  `goods_id` mediumint(8) unsigned NOT NULL,
-  `product_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `goods_name` varchar(255) NOT NULL,
-  `start_time` int(10) unsigned NOT NULL,
-  `end_time` int(10) unsigned NOT NULL,
-  `is_finished` tinyint(3) unsigned NOT NULL,
-  `ext_info` text NOT NULL,
-  PRIMARY KEY (`act_id`),
-  KEY `act_name` (`act_name`,`act_type`,`goods_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
-
--- --------------------------------------------------------
-
---
--- 表的结构 `goods_article`
---
-
-CREATE TABLE IF NOT EXISTS `goods_article` (
-  `goods_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `article_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `admin_id` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  PRIMARY KEY (`goods_id`,`article_id`,`admin_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
---
--- 转存表中的数据 `goods_article`
---
-
-INSERT INTO `goods_article` (`goods_id`, `article_id`, `admin_id`) VALUES
-(1, 27, 1),
-(8, 28, 0),
-(9, 8, 1),
-(13, 29, 0),
-(14, 29, 0),
-(14, 31, 0),
-(23, 8, 1),
-(23, 30, 0),
-(23, 31, 0),
-(32, 8, 1),
-(32, 30, 0);
-
--- --------------------------------------------------------
-
---
--- 表的结构 `goods_attr`
---
-
-CREATE TABLE IF NOT EXISTS `goods_attr` (
-  `goods_attr_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `goods_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `attr_id` smallint(5) unsigned NOT NULL DEFAULT '0',
-  `attr_value` text NOT NULL,
-  `attr_price` varchar(255) NOT NULL DEFAULT '',
-  PRIMARY KEY (`goods_attr_id`),
-  KEY `goods_id` (`goods_id`),
-  KEY `attr_id` (`attr_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=239 ;
-
---
--- 转存表中的数据 `goods_attr`
---
-
-INSERT INTO `goods_attr` (`goods_attr_id`, `goods_id`, `attr_id`, `attr_value`, `attr_price`) VALUES
-(238, 1, 173, 'GSM,850,900,1800,1900', '0'),
-(237, 1, 185, '灰色', ''),
-(236, 1, 191, '支持', '0'),
-(235, 1, 190, '支持', '0'),
-(234, 1, 189, '2.4英寸', '0'),
-(233, 1, 172, '2008年04月', '0'),
-(228, 9, 178, '滑盖', '0'),
-(227, 9, 185, '白色', '0'),
-(226, 9, 185, '黑色', '10'),
-(232, 8, 178, '直板', '0'),
-(231, 8, 185, '黑色', ''),
-(230, 8, 190, '支持', '0'),
-(229, 8, 189, '1.75英寸', '0'),
-(212, 14, 172, '2008年10月', '0'),
-(213, 14, 185, '黑色', '0'),
-(214, 14, 178, '直板', '0'),
-(152, 32, 172, '2008年10月', '0'),
-(153, 32, 180, 'MicroSD', '0'),
-(154, 32, 181, '78MB', '0'),
-(155, 32, 182, 'Symbian OS v9.3', '0'),
-(156, 32, 189, '2.6英寸', '0'),
-(157, 32, 210, '线控耳机', '50'),
-(158, 32, 210, '蓝牙耳机', '100'),
-(159, 32, 210, '数据线', '12'),
-(160, 32, 173, 'GSM,850,900,1800,1900', '0'),
-(161, 32, 174, '6.9 小時', '0'),
-(162, 32, 175, '363 小時', '0'),
-(163, 32, 185, '黑色', '1000');
-
--- --------------------------------------------------------
-
---
--- 表的结构 `goods_cat`
---
-
-CREATE TABLE IF NOT EXISTS `goods_cat` (
-  `goods_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `cat_id` smallint(5) unsigned NOT NULL DEFAULT '0',
-  PRIMARY KEY (`goods_id`,`cat_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
---
--- 转存表中的数据 `goods_cat`
---
-
-INSERT INTO `goods_cat` (`goods_id`, `cat_id`) VALUES
-(8, 2),
-(8, 5);
-
--- --------------------------------------------------------
-
---
--- 表的结构 `goods_gallery`
---
-
-CREATE TABLE IF NOT EXISTS `goods_gallery` (
-  `img_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
-  `goods_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `img_url` varchar(255) NOT NULL DEFAULT '',
-  `img_desc` varchar(255) NOT NULL DEFAULT '',
-  `thumb_url` varchar(255) NOT NULL DEFAULT '',
-  `img_original` varchar(255) NOT NULL DEFAULT '',
-  PRIMARY KEY (`img_id`),
-  KEY `goods_id` (`goods_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=44 ;
-
---
--- 转存表中的数据 `goods_gallery`
---
-
-INSERT INTO `goods_gallery` (`img_id`, `goods_id`, `img_url`, `img_desc`, `thumb_url`, `img_original`) VALUES
-(1, 1, 'images/200905/goods_img/1_P_1240902890730.gif', '', 'images/200905/thumb_img/1_thumb_P_1240902890139.jpg', 'images/200905/source_img/1_P_1240902890193.gif'),
-(2, 1, 'images/200905/goods_img/1_P_1240904370445.jpg', '', 'images/200905/thumb_img/1_thumb_P_1240904370846.jpg', 'images/200905/source_img/1_P_1240904370647.jpg'),
-(3, 1, 'images/200905/goods_img/1_P_1240904371414.jpg', '', 'images/200905/thumb_img/1_thumb_P_1240904371539.jpg', 'images/200905/source_img/1_P_1240904371019.jpg'),
-(4, 1, 'images/200905/goods_img/1_P_1240904371355.jpg', '', 'images/200905/thumb_img/1_thumb_P_1240904371335.jpg', 'images/200905/source_img/1_P_1240904371118.jpg'),
-(5, 1, 'images/200905/goods_img/1_P_1240904371252.jpg', '', 'images/200905/thumb_img/1_thumb_P_1240904371430.jpg', 'images/200905/source_img/1_P_1240904371758.jpg'),
-(6, 3, 'images/200905/goods_img/3_P_1241422082461.jpg', '', 'images/200905/thumb_img/3_thumb_P_1241422082160.jpg', 'images/200905/source_img/3_P_1241422082816.jpg'),
-(7, 4, 'images/200905/goods_img/4_P_1241422402169.jpg', '', 'images/200905/thumb_img/4_thumb_P_1241422402909.jpg', 'images/200905/source_img/4_P_1241422402362.jpg'),
-(8, 5, 'images/200905/goods_img/5_P_1241422518168.jpg', '', 'images/200905/thumb_img/5_thumb_P_1241422518416.jpg', 'images/200905/source_img/5_P_1241422518314.jpg'),
-(9, 7, 'images/200905/goods_img/7_P_1241422785926.jpg', '', 'images/200905/thumb_img/7_thumb_P_1241422785889.jpg', 'images/200905/source_img/7_P_1241422785172.jpg'),
-(10, 8, 'images/200905/goods_img/8_P_1241425513388.jpg', '', 'images/200905/thumb_img/8_thumb_P_1241425513834.jpg', 'images/200905/source_img/8_P_1241425513810.jpg'),
-(11, 8, 'images/200905/goods_img/8_P_1241425891781.JPG', '正面', 'images/200905/thumb_img/8_thumb_P_1241425891460.jpg', 'images/200905/source_img/8_P_1241425891321.JPG'),
-(12, 8, 'images/200905/goods_img/8_P_1241425891193.jpg', '背面', 'images/200905/thumb_img/8_thumb_P_1241425892547.jpg', 'images/200905/source_img/8_P_1241425891588.jpg'),
-(13, 8, 'images/200905/goods_img/8_P_1241425892941.JPG', '侧面', 'images/200905/thumb_img/8_thumb_P_1241425892356.jpg', 'images/200905/source_img/8_P_1241425892999.JPG'),
-(14, 9, 'images/200905/goods_img/9_P_1241511871575.jpg', '', 'images/200905/thumb_img/9_thumb_P_1241511871787.jpg', 'images/200905/source_img/9_P_1241511871749.jpg'),
-(15, 12, 'images/200905/goods_img/12_P_1241965978060.jpg', '', 'images/200905/thumb_img/12_thumb_P_1241965978845.jpg', 'images/200905/source_img/12_P_1241965978333.jpg'),
-(16, 12, 'images/200905/goods_img/12_P_1241966218046.jpg', '', 'images/200905/thumb_img/12_thumb_P_1241966218835.jpg', 'images/200905/source_img/12_P_1241966218225.jpg'),
-(17, 12, 'images/200905/goods_img/12_P_1241966218391.jpg', '', 'images/200905/thumb_img/12_thumb_P_1241966218843.jpg', 'images/200905/source_img/12_P_1241966218859.jpg'),
-(18, 13, 'images/200905/goods_img/13_P_1241967762510.jpg', '', 'images/200905/thumb_img/13_thumb_P_1241967762510.jpg', 'images/200905/source_img/13_P_1241967762358.jpg'),
-(19, 13, 'images/200905/goods_img/13_P_1241968002659.jpg', '', 'images/200905/thumb_img/13_thumb_P_1241968002193.jpg', 'images/200905/source_img/13_P_1241968002709.jpg'),
-(20, 14, 'images/200905/goods_img/14_P_1241968492774.jpg', '', 'images/200905/thumb_img/14_thumb_P_1241968492168.jpg', 'images/200905/source_img/14_P_1241968492973.jpg'),
-(21, 14, 'images/200905/goods_img/14_P_1241968492721.jpg', '', 'images/200905/thumb_img/14_thumb_P_1241968492995.jpg', 'images/200905/source_img/14_P_1241968492307.jpg'),
-(22, 14, 'images/200905/goods_img/14_P_1241968492279.jpg', '', 'images/200905/thumb_img/14_thumb_P_1241968492674.jpg', 'images/200905/source_img/14_P_1241968492392.jpg'),
-(23, 16, 'images/200905/goods_img/16_P_1241968949498.jpg', '', 'images/200905/thumb_img/16_thumb_P_1241968949965.jpg', 'images/200905/source_img/16_P_1241968949069.jpg'),
-(24, 17, 'images/200905/goods_img/17_P_1241969394354.jpg', '', 'images/200905/thumb_img/17_thumb_P_1241969394537.jpg', 'images/200905/source_img/17_P_1241969394369.jpg'),
-(25, 19, 'images/200905/goods_img/19_P_1241970140820.jpg', '', 'images/200905/thumb_img/19_thumb_P_1241970140527.jpg', 'images/200905/source_img/19_P_1241970139925.jpg'),
-(26, 19, 'images/200905/goods_img/19_P_1241970140600.jpg', '', 'images/200905/thumb_img/19_thumb_P_1241970140229.jpg', 'images/200905/source_img/19_P_1241970140187.jpg'),
-(27, 19, 'images/200905/goods_img/19_P_1241970175007.jpg', '', 'images/200905/thumb_img/19_thumb_P_1241970175086.jpg', 'images/200905/source_img/19_P_1241970175028.jpg'),
-(28, 22, 'images/200905/goods_img/22_P_1241971076061.jpg', '', 'images/200905/thumb_img/22_thumb_P_1241971076595.jpg', 'images/200905/source_img/22_P_1241971076696.jpg'),
-(29, 23, 'images/200905/goods_img/23_P_1241971556661.jpg', '', 'images/200905/thumb_img/23_thumb_P_1241971556920.jpg', 'images/200905/source_img/23_P_1241971556122.jpg'),
-(30, 24, 'images/200905/goods_img/24_P_1241971981420.jpg', '', 'images/200905/thumb_img/24_thumb_P_1241971981834.jpg', 'images/200905/source_img/24_P_1241971981824.jpg'),
-(31, 25, 'images/200905/goods_img/25_P_1241972709888.jpg', '', 'images/200905/thumb_img/25_thumb_P_1241972709070.jpg', 'images/200905/source_img/25_P_1241972709222.jpg'),
-(32, 26, 'images/200905/goods_img/26_P_1241972789025.jpg', '', 'images/200905/thumb_img/26_thumb_P_1241972789061.jpg', 'images/200905/source_img/26_P_1241972789731.jpg'),
-(33, 27, 'images/200905/goods_img/27_P_1241972894128.jpg', '', 'images/200905/thumb_img/27_thumb_P_1241972894915.jpg', 'images/200905/source_img/27_P_1241972894886.jpg'),
-(34, 28, 'images/200905/goods_img/28_P_1241972976099.jpg', '', 'images/200905/thumb_img/28_thumb_P_1241972976277.jpg', 'images/200905/source_img/28_P_1241972976150.jpg'),
-(35, 29, 'images/200905/goods_img/29_P_1241973022876.jpg', '', 'images/200905/thumb_img/29_thumb_P_1241973022886.jpg', 'images/200905/source_img/29_P_1241973022880.jpg'),
-(36, 30, 'images/200905/goods_img/30_P_1241973114554.jpg', '', 'images/200905/thumb_img/30_thumb_P_1241973114166.jpg', 'images/200905/source_img/30_P_1241973114795.jpg'),
-(38, 20, 'images/200905/goods_img/20_P_1242106490582.jpg', '', 'images/200905/thumb_img/20_thumb_P_1242106490836.jpg', 'images/200905/source_img/20_P_1242106490796.jpg'),
-(39, 21, 'images/200905/goods_img/21_P_1242109298519.jpg', '', 'images/200905/thumb_img/21_thumb_P_1242109298525.jpg', 'images/200905/source_img/21_P_1242109298459.jpg'),
-(40, 31, 'images/200905/goods_img/31_P_1242110412503.jpg', '', 'images/200905/thumb_img/31_thumb_P_1242110412614.jpg', 'images/200905/source_img/31_P_1242110412152.jpg'),
-(41, 32, 'images/200905/goods_img/32_P_1242110760641.jpg', '', 'images/200905/thumb_img/32_thumb_P_1242110760997.jpg', 'images/200905/source_img/32_P_1242110760203.jpg'),
-(42, 15, 'images/200905/goods_img/15_P_1242973362276.jpg', '', 'images/200905/thumb_img/15_thumb_P_1242973362611.jpg', 'images/200905/source_img/15_P_1242973362172.jpg'),
-(43, 10, 'images/200905/goods_img/10_P_1242973436620.jpg', '', 'images/200905/thumb_img/10_thumb_P_1242973436219.jpg', 'images/200905/source_img/10_P_1242973436898.jpg');
-
--- --------------------------------------------------------
-
---
--- 表的结构 `goods_type`
---
-
-CREATE TABLE IF NOT EXISTS `goods_type` (
-  `cat_id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
-  `cat_name` varchar(60) NOT NULL DEFAULT '',
-  `enabled` tinyint(1) unsigned NOT NULL DEFAULT '1',
-  `attr_group` varchar(255) NOT NULL,
-  PRIMARY KEY (`cat_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=10 ;
-
---
--- 转存表中的数据 `goods_type`
---
-
-INSERT INTO `goods_type` (`cat_id`, `cat_name`, `enabled`, `attr_group`) VALUES
-(1, '书', 1, ''),
-(2, '音乐', 1, ''),
-(3, '电影', 1, ''),
-(4, '手机', 1, ''),
-(5, '笔记本电脑', 1, ''),
-(6, '数码相机', 1, ''),
-(7, '数码摄像机', 1, ''),
-(8, '化妆品', 1, ''),
-(9, '精品手机', 1, '');
-
--- --------------------------------------------------------
-
---
--- 表的结构 `group_goods`
---
-
-CREATE TABLE IF NOT EXISTS `group_goods` (
-  `parent_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `goods_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `goods_price` decimal(10,2) unsigned NOT NULL DEFAULT '0.00',
-  `admin_id` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  PRIMARY KEY (`parent_id`,`goods_id`,`admin_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
---
--- 转存表中的数据 `group_goods`
---
-
-INSERT INTO `group_goods` (`parent_id`, `goods_id`, `goods_price`, `admin_id`) VALUES
-(9, 4, 58.00, 1),
-(9, 3, 68.00, 1),
-(9, 7, 100.00, 1),
-(14, 5, 20.00, 1),
-(14, 6, 42.00, 1),
-(14, 7, 100.00, 1);
-
--- --------------------------------------------------------
-
---
--- 表的结构 `keywords`
---
-
-CREATE TABLE IF NOT EXISTS `keywords` (
-  `date` date NOT NULL DEFAULT '0000-00-00',
-  `searchengine` varchar(20) NOT NULL DEFAULT '',
-  `keyword` varchar(90) NOT NULL DEFAULT '',
-  `count` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  PRIMARY KEY (`date`,`searchengine`,`keyword`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
---
--- 转存表中的数据 `keywords`
---
-
-INSERT INTO `keywords` (`date`, `searchengine`, `keyword`, `count`) VALUES
-('2009-04-21', 'ecshop', '诺基亚', 1),
-('2009-04-27', 'ecshop', '智能手机', 1),
-('2009-05-04', 'ecshop', '斤', 1),
-('2009-05-10', 'ecshop', '诺基亚', 1),
-('2009-05-11', 'ecshop', '智能手机', 1),
-('2009-05-11', 'ecshop', '诺基亚', 1),
-('2009-05-12', 'ecshop', '三星', 1),
-('2009-05-12', 'ecshop', '智能手机', 1),
-('2009-05-12', 'ecshop', 'p806', 1),
-('2009-05-12', 'ecshop', '诺基亚', 1),
-('2009-05-12', 'ecshop', '夏新', 1),
-('2009-05-18', 'ecshop', '52', 2),
-('2009-05-22', 'ecshop', 'p', 1);
-
--- --------------------------------------------------------
-
---
--- 表的结构 `link_goods`
---
-
-CREATE TABLE IF NOT EXISTS `link_goods` (
-  `goods_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `link_goods_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `is_double` tinyint(1) unsigned NOT NULL DEFAULT '0',
-  `admin_id` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  PRIMARY KEY (`goods_id`,`link_goods_id`,`admin_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
---
--- 转存表中的数据 `link_goods`
---
-
-INSERT INTO `link_goods` (`goods_id`, `link_goods_id`, `is_double`, `admin_id`) VALUES
-(12, 9, 0, 1),
-(12, 10, 0, 1),
-(12, 11, 0, 1),
-(9, 13, 1, 1),
-(13, 9, 1, 1),
-(14, 9, 0, 1),
-(14, 13, 0, 1),
-(23, 9, 0, 1),
-(13, 23, 1, 1),
-(23, 13, 1, 1);
-
--- --------------------------------------------------------
-
---
--- 表的结构 `mail_templates`
---
-
-CREATE TABLE IF NOT EXISTS `mail_templates` (
-  `template_id` tinyint(1) unsigned NOT NULL AUTO_INCREMENT,
-  `template_code` varchar(30) NOT NULL DEFAULT '',
-  `is_html` tinyint(1) unsigned NOT NULL DEFAULT '0',
-  `template_subject` varchar(200) NOT NULL DEFAULT '',
-  `template_content` text NOT NULL,
-  `last_modify` int(10) unsigned NOT NULL DEFAULT '0',
-  `last_send` int(10) unsigned NOT NULL DEFAULT '0',
-  `type` varchar(10) NOT NULL,
-  PRIMARY KEY (`template_id`),
-  UNIQUE KEY `template_code` (`template_code`),
-  KEY `type` (`type`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=15 ;
-
---
--- 转存表中的数据 `mail_templates`
---
-
 INSERT INTO `mail_templates` (`template_id`, `template_code`, `is_html`, `template_subject`, `template_content`, `last_modify`, `last_send`, `type`) VALUES
 (1, 'send_password', 1, '密码找回', '{$user_name}您好！<br>\n<br>\n您已经进行了密码重置的操作，请点击以下链接(或者复制到您的浏览器):<br>\n<br>\n<a href="{$reset_email}" target="_blank">{$reset_email}</a><br>\n<br>\n以确认您的新密码重置操作！<br>\n<br>\n{$shop_name}<br>\n{$send_date}', 1194824789, 0, 'template'),
 (2, 'order_confirm', 0, '订单确认通知', '亲爱的{$order.consignee}，你好！ \n\n我们已经收到您于 {$order.formated_add_time} 提交的订单，该订单编号为：{$order.order_sn} 请记住这个编号以便日后的查询。\n\n{$shop_name}\n{$sent_date}\n\n\n', 1158226370, 0, 'template'),
@@ -2407,435 +1989,11 @@ INSERT INTO `mail_templates` (`template_id`, `template_code`, `is_html`, `templa
 (13, 'user_message', 1, '留言回复', '亲爱的{$user_name}。你好！</br></br>对您的留言：</br>{$message_content}</br></br>店主作了如下回复：</br>{$message_note}</br></br>您可以随时回到店中和店主继续沟通。</br>{$shop_name}</br>{$send_date}', 0, 0, 'template'),
 (14, 'recomment', 1, '用户评论回复', '亲爱的{$user_name}。你好！</br></br>对您的评论：</br>“{$comment}”</br></br>店主作了如下回复：</br>“{$recomment}”</br></br>您可以随时回到店中和店主继续沟通。</br>{$shop_name}</br>{$send_date}', 0, 0, 'template');
 
--- --------------------------------------------------------
-
 --
--- 表的结构 `member_price`
+--  `region`
 --
 
-CREATE TABLE IF NOT EXISTS `member_price` (
-  `price_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
-  `goods_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `user_rank` tinyint(3) NOT NULL DEFAULT '0',
-  `user_price` decimal(10,2) NOT NULL DEFAULT '0.00',
-  PRIMARY KEY (`price_id`),
-  KEY `goods_id` (`goods_id`,`user_rank`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=5 ;
-
---
--- 转存表中的数据 `member_price`
---
-
-INSERT INTO `member_price` (`price_id`, `goods_id`, `user_rank`, `user_price`) VALUES
-(1, 23, 3, 3200.00),
-(2, 23, 2, 3300.00),
-(3, 13, 3, 1100.00),
-(4, 13, 2, 1200.00);
-
--- --------------------------------------------------------
-
---
--- 表的结构 `nav`
---
-
-CREATE TABLE IF NOT EXISTS `nav` (
-  `id` mediumint(8) NOT NULL AUTO_INCREMENT,
-  `ctype` varchar(10) DEFAULT NULL,
-  `cid` smallint(5) unsigned DEFAULT NULL,
-  `name` varchar(255) NOT NULL,
-  `ifshow` tinyint(1) NOT NULL,
-  `vieworder` tinyint(1) NOT NULL,
-  `opennew` tinyint(1) NOT NULL,
-  `url` varchar(255) NOT NULL,
-  `type` varchar(10) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `type` (`type`),
-  KEY `ifshow` (`ifshow`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=40 ;
-
---
--- 转存表中的数据 `nav`
---
-
-INSERT INTO `nav` (`id`, `ctype`, `cid`, `name`, `ifshow`, `vieworder`, `opennew`, `url`, `type`) VALUES
-(27, 'c', 6, '手机', 0, 15, 0, 'category.php?id=6', 'middle'),
-(28, 'c', 16, '服装', 1, 102, 0, 'category.php?id=16', 'middle'),
-(30, 'c', 0, '移动电源', 1, 106, 0, 'category.php?id=22', 'middle'),
-(31, 'c', 0, '数码时尚', 1, 108, 0, 'category.php?id=25', 'middle'),
-(32, 'c', 26, '家用电器', 1, 110, 0, 'category.php?id=26', 'middle'),
-(33, 'c', 27, '大家电', 0, 112, 0, 'category.php?id=27', 'middle'),
-(34, 'c', 30, '家电配件', 0, 114, 0, 'category.php?id=30', 'middle'),
-(35, 'c', 31, '洗衣机', 0, 116, 0, 'category.php?id=31', 'middle'),
-(36, 'c', 28, '平板电脑', 0, 118, 0, 'category.php?id=28', 'middle'),
-(37, 'c', 32, '冰箱', 0, 120, 0, 'category.php?id=32', 'middle'),
-(38, 'c', 29, '家用空调', 0, 122, 0, 'category.php?id=29', 'middle'),
-(39, 'c', 25, '数码时尚', 1, 124, 0, 'category.php?id=25', 'middle');
-
--- --------------------------------------------------------
-
---
--- 表的结构 `order_action`
---
-
-CREATE TABLE IF NOT EXISTS `order_action` (
-  `action_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
-  `order_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `action_user` varchar(30) NOT NULL DEFAULT '',
-  `order_status` tinyint(1) unsigned NOT NULL DEFAULT '0',
-  `shipping_status` tinyint(1) unsigned NOT NULL DEFAULT '0',
-  `pay_status` tinyint(1) unsigned NOT NULL DEFAULT '0',
-  `action_place` tinyint(1) unsigned NOT NULL DEFAULT '0',
-  `action_note` varchar(255) NOT NULL DEFAULT '',
-  `log_time` int(11) unsigned NOT NULL DEFAULT '0',
-  PRIMARY KEY (`action_id`),
-  KEY `order_id` (`order_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=17 ;
-
---
--- 转存表中的数据 `order_action`
---
-
-INSERT INTO `order_action` (`action_id`, `order_id`, `action_user`, `order_status`, `shipping_status`, `pay_status`, `action_place`, `action_note`, `log_time`) VALUES
-(3, 3, 'admin', 1, 0, 0, 0, '', 1462948558),
-(4, 3, 'admin', 1, 0, 2, 0, '付款', 1462948573),
-(5, 3, 'admin', 1, 3, 2, 0, '', 1462948579),
-(6, 3, 'admin', 5, 5, 2, 0, '', 1462948586),
-(7, 3, 'admin', 1, 1, 2, 1, '', 1462948609),
-(8, 4, 'admin', 1, 0, 2, 0, '付款', 1462948642),
-(9, 4, 'admin', 1, 3, 2, 0, '', 1462948652),
-(10, 4, 'admin', 5, 5, 2, 0, '', 1462948658),
-(11, 5, 'admin', 1, 0, 0, 0, '', 1462948677),
-(12, 5, 'admin', 1, 0, 2, 0, '付款', 1462948691),
-(13, 7, 'admin', 1, 0, 2, 0, '付款', 1462954287),
-(14, 7, 'admin', 1, 3, 2, 0, '', 1462954290),
-(15, 7, 'admin', 5, 5, 2, 0, '', 1462954297),
-(16, 7, 'admin', 1, 1, 2, 1, '', 1462954309);
-
--- --------------------------------------------------------
-
---
--- 表的结构 `order_goods`
---
-
-CREATE TABLE IF NOT EXISTS `order_goods` (
-  `rec_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
-  `order_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `goods_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `goods_name` varchar(120) NOT NULL DEFAULT '',
-  `goods_sn` varchar(60) NOT NULL DEFAULT '',
-  `product_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `goods_number` smallint(5) unsigned NOT NULL DEFAULT '1',
-  `market_price` decimal(10,2) NOT NULL DEFAULT '0.00',
-  `goods_price` decimal(10,2) NOT NULL DEFAULT '0.00',
-  `discount_fee` decimal(10,2) NOT NULL DEFAULT '0.00' COMMENT '对接erp专用，商品优惠金额',
-  `goods_attr` text NOT NULL,
-  `send_number` smallint(5) unsigned NOT NULL DEFAULT '0',
-  `is_real` tinyint(1) unsigned NOT NULL DEFAULT '0',
-  `extension_code` varchar(30) NOT NULL DEFAULT '',
-  `parent_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `is_gift` smallint(5) unsigned NOT NULL DEFAULT '0',
-  `goods_attr_id` varchar(255) NOT NULL DEFAULT '',
-  PRIMARY KEY (`rec_id`),
-  KEY `order_id` (`order_id`),
-  KEY `goods_id` (`goods_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=8 ;
-
---
--- 转存表中的数据 `order_goods`
---
-
-INSERT INTO `order_goods` (`rec_id`, `order_id`, `goods_id`, `goods_name`, `goods_sn`, `product_id`, `goods_number`, `market_price`, `goods_price`, `discount_fee`, `goods_attr`, `send_number`, `is_real`, `extension_code`, `parent_id`, `is_gift`, `goods_attr_id`) VALUES
-(6, 6, 50, '小米移动电源16000mAh', 'ECS000050', 0, 1, 154.79, 122.55, 0.00, '', 0, 1, '', 0, 0, ''),
-(5, 5, 37, '红米Note3 钢化玻璃膜(0.33mm) ', 'ECS000037', 0, 1, 19.00, 18.05, 0.00, '', 0, 1, '', 0, 0, ''),
-(4, 4, 60, '指环式防滑手机支架', 'ECS000060', 0, 1, 15.00, 11.88, 0.00, '', 1, 1, '', 0, 0, ''),
-(7, 7, 63, '自拍杆', 'ECS000063', 0, 1, 49.00, 46.55, 0.00, '', 1, 1, '', 0, 0, '');
-
--- --------------------------------------------------------
-
---
--- 表的结构 `order_info`
---
-
-CREATE TABLE IF NOT EXISTS `order_info` (
-  `order_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
-  `order_sn` varchar(20) NOT NULL DEFAULT '',
-  `user_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `order_status` tinyint(1) unsigned NOT NULL DEFAULT '0',
-  `shipping_status` tinyint(1) unsigned NOT NULL DEFAULT '0',
-  `pay_status` tinyint(1) unsigned NOT NULL DEFAULT '0',
-  `consignee` varchar(60) NOT NULL DEFAULT '',
-  `country` smallint(5) unsigned NOT NULL DEFAULT '0',
-  `province` smallint(5) unsigned NOT NULL DEFAULT '0',
-  `city` smallint(5) unsigned NOT NULL DEFAULT '0',
-  `district` smallint(5) unsigned NOT NULL DEFAULT '0',
-  `address` varchar(255) NOT NULL DEFAULT '',
-  `zipcode` varchar(60) NOT NULL DEFAULT '',
-  `tel` varchar(60) NOT NULL DEFAULT '',
-  `mobile` varchar(60) NOT NULL DEFAULT '',
-  `email` varchar(60) NOT NULL DEFAULT '',
-  `best_time` varchar(120) NOT NULL DEFAULT '',
-  `sign_building` varchar(120) NOT NULL DEFAULT '',
-  `postscript` varchar(255) NOT NULL DEFAULT '',
-  `shipping_id` tinyint(3) NOT NULL DEFAULT '0',
-  `shipping_name` varchar(120) NOT NULL DEFAULT '',
-  `pay_id` tinyint(3) NOT NULL DEFAULT '0',
-  `pay_name` varchar(120) NOT NULL DEFAULT '',
-  `how_oos` varchar(120) NOT NULL DEFAULT '',
-  `how_surplus` varchar(120) NOT NULL DEFAULT '',
-  `pack_name` varchar(120) NOT NULL DEFAULT '',
-  `card_name` varchar(120) NOT NULL DEFAULT '',
-  `card_message` varchar(255) NOT NULL DEFAULT '',
-  `inv_payee` varchar(120) NOT NULL DEFAULT '',
-  `inv_content` varchar(120) NOT NULL DEFAULT '',
-  `goods_amount` decimal(10,2) NOT NULL DEFAULT '0.00',
-  `shipping_fee` decimal(10,2) NOT NULL DEFAULT '0.00',
-  `insure_fee` decimal(10,2) NOT NULL DEFAULT '0.00',
-  `pay_fee` decimal(10,2) NOT NULL DEFAULT '0.00',
-  `pack_fee` decimal(10,2) NOT NULL DEFAULT '0.00',
-  `card_fee` decimal(10,2) NOT NULL DEFAULT '0.00',
-  `goods_discount_fee` decimal(10,2) NOT NULL DEFAULT '0.00' COMMENT '对接erp专用，商品优惠总金额',
-  `money_paid` decimal(10,2) NOT NULL DEFAULT '0.00',
-  `surplus` decimal(10,2) NOT NULL DEFAULT '0.00',
-  `integral` int(10) unsigned NOT NULL DEFAULT '0',
-  `integral_money` decimal(10,2) NOT NULL DEFAULT '0.00',
-  `bonus` decimal(10,2) NOT NULL DEFAULT '0.00',
-  `order_amount` decimal(10,2) NOT NULL DEFAULT '0.00',
-  `from_ad` smallint(5) NOT NULL DEFAULT '0',
-  `referer` varchar(255) NOT NULL DEFAULT '',
-  `add_time` int(10) unsigned NOT NULL DEFAULT '0',
-  `confirm_time` int(10) unsigned NOT NULL DEFAULT '0',
-  `pay_time` int(10) unsigned NOT NULL DEFAULT '0',
-  `shipping_time` int(10) unsigned NOT NULL DEFAULT '0',
-  `pack_id` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `card_id` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `bonus_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `invoice_no` varchar(255) NOT NULL DEFAULT '',
-  `extension_code` varchar(30) NOT NULL DEFAULT '',
-  `extension_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `to_buyer` varchar(255) NOT NULL DEFAULT '',
-  `pay_note` varchar(255) NOT NULL DEFAULT '',
-  `agency_id` smallint(5) unsigned NOT NULL,
-  `inv_type` varchar(60) NOT NULL,
-  `tax` decimal(10,2) NOT NULL,
-  `is_separate` tinyint(1) NOT NULL DEFAULT '0',
-  `parent_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `discount` decimal(10,2) NOT NULL,
-  `callback_status` enum('true','false') DEFAULT 'true',
-  `lastmodify` int(10) unsigned NOT NULL DEFAULT '0',
-  PRIMARY KEY (`order_id`),
-  UNIQUE KEY `order_sn` (`order_sn`),
-  KEY `user_id` (`user_id`),
-  KEY `order_status` (`order_status`),
-  KEY `shipping_status` (`shipping_status`),
-  KEY `pay_status` (`pay_status`),
-  KEY `shipping_id` (`shipping_id`),
-  KEY `pay_id` (`pay_id`),
-  KEY `extension_code` (`extension_code`,`extension_id`),
-  KEY `agency_id` (`agency_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=8 ;
-
---
--- 转存表中的数据 `order_info`
---
-
-INSERT INTO `order_info` (`order_id`, `order_sn`, `user_id`, `order_status`, `shipping_status`, `pay_status`, `consignee`, `country`, `province`, `city`, `district`, `address`, `zipcode`, `tel`, `mobile`, `email`, `best_time`, `sign_building`, `postscript`, `shipping_id`, `shipping_name`, `pay_id`, `pay_name`, `how_oos`, `how_surplus`, `pack_name`, `card_name`, `card_message`, `inv_payee`, `inv_content`, `goods_amount`, `shipping_fee`, `insure_fee`, `pay_fee`, `pack_fee`, `card_fee`, `goods_discount_fee`, `money_paid`, `surplus`, `integral`, `integral_money`, `bonus`, `order_amount`, `from_ad`, `referer`, `add_time`, `confirm_time`, `pay_time`, `shipping_time`, `pack_id`, `card_id`, `bonus_id`, `invoice_no`, `extension_code`, `extension_id`, `to_buyer`, `pay_note`, `agency_id`, `inv_type`, `tax`, `is_separate`, `parent_id`, `discount`, `callback_status`, `lastmodify`) VALUES
-(6, '2016051124036', 1, 0, 0, 0, '刘先生', 1, 2, 52, 502, '海兴大厦', '', '010-25851234', '13986765412', 'ecshop@ecshop.com', '', '', '', 5, '申通快递', 4, '云起收银', '等待所有商品备齐后再发', '', '', '', '', '', '', 122.55, 15.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0, 0.00, 0.00, 137.55, 8, '本站', 1462948570, 0, 0, 0, 0, 0, 0, '', '', 0, '', '', 0, '', 0.00, 0, 0, 0.00, 'true', 1462948570),
-(5, '2016051166250', 1, 1, 0, 2, '刘先生', 1, 2, 52, 502, '海兴大厦', '', '010-25851234', '13986765412', 'ecshop@ecshop.com', '', '', '', 5, '申通快递', 4, '云起收银', '等待所有商品备齐后再发', '', '', '', '', '', '', 18.05, 15.00, 0.00, 0.00, 0.00, 0.00, 0.00, 33.05, 0.00, 0, 0.00, 0.00, 0.00, 0, '本站', 1462948550, 1462948677, 1462948691, 0, 0, 0, 0, '', '', 0, '', '', 0, '', 0.00, 0, 0, 0.00, 'true', 1462948691),
-(4, '2016051107173', 1, 5, 5, 2, '刘先生', 1, 2, 52, 502, '海兴大厦', '', '010-25851234', '13986765412', 'ecshop@ecshop.com', '', '', '', 5, '申通快递', 4, '云起收银', '等待所有商品备齐后再发', '', '', '', '', '', '', 11.88, 15.00, 0.00, 0.00, 0.00, 0.00, 0.00, 26.88, 0.00, 0, 0.00, 0.00, 0.00, 0, '本站', 1462948528, 1462948642, 1462948642, 0, 0, 0, 0, '', '', 0, '', '', 0, '', 0.00, 0, 0, 0.00, 'true', 1462948658),
-(7, '2016051183359', 1, 5, 1, 2, '刘先生', 1, 2, 52, 502, '海兴大厦', '', '010-25851234', '13986765412', 'ecshop@ecshop.com', '', '', '', 5, '申通快递', 2, '银行汇款/转帐', '等待所有商品备齐后再发', '', '', '', '', '', '', 46.55, 15.00, 0.00, 0.00, 0.00, 0.00, 0.00, 61.55, 0.00, 0, 0.00, 0.00, 0.00, 0, '本站', 1462954269, 1462954287, 1462954287, 1462954309, 0, 0, 0, '600075869', '', 0, '', '', 0, '', 0.00, 0, 0, 0.00, 'true', 1462954309);
-
--- --------------------------------------------------------
-
---
--- 表的结构 `pack`
---
-
-CREATE TABLE IF NOT EXISTS `pack` (
-  `pack_id` tinyint(3) unsigned NOT NULL AUTO_INCREMENT,
-  `pack_name` varchar(120) NOT NULL DEFAULT '',
-  `pack_img` varchar(255) NOT NULL DEFAULT '',
-  `pack_fee` decimal(6,2) unsigned NOT NULL DEFAULT '0.00',
-  `free_money` smallint(5) unsigned NOT NULL DEFAULT '0',
-  `pack_desc` varchar(255) NOT NULL DEFAULT '',
-  PRIMARY KEY (`pack_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
-
---
--- 转存表中的数据 `pack`
---
-
-INSERT INTO `pack` (`pack_id`, `pack_name`, `pack_img`, `pack_fee`, `free_money`, `pack_desc`) VALUES
-(1, '精品包装', '1242108360911825791.jpg', 5.00, 800, '精品包装，尽心为您设计一份不一样的礼物');
-
--- --------------------------------------------------------
-
---
--- 表的结构 `package_goods`
---
-
-CREATE TABLE IF NOT EXISTS `package_goods` (
-  `package_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `goods_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `product_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `goods_number` smallint(5) unsigned NOT NULL DEFAULT '1',
-  `admin_id` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  PRIMARY KEY (`package_id`,`goods_id`,`admin_id`,`product_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
---
--- 转存表中的数据 `package_goods`
---
-
-INSERT INTO `package_goods` (`package_id`, `goods_id`, `product_id`, `goods_number`, `admin_id`) VALUES
-(5, 6, 0, 1, 1),
-(5, 5, 0, 1, 1),
-(6, 4, 0, 1, 1),
-(6, 7, 0, 1, 1),
-(6, 32, 0, 1, 1),
-(5, 31, 0, 1, 1);
-
--- --------------------------------------------------------
-
---
--- 表的结构 `payment`
---
-
-CREATE TABLE IF NOT EXISTS `payment` (
-  `pay_id` tinyint(3) unsigned NOT NULL AUTO_INCREMENT,
-  `pay_code` varchar(20) NOT NULL DEFAULT '',
-  `pay_name` varchar(120) NOT NULL DEFAULT '',
-  `pay_fee` varchar(10) NOT NULL DEFAULT '0',
-  `pay_desc` text NOT NULL,
-  `pay_order` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `pay_config` text NOT NULL,
-  `enabled` tinyint(1) unsigned NOT NULL DEFAULT '0',
-  `is_cod` tinyint(1) unsigned NOT NULL DEFAULT '0',
-  `is_online` tinyint(1) unsigned NOT NULL DEFAULT '0',
-  PRIMARY KEY (`pay_id`),
-  UNIQUE KEY `pay_code` (`pay_code`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=4 ;
-
---
--- 转存表中的数据 `payment`
---
-
-INSERT INTO `payment` (`pay_id`, `pay_code`, `pay_name`, `pay_fee`, `pay_desc`, `pay_order`, `pay_config`, `enabled`, `is_cod`, `is_online`) VALUES
-(1, 'balance', '余额支付', '0', '使用帐户余额支付。只有会员才能使用，通过设置信用额度，可以透支。', 0, 'a:0:{}', 1, 0, 1),
-(2, 'bank', '银行汇款/转帐', '0', '银行名称\n收款人信息：全称 ××× ；帐号或地址 ××× ；开户行 ×××。\n注意事项：办理电汇时，请在电汇单“汇款用途”一栏处注明您的订单号。', 0, 'a:0:{}', 1, 0, 0),
-(3, 'cod', '货到付款', '0', '开通城市：×××\n货到付款区域：×××', 0, 'a:0:{}', 1, 1, 0);
-
--- --------------------------------------------------------
-
---
--- 表的结构 `pay_log`
---
-
-CREATE TABLE IF NOT EXISTS `pay_log` (
-  `log_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `order_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `order_amount` decimal(10,2) unsigned NOT NULL,
-  `order_type` tinyint(1) unsigned NOT NULL DEFAULT '0',
-  `is_paid` tinyint(1) unsigned NOT NULL DEFAULT '0',
-  PRIMARY KEY (`log_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=19 ;
-
---
--- 转存表中的数据 `pay_log`
---
-
-INSERT INTO `pay_log` (`log_id`, `order_id`, `order_amount`, `order_type`, `is_paid`) VALUES
-(1, 1, 0.00, 0, 0),
-(2, 2, 0.00, 0, 0),
-(3, 3, 0.00, 0, 0),
-(4, 4, 0.00, 0, 0),
-(5, 5, 0.00, 0, 0),
-(6, 6, 35.00, 0, 0),
-(7, 7, 2198.10, 0, 0),
-(8, 8, 638.00, 0, 0),
-(9, 9, 2015.00, 0, 0),
-(10, 10, 0.00, 0, 0),
-(11, 11, 3810.00, 0, 0),
-(12, 12, 253.00, 0, 0),
-(13, 13, 975.00, 0, 0),
-(14, 14, 0.00, 0, 0),
-(15, 15, 17054.00, 0, 0),
-(16, 16, 0.00, 0, 0),
-(17, 17, 0.00, 0, 0),
-(18, 18, 0.00, 0, 0);
-
--- --------------------------------------------------------
-
---
--- 表的结构 `plugins`
---
-
-CREATE TABLE IF NOT EXISTS `plugins` (
-  `code` varchar(30) NOT NULL DEFAULT '',
-  `version` varchar(10) NOT NULL DEFAULT '',
-  `library` varchar(255) NOT NULL DEFAULT '',
-  `assign` tinyint(1) unsigned NOT NULL DEFAULT '0',
-  `install_date` int(10) unsigned NOT NULL DEFAULT '0',
-  PRIMARY KEY (`code`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
--- --------------------------------------------------------
-
---
--- 表的结构 `products`
---
-
-CREATE TABLE IF NOT EXISTS `products` (
-  `product_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
-  `goods_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `goods_attr` varchar(50) DEFAULT NULL,
-  `product_sn` varchar(60) DEFAULT NULL,
-  `product_number` mediumint(8) unsigned DEFAULT '0',
-  PRIMARY KEY (`product_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=15 ;
-
---
--- 转存表中的数据 `products`
---
-
-INSERT INTO `products` (`product_id`, `goods_id`, `goods_attr`, `product_sn`, `product_number`) VALUES
-(1, 32, '163', '', 100),
-(2, 24, '167', '', 100),
-(3, 23, '175', '', 100),
-(4, 21, '188', '', 20),
-(5, 20, '194', '', 13),
-(6, 17, '201', '', 1),
-(7, 14, '213', '', 4),
-(8, 13, '217', '', 8),
-(9, 10, '239', '', 6),
-(10, 10, '240', '', 12),
-(11, 9, '227', '', 12),
-(12, 9, '226', '', 3),
-(13, 8, '231', '', 17),
-(14, 1, '237', '', 1);
-
--- --------------------------------------------------------
-
---
--- 表的结构 `region`
---
-
-CREATE TABLE IF NOT EXISTS `region` (
-  `region_id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
-  `parent_id` smallint(5) unsigned NOT NULL DEFAULT '0',
-  `region_name` varchar(120) NOT NULL DEFAULT '',
-  `region_type` tinyint(1) NOT NULL DEFAULT '2',
-  `agency_id` smallint(5) unsigned NOT NULL DEFAULT '0',
-  PRIMARY KEY (`region_id`),
-  KEY `parent_id` (`parent_id`),
-  KEY `region_type` (`region_type`),
-  KEY `agency_id` (`agency_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=4044 ;
-
---
--- 转存表中的数据 `region`
---
-
-INSERT INTO `region` (`region_id`, `parent_id`, `region_name`, `region_type`, `agency_id`) VALUES
+INSERT INTO `region` (`region_id`, `parent_id`, `region_name`, `region_type`, `agency_id`) VALUES 
 (1, 0, '中国', 0, 0),
 (2, 1, '北京', 1, 0),
 (3, 1, '天津', 1, 0),
@@ -4525,8 +3683,7 @@ INSERT INTO `region` (`region_id`, `parent_id`, `region_name`, `region_type`, `a
 (1687, 159, '南昌县', 3, 0),
 (1688, 159, '新建县', 3, 0),
 (1689, 159, '安义县', 3, 0),
-(1690, 159, '进贤县', 3, 0);
-INSERT INTO `region` (`region_id`, `parent_id`, `region_name`, `region_type`, `agency_id`) VALUES
+(1690, 159, '进贤县', 3, 0),
 (1691, 159, '红谷滩新区', 3, 0),
 (1692, 159, '经济技术开发区', 3, 0),
 (1693, 159, '昌北区', 3, 0),
@@ -4856,7 +4013,8 @@ INSERT INTO `region` (`region_id`, `parent_id`, `region_name`, `region_type`, `a
 (2017, 191, '滑县', 3, 0),
 (2018, 191, '内黄县', 3, 0),
 (2019, 191, '林州市', 3, 0),
-(2020, 191, '其它区', 3, 0),
+(2020, 191, '其它区', 3, 0);
+INSERT INTO `region` (`region_id`, `parent_id`, `region_name`, `region_type`, `agency_id`) VALUES
 (2021, 192, '鹤山区', 3, 0),
 (2022, 192, '山城区', 3, 0),
 (2023, 192, '淇滨区', 3, 0),
@@ -6148,8 +5306,7 @@ INSERT INTO `region` (`region_id`, `parent_id`, `region_name`, `region_type`, `a
 (3309, 329, '甘泉县', 3, 0),
 (3310, 329, '富县', 3, 0),
 (3311, 329, '洛川县', 3, 0),
-(3312, 329, '宜川县', 3, 0);
-INSERT INTO `region` (`region_id`, `parent_id`, `region_name`, `region_type`, `agency_id`) VALUES
+(3312, 329, '宜川县', 3, 0),
 (3313, 329, '黄龙县', 3, 0),
 (3314, 329, '黄陵县', 3, 0),
 (3315, 329, '其它区', 3, 0),
@@ -6882,444 +6039,1301 @@ INSERT INTO `region` (`region_id`, `parent_id`, `region_name`, `region_type`, `a
 (4042, 399, '葵青区', 3, 0),
 (4043, 399, '离岛区', 3, 0);
 
--- --------------------------------------------------------
-
 --
--- 表的结构 `reg_extend_info`
+-- `shop_config`
 --
 
-CREATE TABLE IF NOT EXISTS `reg_extend_info` (
-  `Id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `user_id` mediumint(8) unsigned NOT NULL,
-  `reg_field_id` int(10) unsigned NOT NULL,
-  `content` text NOT NULL,
-  PRIMARY KEY (`Id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
-
--- --------------------------------------------------------
+INSERT INTO `shop_config` (`id`, `parent_id`, `code`, `type`, `store_range`, `store_dir`, `value`, `sort_order`) VALUES
+(1, 0, 'shop_info', 'group', '', '', '', '1'),
+(2, 0, 'basic', 'group', '', '', '', '1'),
+(3, 0, 'display', 'group', '', '', '', '1'),
+(4, 0, 'shopping_flow', 'group', '', '', '', '1'),
+(5, 0, 'smtp', 'group', '', '', '', '1'),
+(6, 0, 'hidden', 'hidden', '', '', '', '1'),
+(7, 0, 'goods', 'group', '', '', '', '1'),
+(8, 0, 'sms', 'group', '', '', '', '1'),
+(101, 1, 'shop_name', 'text', '', '', 'ECSHOP', '1'),
+(102, 1, 'shop_title', 'text', '', '', 'ECSHOP演示站', '1'),
+(103, 1, 'shop_desc', 'text', '', '', 'ECSHOP演示站', '1'),
+(104, 1, 'shop_keywords', 'text', '', '', 'ECSHOP演示站', '1'),
+(105, 1, 'shop_country', 'manual', '', '', '1', '1'),
+(106, 1, 'shop_province', 'manual', '', '', '2', '1'),
+(107, 1, 'shop_city', 'manual', '', '', '52', '1'),
+(108, 1, 'shop_address', 'text', '', '', '', '1'),
+(109, 1, 'qq', 'text', '', '', '', '1'),
+(110, 1, 'ww', 'text', '', '', '', '1'),
+(111, 1, 'skype', 'text', '', '', '', '1'),
+(112, 1, 'ym', 'text', '', '', '', '1'),
+(113, 1, 'msn', 'text', '', '', '', '1'),
+(114, 1, 'service_email', 'text', '', '', '', '1'),
+(115, 1, 'service_phone', 'text', '', '', '', '1'),
+(116, 1, 'shop_closed', 'select', '0,1', '', '0', '1'),
+(117, 1, 'close_comment', 'textarea', '', '', '', '1'),
+(118, 1, 'shop_logo', 'file', '', '../themes/{$template}/images/', '', '1'),
+(119, 1, 'licensed', 'select', '0,1', '', '1', '1'),
+(120, 1, 'user_notice', 'textarea', '', '', '用户中心公告！', '1'),
+(121, 1, 'shop_notice', 'textarea', '', '', '', '1'),
+(122, 1, 'shop_reg_closed', 'select', '1,0', '', '0', '1'),
+(201, 2, 'lang', 'manual', '', '', 'zh_cn', '1'),
+(202, 2, 'icp_number', 'text', '', '', '', '1'),
+(203, 2, 'icp_file', 'file', '', '../cert/', '', '1'),
+(204, 2, 'watermark', 'file', '', '../images/', '', '1'),
+(205, 2, 'watermark_place', 'select', '0,1,2,3,4,5', '', '1', '1'),
+(206, 2, 'watermark_alpha', 'text', '', '', '65', '1'),
+(207, 2, 'use_storage', 'select', '1,0', '', '1', '1'),
+(208, 2, 'market_price_rate', 'text', '', '', '1.2', '1'),
+(209, 2, 'rewrite', 'select', '0,1,2', '', '0', '1'),
+(210, 2, 'integral_name', 'text', '', '', '积分', '1'),
+(211, 2, 'integral_scale', 'text', '', '', '1', '1'),
+(212, 2, 'integral_percent', 'text', '', '', '1', '1'),
+(213, 2, 'sn_prefix', 'text', '', '', 'ECS', '1'),
+(214, 2, 'comment_check', 'select', '0,1', '', '1', '1'),
+(215, 2, 'no_picture', 'file', '', '../images/', '', '1'),
+(218, 2, 'stats_code', 'textarea', '', '', '', '1'),
+(219, 2, 'cache_time', 'text', '', '', '3600', '1'),
+(220, 2, 'register_points', 'text', '', '', '0', '1'),
+(221, 2, 'enable_gzip', 'select', '0,1', '', '0', '1'),
+(222, 2, 'top10_time', 'select', '0,1,2,3,4', '', '0', '1'),
+(223, 2, 'timezone', 'options', '-12,-11,-10,-9,-8,-7,-6,-5,-4,-3.5,-3,-2,-1,0,1,2,3,3.5,4,4.5,5,5.5,5.75,6,6.5,7,8,9,9.5,10,11,12', '', '8', '1'),
+(224, 2, 'upload_size_limit', 'options', '-1,0,64,128,256,512,1024,2048,4096', '', '64', '1'),
+(226, 2, 'cron_method', 'select', '0,1', '', '0', '1'),
+(227, 2, 'comment_factor', 'select', '0,1,2,3', '', '0', '1'),
+(228, 2, 'enable_order_check', 'select', '0,1', '', '1', '1'),
+(229, 2, 'default_storage', 'text', '', '', '1', '1'),
+(230, 2, 'bgcolor', 'text', '', '', '#FFFFFF', '1'),
+(231, 2, 'visit_stats', 'select', 'on,off', '', 'on', '1'),
+(232, 2, 'send_mail_on', 'select', 'on,off', '', 'off', '1'),
+(233, 2, 'auto_generate_gallery', 'select', '1,0', '', '1', '1'),
+(234, 2, 'retain_original_img', 'select', '1,0', '', '1', '1'),
+(235, 2, 'member_email_validate', 'select', '1,0', '', '1', '1'),
+(236, 2, 'message_board', 'select', '1,0', '', '1', '1'),
+(239, 2, 'certificate_id', 'hidden', '', '', '', '1'),
+(240, 2, 'token', 'hidden', '', '', '', '1'),
+(241, 2, 'certi', 'hidden', '', '', 'http://service.shopex.cn/openapi/api.php', '1'),
+(242, 2, 'send_verify_email', 'select', '1,0', '', '0', '1'),
+(243, 2, 'ent_id', 'hidden', '', '', '', '1'),
+(244, 2, 'ent_ac', 'hidden', '', '', '', '1'),
+(245, 2, 'ent_sign', 'hidden', '', '', '', '1'),
+(246, 2, 'ent_email', 'hidden', '', '', '', '1'),
+(247, 2, 'logistics_trace', 'select', '1,0', '', '0', '1'),
+(301, 3, 'date_format', 'hidden', '', '', 'Y-m-d', '1'),
+(302, 3, 'time_format', 'text', '', '', 'Y-m-d H:i:s', '1'),
+(303, 3, 'currency_format', 'text', '', '', '￥%s元', '1'),
+(304, 3, 'thumb_width', 'text', '', '', '100', '1'),
+(305, 3, 'thumb_height', 'text', '', '', '100', '1'),
+(306, 3, 'image_width', 'text', '', '', '230', '1'),
+(307, 3, 'image_height', 'text', '', '', '230', '1'),
+(312, 3, 'top_number', 'text', '', '', '10', '1'),
+(313, 3, 'history_number', 'text', '', '', '5', '1'),
+(314, 3, 'comments_number', 'text', '', '', '5', '1'),
+(315, 3, 'bought_goods', 'text', '', '', '3', '1'),
+(316, 3, 'article_number', 'text', '', '', '8', '1'),
+(317, 3, 'goods_name_length', 'text', '', '', '7', '1'),
+(318, 3, 'price_format', 'select', '0,1,2,3,4,5', '', '5', '1'),
+(319, 3, 'page_size', 'text', '', '', '10', '1'),
+(320, 3, 'sort_order_type', 'select', '0,1,2', '', '0', '1'),
+(321, 3, 'sort_order_method', 'select', '0,1', '', '0', '1'),
+(322, 3, 'show_order_type', 'select', '0,1,2', '', '1', '1'),
+(323, 3, 'attr_related_number', 'text', '', '', '5', '1'),
+(324, 3, 'goods_gallery_number', 'text', '', '', '5', '1'),
+(325, 3, 'article_title_length', 'text', '', '', '16', '1'),
+(326, 3, 'name_of_region_1', 'text', '', '', '国家', '1'),
+(327, 3, 'name_of_region_2', 'text', '', '', '省', '1'),
+(328, 3, 'name_of_region_3', 'text', '', '', '市', '1'),
+(329, 3, 'name_of_region_4', 'text', '', '', '区', '1'),
+(330, 3, 'search_keywords', 'text', '', '', '', '0'),
+(332, 3, 'related_goods_number', 'text', '', '', '4', '1'),
+(333, 3, 'help_open', 'select', '0,1', '', '1', '1'),
+(334, 3, 'article_page_size', 'text', '', '', '10', '1'),
+(335, 3, 'page_style', 'select', '0,1', '', '1', '1'),
+(336, 3, 'recommend_order', 'select', '0,1', '', '0', '1'),
+(337, 3, 'index_ad', 'hidden', '', '', 'sys', '1'),
+(401, 4, 'can_invoice', 'select', '1,0', '', '1', '1'),
+(402, 4, 'use_integral', 'select', '1,0', '', '1', '1'),
+(403, 4, 'use_bonus', 'select', '1,0', '', '1', '1'),
+(404, 4, 'use_surplus', 'select', '1,0', '', '1', '1'),
+(405, 4, 'use_how_oos', 'select', '1,0', '', '1', '1'),
+(406, 4, 'send_confirm_email', 'select', '1,0', '', '0', '1'),
+(407, 4, 'send_ship_email', 'select', '1,0', '', '0', '1'),
+(408, 4, 'send_cancel_email', 'select', '1,0', '', '0', '1'),
+(409, 4, 'send_invalid_email', 'select', '1,0', '', '0', '1'),
+(410, 4, 'order_pay_note', 'select', '1,0', '', '1', '1'),
+(411, 4, 'order_unpay_note', 'select', '1,0', '', '1', '1'),
+(412, 4, 'order_ship_note', 'select', '1,0', '', '1', '1'),
+(413, 4, 'order_receive_note', 'select', '1,0', '', '1', '1'),
+(414, 4, 'order_unship_note', 'select', '1,0', '', '1', '1'),
+(415, 4, 'order_return_note', 'select', '1,0', '', '1', '1'),
+(416, 4, 'order_invalid_note', 'select', '1,0', '', '1', '1'),
+(417, 4, 'order_cancel_note', 'select', '1,0', '', '1', '1'),
+(418, 4, 'invoice_content', 'textarea', '', '', '', '1'),
+(419, 4, 'anonymous_buy', 'select', '1,0', '', '1', '1'),
+(420, 4, 'min_goods_amount', 'text', '', '', '0', '1'),
+(421, 4, 'one_step_buy', 'select', '1,0', '', '0', '1'),
+(422, 4, 'invoice_type', 'manual', '', '', 'a:2:{s:4:"type";a:3:{i:0;s:1:"1";i:1;s:1:"2";i:2;s:0:"";}s:4:"rate";a:3:{i:0;d:1;i:1;d:1.5;i:2;d:0;}}', '1'),
+(423, 4, 'stock_dec_time', 'select', '1,0', '', '0', '1'),
+(424, 4, 'cart_confirm', 'options', '1,2,3,4', '', '3', '0'),
+(425, 4, 'send_service_email', 'select', '1,0', '', '0', '1'),
+(426, 4, 'show_goods_in_cart', 'select', '1,2,3', '', '3', '1'),
+(427, 4, 'show_attr_in_cart', 'select', '1,0', '', '1', '1'),
+(501, 5, 'smtp_host', 'text', '', '', 'localhost', '1'),
+(502, 5, 'smtp_port', 'text', '', '', '25', '1'),
+(503, 5, 'smtp_user', 'text', '', '', '', '1'),
+(504, 5, 'smtp_pass', 'password', '', '', '', '1'),
+(505, 5, 'smtp_mail', 'text', '', '', '', '1'),
+(506, 5, 'mail_charset', 'select', 'UTF8,GB2312,BIG5', '', 'UTF8', '1'),
+(507, 5, 'mail_service', 'select', '0,1', '', '0', '0'),
+(508, 5, 'smtp_ssl', 'select', '0,1', '', '0', '0'),
+(601, 6, 'integrate_code', 'hidden', '', '', 'ecshop', '1'),
+(602, 6, 'integrate_config', 'hidden', '', '', '', '1'),
+(603, 6, 'hash_code', 'hidden', '', '', '31693422540744c0a6b6da635b7a5a93', '1'),
+(604, 6, 'template', 'hidden', '', '', 'default', '1'),
+(605, 6, 'install_date', 'hidden', '', '', '1224919217', '1'),
+(606, 6, 'version', 'hidden', '', '', 'v2.7.2', '1'),
+(607, 6, 'sms_user_name', 'hidden', '', '', '', '1'),
+(608, 6, 'sms_password', 'hidden', '', '', '', '1'),
+(609, 6, 'sms_auth_str', 'hidden', '', '', '', '1'),
+(610, 6, 'sms_domain', 'hidden', '', '', '', '1'),
+(611, 6, 'sms_count', 'hidden', '', '', '', '1'),
+(612, 6, 'sms_total_money', 'hidden', '', '', '', '1'),
+(613, 6, 'sms_balance', 'hidden', '', '', '', '1'),
+(614, 6, 'sms_last_request', 'hidden', '', '', '', '1'),
+(616, 6, 'affiliate', 'hidden', '', '', 'a:3:{s:6:"config";a:7:{s:6:"expire";d:24;s:11:"expire_unit";s:4:"hour";s:11:"separate_by";i:0;s:15:"level_point_all";s:2:"5%";s:15:"level_money_all";s:2:"1%";s:18:"level_register_all";i:2;s:17:"level_register_up";i:60;}s:4:"item";a:4:{i:0;a:2:{s:11:"level_point";s:3:"60%";s:11:"level_money";s:3:"60%";}i:1;a:2:{s:11:"level_point";s:3:"30%";s:11:"level_money";s:3:"30%";}i:2;a:2:{s:11:"level_point";s:2:"7%";s:11:"level_money";s:2:"7%";}i:3;a:2:{s:11:"level_point";s:2:"3%";s:11:"level_money";s:2:"3%";}}s:2:"on";i:1;}', '1'),
+(617, 6, 'captcha', 'hidden', '', '', '36', '1'),
+(618, 6, 'captcha_width', 'hidden', '', '', '100', '1'),
+(619, 6, 'captcha_height', 'hidden', '', '', '20', '1'),
+(620, 6, 'sitemap', 'hidden', '', '', 'a:6:{s:19:"homepage_changefreq";s:6:"hourly";s:17:"homepage_priority";s:3:"0.9";s:19:"category_changefreq";s:6:"hourly";s:17:"category_priority";s:3:"0.8";s:18:"content_changefreq";s:6:"weekly";s:16:"content_priority";s:3:"0.7";}', '0'),
+(621, 6, 'points_rule', 'hidden', '', '', '', '0'),
+(622, 6, 'flash_theme', 'hidden', '', '', 'dynfocus', '1'),
+(623, 6, 'stylename', 'hidden', '', '', '', 1),
+(701, 7, 'show_goodssn', 'select', '1,0', '', '1', '1'),
+(702, 7, 'show_brand', 'select', '1,0', '', '1', '1'),
+(703, 7, 'show_goodsweight', 'select', '1,0', '', '1', '1'),
+(704, 7, 'show_goodsnumber', 'select', '1,0', '', '1', '1'),
+(705, 7, 'show_addtime', 'select', '1,0', '', '1', '1'),
+(706, 7, 'goodsattr_style', 'select', '1,0', '', '1', '1'),
+(707, 7, 'show_marketprice', 'select', '1,0', '', '1', '1'),
+(801, 8, 'sms_shop_mobile', 'text', '', '', '', '1'),
+(802, 8, 'sms_order_placed', 'select', '1,0', '', '0', '1'),
+(803, 8, 'sms_order_payed', 'select', '1,0', '', '0', '1'),
+(804, 8, 'sms_order_payed_to_customer', 'select', '1,0', '', '0', '1'),
+(805, 8, 'sms_order_shipped', 'select', '1,0', '', '0', '1'),
+(806, 2, 'snlist_code', 'hidden', '', '', '{"erp":"goods_1109","fy":"goods_1137","taodali":"goods_1103","HDT":"goods_1500"}', '1'),
+(903, 2, 'message_check', 'select', '1,0', '', '1', '1'),
+(904, 0, 'showerpPanel', 'hidden', '', '', '1', '1');
+--
+-- user_rank
+--
+INSERT INTO `user_rank` (`rank_id`, `rank_name`, `min_points`, `max_points`, `discount`, `show_price`, `special_rank`)
+VALUES (NULL, '注册用户', '0', '10000', '100', 1, 0);
 
 --
--- 表的结构 `reg_fields`
+-- 文章默认分类
 --
-
-CREATE TABLE IF NOT EXISTS `reg_fields` (
-  `id` tinyint(3) unsigned NOT NULL AUTO_INCREMENT,
-  `reg_field_name` varchar(60) NOT NULL,
-  `dis_order` tinyint(3) unsigned NOT NULL DEFAULT '100',
-  `display` tinyint(1) unsigned NOT NULL DEFAULT '1',
-  `type` tinyint(1) unsigned NOT NULL DEFAULT '0',
-  `is_need` tinyint(1) unsigned NOT NULL DEFAULT '1',
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=100 ;
+INSERT INTO `article_cat` (`cat_id`, `cat_name`, `cat_type`, `keywords`, `cat_desc`, `sort_order`, `parent_id`) VALUES (1, '系统分类', 2, '', '系统保留分类', 50, 0);
+INSERT INTO `article_cat` (`cat_id`, `cat_name`, `cat_type`, `keywords`, `cat_desc`, `sort_order`, `parent_id`) VALUES (2, '网店信息', 3, '', '网店信息分类', 50, 1);
+INSERT INTO `article_cat` (`cat_id`, `cat_name`, `cat_type`, `keywords`, `cat_desc`, `sort_order`, `parent_id`) VALUES (3, '网店帮助分类', 4, '', '网店帮助分类', 50, 1);
 
 --
--- 转存表中的数据 `reg_fields`
+-- `article`
 --
 
-INSERT INTO `reg_fields` (`id`, `reg_field_name`, `dis_order`, `display`, `type`, `is_need`) VALUES
-(2, 'QQ', 0, 1, 1, 0),
-(3, '办公电话', 0, 1, 1, 0),
-(4, '家庭电话', 0, 1, 1, 0),
+INSERT INTO `article` (`article_id`, `cat_id`, `title`, `content`, `author`, `author_email`, `keywords`, `article_type`, `is_open`, `add_time`, `file_url`, `open_type`) VALUES
+(1, 2, '免责条款', '', '', '', '', 0, 1, UNIX_TIMESTAMP(), '', 0),
+(2, 2, '隐私保护', '', '', '', '', 0, 1, UNIX_TIMESTAMP(), '', 0),
+(3, 2, '咨询热点', '', '', '', '', 0, 1, UNIX_TIMESTAMP(), '', 0),
+(4, 2, '联系我们', '', '', '', '', 0, 1, UNIX_TIMESTAMP(), '', 0),
+(5, 2, '公司简介', '', '', '', '', 0, 1, UNIX_TIMESTAMP(), '', 0),
+(6, -1, '用户协议', '', '', '', '', 0, 1, UNIX_TIMESTAMP(), '', 0);
+
+--
+-- `template`
+--
+
+INSERT INTO `template` (`filename`, `region`, `library`, `sort_order`, `id`, `number`, `type`, `theme`, `remarks`) VALUES
+('index', '左边区域', '/library/vote_list.lbi', 8, 0, 0, 0, 'default', ''),
+('index', '左边区域', '/library/email_list.lbi', 9, 0, 0, 0, 'default', ''),
+('index', '左边区域', '/library/order_query.lbi', 6, 0, 0, 0, 'default', ''),
+('index', '左边区域', '/library/cart.lbi', 0, 0, 0, 0, 'default', ''),
+('index', '左边区域', '/library/promotion_info.lbi', 3, 0, 0, 0, 'default', ''),
+('index', '左边区域', '/library/auction.lbi', 4, 0, 3, 0, 'default', ''),
+('index', '左边区域', '/library/group_buy.lbi', 5, 0, 3, 0, 'default', ''),
+('index', '', '/library/recommend_promotion.lbi', 0, 0, 4, 0, 'default', ''),
+('index', '右边主区域', '/library/recommend_hot.lbi', 2, 0, 10, 0, 'default', ''),
+('index', '右边主区域', '/library/recommend_new.lbi', 1, 0, 10, 0, 'default', ''),
+('index', '右边主区域', '/library/recommend_best.lbi', 0, 0, 10, 0, 'default', ''),
+('index', '左边区域', '/library/invoice_query.lbi', 7, 0, 0, 0, 'default', ''),
+('index', '左边区域', '/library/top10.lbi', 2, 0, 0, 0, 'default', ''),
+('index', '左边区域', '/library/category_tree.lbi', 1, 0, 0, 0, 'default', ''),
+('index', '', '/library/brands.lbi', '0', '0', '11', '0', 'default', ''),
+('category', '左边区域', '/library/category_tree.lbi', 1, 0, 0, 0, 'default', ''),
+('category', '右边区域', '/library/recommend_best.lbi', 0, 0, 5, 0, 'default', ''),
+('category', '右边区域', '/library/goods_list.lbi', 1, 0, 0, 0, 'default', ''),
+('category', '右边区域', '/library/pages.lbi', 2, 0, 0, 0, 'default', ''),
+('category', '左边区域', '/library/cart.lbi', 0, 0, 0, 0, 'default', ''),
+('category', '左边区域', '/library/price_grade.lbi', 3, 0, 0, 0, 'default', ''),
+('category', '左边区域', '/library/filter_attr.lbi', 2, 0, 0, 0, 'default', '');
+
+
+--
+-- 会员注册项 reg_fields
+--
+
+INSERT INTO `reg_fields` (`id`, `reg_field_name`, `dis_order`, `display`, `type`, `is_need`) VALUES  
+(2, 'QQ', 0, 1, 1, 0), 
+(3, '办公电话', 0, 1, 1, 0), 
+(4, '家庭电话', 0, 1, 1, 0), 
 (5, '手机', 0, 1, 1, 1),
 (6, '密码找回问题', 0, 1, 1, 0);
 
--- --------------------------------------------------------
 
 --
--- 表的结构 `role`
+-- `account_log`
 --
 
-CREATE TABLE IF NOT EXISTS `role` (
-  `role_id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
-  `role_name` varchar(60) NOT NULL DEFAULT '',
-  `action_list` text NOT NULL,
-  `role_describe` text,
-  PRIMARY KEY (`role_id`),
-  KEY `user_name` (`role_name`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
-
--- --------------------------------------------------------
-
---
--- 表的结构 `searchengine`
---
-
-CREATE TABLE IF NOT EXISTS `searchengine` (
-  `date` date NOT NULL DEFAULT '0000-00-00',
-  `searchengine` varchar(20) NOT NULL DEFAULT '',
-  `count` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  PRIMARY KEY (`date`,`searchengine`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
--- --------------------------------------------------------
-
---
--- 表的结构 `sessions`
---
-
-CREATE TABLE IF NOT EXISTS `sessions` (
-  `sesskey` char(32) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
-  `expiry` int(10) unsigned NOT NULL DEFAULT '0',
-  `userid` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `adminid` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `ip` char(15) NOT NULL DEFAULT '',
-  `user_name` varchar(60) NOT NULL,
-  `user_rank` tinyint(3) NOT NULL,
-  `discount` decimal(3,2) NOT NULL,
-  `email` varchar(60) NOT NULL,
-  `data` char(255) NOT NULL DEFAULT '',
-  PRIMARY KEY (`sesskey`),
-  KEY `expiry` (`expiry`)
-) ENGINE=MEMORY DEFAULT CHARSET=utf8;
+INSERT INTO `account_log` (`log_id`, `user_id`, `user_money`, `frozen_money`, `rank_points`, `pay_points`, `change_time`, `change_desc`, `change_type`) VALUES
+(1, 5, 1100000.00, 0.00, 0, 0, 1242140736, '11', 2),
+(2, 3, 400000.00, 0.00, 0, 0, 1242140752, '21312', 2),
+(3, 2, 300000.00, 0.00, 0, 0, 1242140775, '300000', 2),
+(4, 1, 50000.00, 0.00, 0, 0, 1242140811, '50', 2),
+(5, 5, 0.00, 10000.00, 0, 0, 1242140853, '32', 2),
+(6, 1, -400.00, 0.00, 0, 0, 1242142274, '支付订单 2009051298180', 99),
+(7, 1, -975.00, 0.00, 0, 0, 1242142324, '支付订单 2009051255518', 99),
+(8, 1, 0.00, 0.00, 960, 960, 1242142390, '订单 2009051255518 赠送的积分', 99),
+(9, 1, 0.00, 0.00, 385, 385, 1242142432, '订单 2009051298180 赠送的积分', 99),
+(10, 1, -2310.00, 0.00, 0, 0, 1242142549, '支付订单 2009051267570', 99),
+(11, 1, 0.00, 0.00, 2300, 2300, 1242142589, '订单 2009051267570 赠送的积分', 99),
+(12, 1, -5989.00, 0.00, 0, 0, 1242142681, '支付订单 2009051230249', 99),
+(13, 1, -8610.00, 0.00, 0, 0, 1242142808, '支付订单 2009051276258', 99),
+(14, 1, 0.00, 0.00, 0, -1, 1242142910, '参加夺宝奇兵夺宝奇兵之夏新N7 ', 99),
+(15, 1, 0.00, 0.00, 0, -1, 1242142935, '参加夺宝奇兵夺宝奇兵之诺基亚N96 ', 99),
+(16, 1, 0.00, 0.00, 0, 100000, 1242143867, '奖励', 2),
+(17, 1, -10.00, 0.00, 0, 0, 1242143920, '支付订单 2009051268194', 99),
+(18, 1, 0.00, 0.00, 0, -17000, 1242143920, '支付订单 2009051268194', 99),
+(19, 1, 0.00, 0.00, -960, -960, 1242144185, '由于退货或未发货操作，退回订单 2009051255518 赠送的积分', 99),
+(20, 1, 975.00, 0.00, 0, 0, 1242144185, '由于取消、无效或退货操作，退回支付订单 2009051255518 时使用的预付款', 99),
+(21, 1, 0.00, 0.00, 960, 960, 1242576445, '订单 2009051719232 赠送的积分', 99),
+(22, 3, -1000.00, 0.00, 0, 0, 1242973612, '追加使用余额支付订单：2009051227085', 99),
+(23, 1, -13806.60, 0.00, 0, 0, 1242976699, '支付订单 2009052224892', 99),
+(24, 1, 0.00, 0.00, 14045, 14045, 1242976740, '订单 2009052224892 赠送的积分', 99),
+(25, 1, 0.00, 0.00, -2300, -2300, 1245045334, '由于退货或未发货操作，退回订单 2009051267570 赠送的积分', 99),
+(26, 1, 2310.00, 0.00, 0, 0, 1245045334, '由于取消、无效或退货操作，退回支付订单 2009051267570 时使用的预付款', 99),
+(27, 1, 0.00, 0.00, 17044, 17044, 1245045443, '订单 2009061585887 赠送的积分', 99),
+(28, 1, 17054.00, 0.00, 0, 0, 1245045515, '1', 99),
+(29, 1, 0.00, 0.00, -17044, -17044, 1245045515, '由于退货或未发货操作，退回订单 2009061585887 赠送的积分', 99),
+(30, 1, -3196.30, 0.00, 0, 0, 1245045672, '支付订单 2009061525429', 99),
+(31, 1, -1910.00, 0.00, 0, 0, 1245047978, '支付订单 2009061503335', 99),
+(32, 1, 0.00, 0.00, 1900, 1900, 1245048189, '订单 2009061503335 赠送的积分', 99),
+(33, 1, 0.00, 0.00, -1900, -1900, 1245048212, '由于退货或未发货操作，退回订单 2009061503335 赠送的积分', 99),
+(34, 1, 1910.00, 0.00, 0, 0, 1245048212, '由于取消、无效或退货操作，退回支付订单 2009061503335 时使用的预付款', 99),
+(35, 1, -500.00, 0.00, 0, 0, 1245048585, '支付订单 2009061510313', 99);
 
 --
--- 转存表中的数据 `sessions`
+-- `admin_log`
 --
 
-INSERT INTO `sessions` (`sesskey`, `expiry`, `userid`, `adminid`, `ip`, `user_name`, `user_rank`, `discount`, `email`, `data`) VALUES
-('f7358507ef13ed488c45278147e03448', 1464523838, 0, 1, '127.0.0.1', '0', 0, 0.00, '0', 'a:5:{s:12:"captcha_word";s:16:"MmY3MjQ2N2U5Ng==";s:10:"admin_name";s:5:"admin";s:11:"action_list";s:3:"all";s:10:"last_check";i:1464523838;s:12:"suppliers_id";s:1:"0";}');
-
--- --------------------------------------------------------
+INSERT INTO `admin_log` (`log_id`, `log_time`, `user_id`, `log_info`, `ip_address`) VALUES
+(1, 1240294375, 1, '添加品牌管理: 诺基亚', '0.0.0.0'),
+(2, 1240295621, 1, '添加属性: 网络类型', '0.0.0.0'),
+(3, 1240295930, 1, '添加属性: 扩展卡', '0.0.0.0'),
+(4, 1240295980, 1, '添加属性: 操作系统', '0.0.0.0'),
+(5, 1240296082, 1, '添加属性: 通话时间（分）', '0.0.0.0'),
+(6, 1240296102, 1, '添加属性: 待机时间（小时）', '0.0.0.0'),
+(7, 1240296379, 1, '添加属性: 上市时间', '0.0.0.0'),
+(8, 1240296403, 1, '编辑属性: 网络类型', '0.0.0.0'),
+(9, 1240296415, 1, '编辑属性: 扩展卡', '0.0.0.0'),
+(10, 1240298784, 1, '添加属性: 手机颜色', '0.0.0.0'),
+(11, 1240300896, 1, '添加属性: 基本配件', '0.0.0.0'),
+(12, 1240301110, 1, '添加属性: 附加配件', '0.0.0.0'),
+(13, 1240301295, 1, '添加属性: 和铉铃声', '0.0.0.0'),
+(14, 1240301371, 1, '添加属性: 相机像数', '0.0.0.0'),
+(15, 1240301487, 1, '添加属性: 感光元件', '0.0.0.0'),
+(16, 1240301508, 1, '编辑属性: 和铉铃声', '0.0.0.0'),
+(17, 1240301518, 1, '编辑属性: 基本配件', '0.0.0.0'),
+(18, 1240301570, 1, '添加属性: 移动qq', '0.0.0.0'),
+(19, 1240301611, 1, '添加属性: gps', '0.0.0.0'),
+(20, 1240301650, 1, '添加属性: FM收音机', '0.0.0.0'),
+(21, 1240301665, 1, '编辑属性: GPS', '0.0.0.0'),
+(22, 1240301679, 1, '编辑属性: FM收音机', '0.0.0.0'),
+(23, 1240301705, 1, '添加属性: 话机电话薄（条）', '0.0.0.0'),
+(24, 1240301715, 1, '添加属性: K-JAVA', '0.0.0.0'),
+(25, 1240301788, 1, '添加属性: 价格档位', '0.0.0.0'),
+(26, 1240305032, 1, '添加属性: 手机样式', '0.0.0.0'),
+(27, 1240380338, 1, '添加属性: 图形菜单', '0.0.0.0'),
+(28, 1240380399, 1, '添加属性: 中文短消息', '0.0.0.0'),
+(29, 1240380444, 1, '添加属性: 内置游戏', '0.0.0.0'),
+(30, 1240380507, 1, '添加属性: Wap 上网', '0.0.0.0'),
+(31, 1240380533, 1, '添加属性: Wap 上网', '0.0.0.0'),
+(32, 1240380552, 1, '编辑属性: Wap 上网', '0.0.0.0'),
+(33, 1240380574, 1, '编辑属性: Wap 上网', '0.0.0.0'),
+(34, 1240380587, 1, '编辑属性: Wap 上网', '0.0.0.0'),
+(35, 1240380646, 1, '添加属性: 数据功能', '0.0.0.0'),
+(36, 1240380743, 1, '添加属性: 移动QQ', '0.0.0.0'),
+(37, 1240380759, 1, '添加属性: 视频格式', '0.0.0.0'),
+(38, 1240380831, 1, '添加属性: 扩张卡', '0.0.0.0'),
+(39, 1240380875, 1, '添加属性: 手机颜色', '0.0.0.0'),
+(40, 1240380920, 1, '添加属性: 来电防火墙', '0.0.0.0'),
+(41, 1240380945, 1, '添加属性: 英汉词典', '0.0.0.0'),
+(42, 1240380957, 1, '添加属性: 多语言显示', '0.0.0.0'),
+(43, 1240381002, 1, '添加属性: 电子书', '0.0.0.0'),
+(44, 1240381052, 1, '添加属性: 移动 MSN', '0.0.0.0'),
+(45, 1240381088, 1, '添加属性: 音频格式', '0.0.0.0'),
+(46, 1240381143, 1, '添加属性: 上市时间', '0.0.0.0'),
+(47, 1240381206, 1, '添加属性: 语音拨号', '0.0.0.0'),
+(48, 1240381229, 1, '添加属性: 语音菜单', '0.0.0.0'),
+(49, 1240381356, 1, '添加属性: 外观样式', '0.0.0.0'),
+(50, 1240381382, 1, '添加属性: 天线位置', '0.0.0.0'),
+(51, 1240381425, 1, '编辑属性: K-JAVA', '0.0.0.0'),
+(52, 1240381430, 1, '添加属性: K-JAVA', '0.0.0.0'),
+(53, 1240381464, 1, '添加属性: PDA 功能', '0.0.0.0'),
+(54, 1240381480, 1, '添加属性: 操作系统', '0.0.0.0'),
+(55, 1240381512, 1, '添加属性: 外壳材质', '0.0.0.0'),
+(56, 1240381561, 1, '编辑属性: 基本配件', '0.0.0.0'),
+(57, 1240381572, 1, '添加属性: 基本配件', '0.0.0.0'),
+(58, 1240381580, 1, '编辑属性: 附加配件', '0.0.0.0'),
+(59, 1240381602, 1, '添加属性: 附加配件', '0.0.0.0'),
+(60, 1240381627, 1, '编辑属性: 附加配件', '0.0.0.0'),
+(61, 1240381694, 1, '添加属性: 自动开关机', '0.0.0.0'),
+(62, 1240381717, 1, '添加属性: 视频分辨率', '0.0.0.0'),
+(63, 1240381731, 1, '添加属性: 影音编辑器', '0.0.0.0'),
+(64, 1240381741, 1, '添加属性: 图像编辑器', '0.0.0.0'),
+(65, 1240381759, 1, '添加属性: 可用内存', '0.0.0.0'),
+(66, 1240381775, 1, '添加属性: 主屏幕像素', '0.0.0.0'),
+(67, 1240381786, 1, '添加属性: 副屏幕像素', '0.0.0.0'),
+(68, 1240382037, 1, '添加属性: 更换外壳', '0.0.0.0'),
+(69, 1240382801, 1, '添加属性: 办公功能', '0.0.0.0'),
+(70, 1240382823, 1, '添加属性: 传感器', '0.0.0.0'),
+(71, 1240382844, 1, '添加属性: CPU频率', '0.0.0.0'),
+(72, 1240382866, 1, '添加属性: 理论待机时间', '0.0.0.0'),
+(73, 1240382875, 1, '添加属性: 理论通话时间', '0.0.0.0'),
+(74, 1240383267, 1, '编辑商品类型: 3g手机', '0.0.0.0'),
+(75, 1240383268, 1, '编辑商品类型: 手机', '0.0.0.0'),
+(76, 1240383269, 1, '编辑商品类型: 3g手机', '0.0.0.0'),
+(77, 1240383397, 1, '删除商品类型: 图形菜单', '0.0.0.0'),
+(78, 1240383432, 1, '添加属性: 图形菜单', '0.0.0.0'),
+(79, 1240383491, 1, '添加属性: EFR 服务', '0.0.0.0'),
+(80, 1240383509, 1, '添加属性: STK 服务', '0.0.0.0'),
+(81, 1240383528, 1, '添加属性: 通话录音', '0.0.0.0'),
+(82, 1240383554, 1, '添加属性: 语音菜单', '0.0.0.0'),
+(83, 1240383575, 1, '添加属性: 中文输入法', '0.0.0.0'),
+(84, 1240383594, 1, '编辑属性: 中文输入法', '0.0.0.0'),
+(85, 1240383613, 1, '编辑属性: 语音菜单', '0.0.0.0'),
+(86, 1240383635, 1, '添加属性: 和弦铃声', '0.0.0.0'),
+(87, 1240383651, 1, '添加属性: 主屏幕色彩', '0.0.0.0'),
+(88, 1240383658, 1, '添加属性: 副屏幕色彩', '0.0.0.0'),
+(89, 1240383682, 1, '添加属性: 天线位置', '0.0.0.0'),
+(90, 1240383700, 1, '添加属性: 数据功能', '0.0.0.0'),
+(91, 1240392733, 1, '安装配送方式: 邮政快递包裹', '0.0.0.0'),
+(92, 1240392748, 1, '安装配送方式: 圆通速递', '0.0.0.0'),
+(93, 1240392761, 1, '安装配送方式: 城际快递', '0.0.0.0'),
+(94, 1240392769, 1, '安装配送方式: 市内快递', '0.0.0.0'),
+(95, 1240463689, 1, '添加属性: 连拍', '0.0.0.0'),
+(96, 1240463709, 1, '添加属性: 定时拍摄', '0.0.0.0'),
+(97, 1240463729, 1, '添加属性: 照片打印', '0.0.0.0'),
+(98, 1240463748, 1, '添加属性: 照片特效', '0.0.0.0'),
+(99, 1240463766, 1, '添加属性: 电子书', '0.0.0.0'),
+(100, 1240463777, 1, '添加属性: 外壳材质', '0.0.0.0'),
+(101, 1240463793, 1, '添加属性: 名片扫描', '0.0.0.0'),
+(102, 1240463803, 1, '添加属性: GPU', '0.0.0.0'),
+(103, 1240463814, 1, '添加属性: CPU频率', '0.0.0.0'),
+(104, 1240463830, 1, '添加属性: TV-OUT电视输出', '0.0.0.0'),
+(105, 1240463843, 1, '添加属性: 来电图片识别', '0.0.0.0'),
+(106, 1240463855, 1, '添加属性: 来电防火墙', '0.0.0.0'),
+(107, 1240463865, 1, '添加属性: 背光自动调节', '0.0.0.0'),
+(108, 1240463873, 1, '添加属性: 照片分辨率', '0.0.0.0'),
+(109, 1240463880, 1, '添加属性: 变焦模式', '0.0.0.0'),
+(110, 1240463903, 1, '添加属性: 英汉词典', '0.0.0.0'),
+(111, 1240463925, 1, '添加属性: 多语言显示', '0.0.0.0'),
+(112, 1240463974, 1, '添加属性: 数据线功能', '0.0.0.0'),
+(113, 1240463992, 1, '添加属性: 留言应答', '0.0.0.0'),
+(114, 1240464004, 1, '添加属性: 可用内存(MB)', '0.0.0.0'),
+(115, 1240464015, 1, '添加属性: GPS', '0.0.0.0'),
+(116, 1240464022, 1, '添加属性: 相机闪光灯', '0.0.0.0'),
+(117, 1240464030, 1, '添加属性: 移动 MSN', '0.0.0.0'),
+(118, 1240464038, 1, '添加属性: 移动QQ', '0.0.0.0'),
+(119, 1240464050, 1, '添加属性: 内置媒体播放器', '0.0.0.0'),
+(120, 1240464066, 1, '添加属性: 电子邮件', '0.0.0.0'),
+(121, 1240464220, 1, '编辑属性: 待机时间（小时）', '0.0.0.0'),
+(122, 1240464272, 1, '编辑属性: 网络类型', '0.0.0.0'),
+(123, 1240464277, 1, '编辑属性: 网络类型', '0.0.0.0'),
+(124, 1240464331, 1, '编辑属性: 网络类型', '0.0.0.0'),
+(125, 1240464631, 1, '编辑属性: 网络类型', '0.0.0.0'),
+(126, 1240464639, 1, '编辑属性: 扩展卡', '0.0.0.0'),
+(127, 1240464650, 1, '编辑属性: 操作系统', '0.0.0.0'),
+(128, 1240464709, 1, '编辑属性: 通话时间（分）', '0.0.0.0'),
+(129, 1240464720, 1, '编辑属性: 待机时间（小时）', '0.0.0.0'),
+(130, 1240464737, 1, '编辑属性: 上市时间', '0.0.0.0'),
+(131, 1240464748, 1, '编辑属性: 手机颜色', '0.0.0.0'),
+(132, 1240464758, 1, '编辑属性: 基本配件', '0.0.0.0'),
+(133, 1240464770, 1, '编辑属性: 和铉铃声', '0.0.0.0'),
+(134, 1240464783, 1, '编辑属性: 相机像数', '0.0.0.0'),
+(135, 1240464794, 1, '编辑属性: 移动qq', '0.0.0.0'),
+(136, 1240464806, 1, '编辑属性: 感光元件', '0.0.0.0'),
+(137, 1240464816, 1, '编辑属性: GPS', '0.0.0.0'),
+(138, 1240464827, 1, '编辑属性: FM收音机', '0.0.0.0'),
+(139, 1240464853, 1, '编辑属性: FM收音机', '0.0.0.0'),
+(140, 1240464869, 1, '编辑属性: 话机电话薄（条）', '0.0.0.0'),
+(141, 1240464880, 1, '编辑属性: 扩展卡', '0.0.0.0'),
+(142, 1240464896, 1, '编辑属性: 扩展卡', '0.0.0.0'),
+(143, 1240464917, 1, '编辑属性: K-JAVA', '0.0.0.0'),
+(144, 1240464931, 1, '编辑属性: 价格档位', '0.0.0.0'),
+(145, 1240464945, 1, '编辑属性: 手机样式', '0.0.0.0'),
+(146, 1240464959, 1, '编辑属性: Wap 上网', '0.0.0.0'),
+(147, 1240800622, 1, '添加商品分类: 手机类型', '0.0.0.0'),
+(148, 1240800687, 1, '添加商品分类: GSM手机', '0.0.0.0'),
+(149, 1240800745, 1, '添加商品分类: GSM手机', '0.0.0.0'),
+(150, 1240800791, 1, '添加商品分类: 3G手机', '0.0.0.0'),
+(151, 1240800845, 1, '添加商品分类: 双模手机', '0.0.0.0'),
+(152, 1240800877, 1, '编辑商品分类: GSM手机', '0.0.0.0'),
+(153, 1240802922, 1, '添加品牌管理: 摩托罗拉', '0.0.0.0'),
+(154, 1240803062, 1, '编辑品牌管理: 诺基亚', '0.0.0.0'),
+(155, 1240803144, 1, '添加品牌管理: 多普达', '0.0.0.0'),
+(156, 1240803248, 1, '添加品牌管理: 飞利浦', '0.0.0.0'),
+(157, 1240803352, 1, '添加品牌管理: 夏新', '0.0.0.0'),
+(158, 1240803412, 1, '添加品牌管理: 三星', '0.0.0.0'),
+(159, 1240803482, 1, '添加品牌管理: 索爱', '0.0.0.0'),
+(160, 1240803526, 1, '添加品牌管理: LG', '0.0.0.0'),
+(161, 1240803578, 1, '添加品牌管理: 联想', '0.0.0.0'),
+(162, 1240803689, 1, '添加品牌管理: 金立', '0.0.0.0'),
+(163, 1240803736, 1, '添加品牌管理: 恒基伟业', '0.0.0.0'),
+(164, 1240803750, 1, '编辑品牌管理: 恒基伟业', '0.0.0.0'),
+(165, 1240804593, 1, '编辑商品分类: CDMA手机', '0.0.0.0'),
+(166, 1240902890, 1, '添加商品: KD876', '0.0.0.0'),
+(167, 1240904370, 1, '编辑商品: KD876', '0.0.0.0'),
+(168, 1240904461, 1, '编辑商品: KD876', '0.0.0.0'),
+(169, 1240912338, 1, '删除商品类型: 手机配件', '0.0.0.0'),
+(170, 1240912361, 1, '添加商品分类: 手机配件', '0.0.0.0'),
+(171, 1240912385, 1, '添加商品分类: 充电器', '0.0.0.0'),
+(172, 1240912477, 1, '添加商品分类: 耳机', '0.0.0.0'),
+(173, 1240912489, 1, '添加商品分类: 电池', '0.0.0.0'),
+(174, 1241420935, 1, '添加商品分类: 111', '0.0.0.0'),
+(175, 1241420966, 1, '添加商品: 斤', '0.0.0.0'),
+(176, 1241421093, 1, '回收商品: 斤', '0.0.0.0'),
+(177, 1241421104, 1, '删除商品: 斤', '0.0.0.0'),
+(178, 1241421110, 1, '删除商品分类: 111', '0.0.0.0'),
+(179, 1241421127, 1, '编辑商品分类: GSM手机', '0.0.0.0'),
+(180, 1241422082, 1, '添加商品: 诺基亚原装5800耳机', '0.0.0.0'),
+(181, 1241422137, 1, '添加属性: 卡的类型', '0.0.0.0'),
+(182, 1241422163, 1, '添加属性: 卡的大小', '0.0.0.0'),
+(183, 1241422236, 1, '添加属性: 颜色', '0.0.0.0'),
+(184, 1241422272, 1, '编辑属性: 卡的容量', '0.0.0.0'),
+(185, 1241422289, 1, '添加属性: 电池容量', '0.0.0.0'),
+(186, 1241422347, 1, '编辑商品: 诺基亚原装5800耳机', '0.0.0.0'),
+(187, 1241422402, 1, '添加商品: 诺基亚N85原装充电器', '0.0.0.0'),
+(188, 1241422416, 1, '编辑商品: KD876', '0.0.0.0'),
+(189, 1241422518, 1, '添加商品: 索爱原装M2卡读卡器', '0.0.0.0'),
+(190, 1241422573, 1, '添加商品: 胜创KINGMAX内存卡', '0.0.0.0'),
+(191, 1241422615, 1, '编辑商品: 胜创KINGMAX内存卡', '0.0.0.0'),
+(192, 1241422626, 1, '编辑商品: 诺基亚N85原装充电器', '0.0.0.0'),
+(193, 1241422785, 1, '添加商品: 诺基亚N85原装立体声耳机HS-82 查看商品相册 诺基亚N85原装立体声耳机HS-82', '0.0.0.0'),
+(194, 1241425512, 1, '添加商品: 飞利浦9@9v ', '0.0.0.0'),
+(195, 1241425836, 1, '编辑商品: 飞利浦9@9v ', '0.0.0.0'),
+(196, 1241425891, 1, '编辑商品: 飞利浦9@9v ', '0.0.0.0'),
+(197, 1241426819, 1, '添加文章分类: 3G手机资讯', '0.0.0.0'),
+(198, 1241426864, 1, '添加文章: 三星电子宣布将在中国发布15款3G手机', '0.0.0.0'),
+(199, 1241426898, 1, '编辑文章: 三星电子宣布将在中国发布15款3G手机', '0.0.0.0'),
+(200, 1241427051, 1, '添加文章: 薄锐极限 电信3G定制摩托罗拉V10发布', '0.0.0.0'),
+(201, 1241427449, 1, '编辑文章: 薄锐极限 电信3G定制摩托罗拉V10发布', '0.0.0.0'),
+(202, 1241427779, 1, '编辑文章: 诺基亚牵手移动 5款热门TD手机机型推荐', '0.0.0.0'),
+(203, 1241427850, 1, '编辑文章: 诺基亚牵手移动 5款热门TD手机机型推荐', '0.0.0.0'),
+(204, 1241511486, 1, '编辑商品: 飞利浦9@9v', '0.0.0.0'),
+(205, 1241511514, 1, '编辑属性: FM收音机', '0.0.0.0'),
+(206, 1241511871, 1, '添加商品: 诺基亚E66', '0.0.0.0'),
+(207, 1241512315, 1, '编辑商品: 诺基亚E66', '0.0.0.0'),
+(208, 1241512443, 1, '删除商品类型: 手机', '0.0.0.0'),
+(209, 1241512563, 1, '添加属性: 手机制式', '0.0.0.0'),
+(210, 1241512693, 1, '添加属性: 外观样式', '0.0.0.0'),
+(211, 1241512704, 1, '添加属性: 上市时间', '0.0.0.0'),
+(212, 1241512712, 1, '添加属性: 屏幕参数', '0.0.0.0'),
+(213, 1241512720, 1, '添加属性: 摄像功能', '0.0.0.0'),
+(214, 1241512728, 1, '添加属性: 其它功能', '0.0.0.0'),
+(215, 1241512737, 1, '添加属性: 产品配置', '0.0.0.0'),
+(216, 1241512762, 1, '添加属性: 理论通话时间', '0.0.0.0'),
+(217, 1241512772, 1, '添加属性: 理论待机时间', '0.0.0.0'),
+(218, 1241512804, 1, '添加属性: 中文短消息', '0.0.0.0'),
+(219, 1241512813, 1, '添加属性: 存储卡格式', '0.0.0.0'),
+(220, 1241512842, 1, '添加属性: 外壳材质', '0.0.0.0'),
+(221, 1241512868, 1, '添加属性: # 情景模式', '0.0.0.0'),
+(222, 1241512907, 1, '添加属性: 蓝牙接口', '0.0.0.0'),
+(223, 1241512939, 1, '添加属性: GPS', '0.0.0.0'),
+(224, 1241512966, 1, '添加属性: MP3播放器', '0.0.0.0'),
+(225, 1241512977, 1, '添加属性: 视频播放', '0.0.0.0'),
+(226, 1241513003, 1, '添加属性: 内置游戏', '0.0.0.0'),
+(227, 1241513036, 1, '编辑属性: 情景模式', '0.0.0.0'),
+(228, 1241513132, 1, '添加属性: 价位', '0.0.0.0'),
+(229, 1241513210, 1, '添加属性: 颜色', '0.0.0.0'),
+(230, 1241513508, 1, '编辑商品: 飞利浦9@9v', '0.0.0.0'),
+(231, 1241513571, 1, '编辑属性: MP3播放器', '0.0.0.0'),
+(232, 1241513596, 1, '编辑属性: 外壳材质', '0.0.0.0'),
+(233, 1241513630, 1, '编辑商品: 飞利浦9@9v', '0.0.0.0'),
+(234, 1241513750, 1, '编辑属性: MP3播放器', '0.0.0.0'),
+(235, 1241513771, 1, '添加属性: 附加配件', '0.0.0.0'),
+(236, 1241513918, 1, '编辑属性: 像数（万）', '0.0.0.0'),
+(237, 1241513939, 1, '编辑商品: 飞利浦9@9v', '0.0.0.0'),
+(238, 1241513959, 1, '编辑属性: 像数（万）', '0.0.0.0'),
+(239, 1241518314, 1, '编辑属性: 外壳材质', '0.0.0.0'),
+(240, 1241518329, 1, '编辑属性: 价位', '0.0.0.0'),
+(241, 1241946343, 1, '还原数据库备份: 备份时间2009-05-05 10:36:29', '127.0.0.1'),
+(242, 1241965622, 1, '添加商品: 索爱C702c', '127.0.0.1'),
+(243, 1241965816, 1, '添加商品: 索爱C702c', '127.0.0.1'),
+(244, 1241965859, 1, '编辑品牌管理: 摩托罗拉', '127.0.0.1'),
+(245, 1241965978, 1, '添加商品: 摩托罗拉A810', '127.0.0.1'),
+(246, 1241966023, 1, '编辑商品: 摩托罗拉A810', '127.0.0.1'),
+(247, 1241966218, 1, '编辑商品: 摩托罗拉A810', '127.0.0.1'),
+(248, 1241966408, 1, '编辑商品: 摩托罗拉A810', '127.0.0.1'),
+(249, 1241966536, 1, '编辑品牌管理: 诺基亚', '127.0.0.1'),
+(250, 1241966874, 1, '编辑商品: 摩托罗拉A810', '127.0.0.1'),
+(251, 1241966922, 1, '回收商品: 索爱C702c', '127.0.0.1'),
+(252, 1241966951, 1, '还原商品: 索爱C702c', '127.0.0.1'),
+(253, 1241966963, 1, '回收商品: 索爱C702c', '127.0.0.1'),
+(254, 1241967340, 1, '编辑商品: 诺基亚E66', '127.0.0.1'),
+(255, 1241967424, 1, '编辑商品: 诺基亚N85原装立体声耳机HS-82', '127.0.0.1'),
+(256, 1241967465, 1, '编辑商品: 索爱原装M2卡读卡器', '127.0.0.1'),
+(257, 1241967487, 1, '编辑商品: 诺基亚N85原装充电器', '127.0.0.1'),
+(258, 1241967556, 1, '编辑商品: KD876', '127.0.0.1'),
+(259, 1241967667, 1, '编辑商品: 飞利浦9@9v', '127.0.0.1'),
+(260, 1241967762, 1, '添加商品: 诺基亚5320 XpressMusic', '127.0.0.1'),
+(261, 1241968002, 1, '编辑商品: 诺基亚5320 XpressMusic', '127.0.0.1'),
+(262, 1241968058, 1, '编辑商品: 诺基亚5320 XpressMusic', '127.0.0.1'),
+(263, 1241968492, 1, '添加商品: 诺基亚5800XM', '127.0.0.1'),
+(264, 1241968703, 1, '添加商品: 摩托罗拉A810', '127.0.0.1'),
+(265, 1241968949, 1, '添加商品: 恒基伟业G101', '127.0.0.1'),
+(266, 1241969394, 1, '添加商品: 夏新N7', '127.0.0.1'),
+(267, 1241969533, 1, '添加商品: 夏新T5', '127.0.0.1'),
+(268, 1241969541, 1, '回收商品: 夏新T5', '127.0.0.1'),
+(269, 1241970139, 1, '添加商品: 三星SGH-F258', '127.0.0.1'),
+(270, 1241970175, 1, '编辑商品: 三星SGH-F258', '127.0.0.1'),
+(271, 1241970417, 1, '添加商品: 三星BC01', '127.0.0.1'),
+(272, 1241970634, 1, '添加商品: 金立 A30', '127.0.0.1'),
+(273, 1241970743, 1, '编辑商品: 飞利浦9@9v', '127.0.0.1'),
+(274, 1241971076, 1, '添加商品: 多普达Touch HD', '127.0.0.1'),
+(275, 1241971488, 1, '添加商品: 诺基亚N96', '127.0.0.1'),
+(276, 1241971556, 1, '编辑商品: 诺基亚N96', '127.0.0.1'),
+(277, 1241971981, 1, '添加商品: P806', '127.0.0.1'),
+(278, 1241972305, 1, '编辑商品: 飞利浦9@9v', '127.0.0.1'),
+(279, 1241972339, 1, '编辑商品: 恒基伟业G101', '127.0.0.1'),
+(280, 1241972512, 1, '添加商品分类: 充值卡', '127.0.0.1'),
+(281, 1241972554, 1, '添加商品分类: 小灵通/固话充值卡', '127.0.0.1'),
+(282, 1241972598, 1, '添加商品分类: 移动手机充值卡', '127.0.0.1'),
+(283, 1241972634, 1, '添加商品分类: 联通手机充值卡', '127.0.0.1'),
+(284, 1241972709, 1, '添加商品: 小灵通/固话50元充值卡', '127.0.0.1'),
+(285, 1241972789, 1, '添加商品: 小灵通/固话20元充值卡', '127.0.0.1'),
+(286, 1241972894, 1, '添加商品: 联通100元充值卡', '127.0.0.1'),
+(287, 1241972976, 1, '添加商品: 联通50元充值卡', '127.0.0.1'),
+(288, 1241973022, 1, '添加商品: 移动100元充值卡', '127.0.0.1'),
+(289, 1241973114, 1, '添加商品: 移动20元充值卡', '127.0.0.1'),
+(290, 1242105946, 1, '还原数据库备份: 备份时间2009-05-10 16:33:51', '0.0.0.0'),
+(291, 1242106383, 1, '编辑商品: 三星BC01', '0.0.0.0'),
+(292, 1242106490, 1, '编辑商品: 三星BC01', '0.0.0.0'),
+(293, 1242106594, 1, '添加会员账号: ecshop', '0.0.0.0'),
+(294, 1242106663, 1, '添加会员等级: vip', '0.0.0.0'),
+(295, 1242106727, 1, '添加会员等级: 钻石用户', '0.0.0.0'),
+(296, 1242106771, 1, '编辑商品: 诺基亚N96', '0.0.0.0'),
+(297, 1242106836, 1, '编辑商品: 诺基亚5320 XpressMusic', '0.0.0.0'),
+(298, 1242106894, 1, '添加会员账号: vip', '0.0.0.0'),
+(299, 1242106928, 1, '添加会员账号: text', '0.0.0.0'),
+(300, 1242106997, 1, '添加会员账号: zhuangshi', '0.0.0.0'),
+(301, 1242107017, 1, '删除会员账号: zhuangshi', '0.0.0.0'),
+(302, 1242107045, 1, '添加会员账号: zuanshi', '0.0.0.0'),
+(303, 1242107052, 1, '编辑会员账号: vip', '0.0.0.0'),
+(304, 1242107224, 1, '编辑操作日志: ', '0.0.0.0'),
+(305, 1242107360, 1, '添加: 音乐手机', '0.0.0.0'),
+(306, 1242107418, 1, '添加: 音乐手机', '0.0.0.0'),
+(307, 1242107466, 1, '添加: 音乐手机', '0.0.0.0'),
+(308, 1242107517, 1, '添加: 智能手机', '0.0.0.0'),
+(309, 1242107557, 1, '添加: 智能手机', '0.0.0.0'),
+(310, 1242107611, 1, '添加: 智能手机', '0.0.0.0'),
+(311, 1242107825, 1, '添加夺宝奇兵: 夺宝奇兵之诺基亚N96', '0.0.0.0'),
+(312, 1242107987, 1, '添加夺宝奇兵: 夺宝奇兵之夏新N7', '0.0.0.0'),
+(313, 1242108026, 1, '添加红包类型: 用户红包', '0.0.0.0'),
+(314, 1242108084, 1, '添加红包类型: 商品红包', '0.0.0.0'),
+(315, 1242108124, 1, '添加红包类型: 订单红包', '0.0.0.0'),
+(316, 1242108159, 1, '添加红包类型: 线下红包', '0.0.0.0'),
+(317, 1242108754, 1, '添加商品贺卡: 祝福贺卡', '0.0.0.0'),
+(318, 1242109088, 1, '添加团购商品: P806', '0.0.0.0'),
+(319, 1242109198, 1, '编辑商品: 金立 A30', '0.0.0.0'),
+(320, 1242109298, 1, '编辑商品: 金立 A30', '0.0.0.0'),
+(321, 1242109354, 1, '添加批发活动: 金立 A30', '0.0.0.0'),
+(322, 1242109644, 1, '编辑会员等级: 钻石用户', '0.0.0.0'),
+(323, 1242109964, 1, '添加优惠活动: 5.1诺基亚优惠活动', '0.0.0.0'),
+(324, 1242110117, 1, '添加拍卖活动: 拍卖活动——索爱C702c', '0.0.0.0'),
+(325, 1242110412, 1, '添加商品: 摩托罗拉E8 ', '0.0.0.0'),
+(326, 1242110451, 1, '添加: 音乐手机', '0.0.0.0'),
+(327, 1242110566, 1, '添加超值礼包: 摩托罗拉E8 大礼包', '0.0.0.0'),
+(328, 1242110760, 1, '添加商品: 诺基亚N85', '0.0.0.0'),
+(329, 1242110880, 1, '添加超值礼包: 诺基亚N85大礼包', '0.0.0.0'),
+(330, 1242140620, 1, '还原数据库备份: 备份时间2009-05-12 06:48:22', '127.0.0.1'),
+(331, 1242140683, 1, '添加积分可兑换的商品: 24', '127.0.0.1'),
+(332, 1242141551, 1, '安装支付方式: 余额支付', '127.0.0.1'),
+(333, 1242141813, 1, '安装配送方式: 申通快递', '127.0.0.1'),
+(334, 1242141841, 1, '添加配送区域: 申通', '127.0.0.1'),
+(335, 1242141890, 1, '添加配送区域: 1', '127.0.0.1'),
+(336, 1242141897, 1, '安装配送方式: 邮局平邮', '127.0.0.1'),
+(337, 1242141914, 1, '添加配送区域: 邮局', '127.0.0.1'),
+(338, 1242141958, 1, '安装配送方式: 运费到付', '127.0.0.1'),
+(339, 1242142014, 1, '添加配送区域: 运费到付', '127.0.0.1'),
+(340, 1242142081, 1, '安装支付方式: 银行汇款/转帐', '127.0.0.1'),
+(341, 1242142190, 1, '编辑配送区域: 1', '127.0.0.1'),
+(342, 1242142210, 1, '编辑配送区域: 运费到付', '127.0.0.1'),
+(343, 1242142227, 1, '编辑配送区域: 邮局', '127.0.0.1'),
+(344, 1242142503, 1, '编辑红包类型: 商品红包', '127.0.0.1'),
+(345, 1242143005, 1, '编辑团购商品: P806[3]', '127.0.0.1'),
+(346, 1242143557, 1, '编辑商店设置: ', '127.0.0.1'),
+(347, 1242144250, 1, '添加订单: 2009051264945', '127.0.0.1'),
+(348, 1242144268, 1, '编辑订单: 2009051264945,订单总金额由 0.00 变为 3800.00', '127.0.0.1'),
+(349, 1242144348, 1, '编辑订单: 2009051264945', '127.0.0.1'),
+(350, 1242144353, 1, '编辑订单: 2009051264945,订单总金额由 3800.00 变为 3810.00', '127.0.0.1'),
+(351, 1242144356, 1, '编辑订单: 2009051264945', '127.0.0.1'),
+(352, 1242144359, 1, '编辑订单: 2009051264945', '127.0.0.1'),
+(353, 1242144363, 1, '编辑订单: 2009051264945', '127.0.0.1'),
+(354, 1242576182, 1, '安装支付方式: 货到付款', '127.0.0.1'),
+(355, 1242576584, 1, '添加文章分类: 新手上路 ', '127.0.0.1'),
+(356, 1242576615, 1, '添加文章分类: 手机常识 ', '127.0.0.1'),
+(357, 1242576627, 1, '添加文章分类: 配送与支付 ', '127.0.0.1'),
+(358, 1242576634, 1, '添加文章分类: 服务保证 ', '127.0.0.1'),
+(359, 1242576641, 1, '添加文章分类: 联系我们 ', '127.0.0.1'),
+(360, 1242576650, 1, '添加文章分类: 会员 ', '127.0.0.1'),
+(361, 1242576700, 1, '添加文章: 售后流程', '127.0.0.1'),
+(362, 1242576717, 1, '添加文章: 购物流程', '127.0.0.1'),
+(363, 1242576727, 1, '添加文章: 订购方式', '127.0.0.1'),
+(364, 1242576826, 1, '添加文章: 如何分辨原装电池', '127.0.0.1'),
+(365, 1242576911, 1, '添加文章: 如何分辨水货手机 ', '127.0.0.1'),
+(366, 1242576927, 1, '添加文章: 如何享受全国联保', '127.0.0.1'),
+(367, 1242576971, 1, '编辑文章: 如何分辨原装电池', '127.0.0.1'),
+(368, 1242577023, 1, '添加文章: 货到付款区域', '127.0.0.1'),
+(369, 1242577032, 1, '添加文章: 配送支付智能查询 ', '127.0.0.1'),
+(370, 1242577041, 1, '添加文章: 支付方式说明', '127.0.0.1'),
+(371, 1242577080, 1, '编辑文章分类: 会员中心', '127.0.0.1'),
+(372, 1242577127, 1, '添加文章: 资金管理', '127.0.0.1'),
+(373, 1242577178, 1, '添加文章: 我的收藏', '127.0.0.1'),
+(374, 1242577199, 1, '添加文章: 我的订单', '127.0.0.1'),
+(375, 1242577230, 1, '编辑文章: 资金管理', '127.0.0.1'),
+(376, 1242577293, 1, '添加文章: 退换货原则', '127.0.0.1'),
+(377, 1242577308, 1, '添加文章: 售后服务保证 ', '127.0.0.1'),
+(378, 1242577326, 1, '添加文章: 产品质量保证 ', '127.0.0.1'),
+(379, 1242577409, 1, '编辑文章分类: 联系我们 ', '127.0.0.1'),
+(380, 1242577432, 1, '添加文章: 网站故障报告', '127.0.0.1'),
+(381, 1242577448, 1, '添加文章: 选机咨询 ', '127.0.0.1'),
+(382, 1242577459, 1, '添加文章: 投诉与建议 ', '127.0.0.1'),
+(383, 1242577702, 1, '添加文章: 800万像素超强拍照机 LG Viewty Smart再曝光', '127.0.0.1'),
+(384, 1242577731, 1, '编辑商品: KD876', '127.0.0.1'),
+(385, 1242577749, 1, '编辑商品: 三星BC01', '127.0.0.1'),
+(386, 1242577768, 1, '编辑商品: 三星SGH-F258', '127.0.0.1'),
+(387, 1242577791, 1, '编辑商品: 诺基亚N85', '127.0.0.1'),
+(388, 1242577813, 1, '编辑商品: 诺基亚N96', '127.0.0.1'),
+(389, 1242577838, 1, '编辑商品: 诺基亚N96', '127.0.0.1'),
+(390, 1242577864, 1, '编辑商品: 诺基亚E66', '127.0.0.1'),
+(391, 1242578018, 1, '添加文章分类: 本站手机促销', '127.0.0.1'),
+(392, 1242578199, 1, '添加文章: 飞利浦9@9促销', '127.0.0.1'),
+(393, 1242578365, 1, '编辑文章: 飞利浦9@9促销', '127.0.0.1'),
+(394, 1242578676, 1, '添加文章: 诺基亚5320 促销', '127.0.0.1'),
+(395, 1242578826, 1, '添加文章: 促销诺基亚N96', '127.0.0.1'),
+(396, 1242578885, 1, '添加文章分类: 站内快讯', '127.0.0.1'),
+(397, 1242579069, 1, '添加文章: 诺基亚6681手机广告欣赏', '127.0.0.1'),
+(398, 1242579189, 1, '添加文章: 手机游戏下载', '127.0.0.1'),
+(399, 1242579559, 1, '添加文章: 三星SGHU308说明书下载', '127.0.0.1'),
+(400, 1242579587, 1, '编辑文章: 三星SGHU308说明书下载', '127.0.0.1'),
+(401, 1242579622, 1, '编辑文章: 手机游戏下载', '127.0.0.1'),
+(402, 1242580013, 1, '添加文章: 3G知识普及', '127.0.0.1'),
+(403, 1242973211, 1, '还原数据库备份: 备份时间2009-05-17 17:10:28', '0.0.0.0'),
+(404, 1242973252, 1, '编辑商品分类: 联通手机充值卡', '0.0.0.0'),
+(405, 1242973362, 1, '编辑商品: 摩托罗拉A810', '0.0.0.0'),
+(406, 1242973436, 1, '编辑商品: 索爱C702c', '0.0.0.0'),
+(407, 1242973501, 1, '编辑文章分类: 3G资讯', '0.0.0.0'),
+(408, 1242974080, 1, '添加拍卖活动: 拍卖活动——索爱C702c(第2期)', '0.0.0.0'),
+(409, 1242974159, 1, '编辑拍卖活动: 拍卖活动——索爱C702c(第2期)', '0.0.0.0'),
+(410, 1242974327, 1, '添加团购商品: P806', '0.0.0.0'),
+(411, 1242974380, 1, '编辑团购商品: P806[8]', '0.0.0.0'),
+(412, 1242974613, 1, '添加文章: “沃”的世界我做主', '0.0.0.0'),
+(413, 1242976639, 1, '添加用户红包: 1000091405', '0.0.0.0'),
+(414, 1244189181, 1, '编辑商品: 索爱C702c', '0.0.0.0'),
+(415, 1244189344, 1, '编辑文章分类: 手机促销', '0.0.0.0'),
+(416, 1244190576, 1, '编辑文章: 三星SGHU308说明书下载', '0.0.0.0'),
+(417, 1244190791, 1, '编辑文章: 三星SGHU308说明书下载', '0.0.0.0'),
+(418, 1244190825, 1, '编辑文章: 三星SGHU308说明书下载', '0.0.0.0'),
+(419, 1244190882, 1, '编辑文章: 三星SGHU308说明书下载', '0.0.0.0'),
+(420, 1244190952, 1, '编辑文章: 三星SGHU308说明书下载', '0.0.0.0'),
+(421, 1244191015, 1, '编辑文章: 三星SGHU308说明书下载', '0.0.0.0'),
+(422, 1244191031, 1, '编辑文章: 三星SGHU308说明书下载', '0.0.0.0'),
+(423, 1244773301, 1, '添加在线调查: 您从哪里知道我们的网站', '0.0.0.0'),
+(424, 1244773315, 1, '添加在线调查: 论坛', '0.0.0.0'),
+(425, 1244773328, 1, '添加在线调查: 朋友', '0.0.0.0'),
+(426, 1244773345, 1, '添加在线调查: 友情链接', '0.0.0.0'),
+(427, 1245042408, 1, '还原数据库备份: 备份时间2009-06-12 02:23:14', '0.0.0.0'),
+(428, 1245042659, 1, '编辑商品分类: 手机类型', '0.0.0.0'),
+(429, 1245042742, 1, '编辑商品分类: GSM手机', '0.0.0.0'),
+(430, 1245042772, 1, '编辑商品分类: 手机类型', '0.0.0.0'),
+(431, 1245043251, 1, '编辑文章: 三星SGHU308说明书下载', '0.0.0.0'),
+(432, 1245043292, 1, '编辑文章: 三星SGHU308说明书下载', '0.0.0.0'),
+(433, 1245044142, 1, '编辑权限管理: bjgonghuo1', '0.0.0.0'),
+(434, 1245044234, 1, '添加供货商管理: 北京供货商', '0.0.0.0'),
+(435, 1245044248, 1, '添加供货商管理: 上海供货商', '0.0.0.0'),
+(436, 1245044469, 1, '编辑红包类型: 订单红包', '0.0.0.0'),
+(437, 1245044698, 1, '编辑供货商管理: 北京供货商', '0.0.0.0'),
+(438, 1245044706, 1, '编辑供货商管理: 上海供货商', '0.0.0.0'),
+(439, 1245136915, 1, '还原数据库备份: 备份时间2009-06-15 06:54:05', '0.0.0.0'),
+(440, 1245138481, 1, '还原数据库备份: 备份时间2009-06-16 07:47:15', '0.0.0.0'),
+(441, 1245220014, 1, '编辑商品: 诺基亚N85', '0.0.0.0'),
+(442, 1245220040, 1, '编辑商品: 诺基亚N85', '0.0.0.0'),
+(443, 1245220295, 1, '编辑商品: P806', '0.0.0.0'),
+(444, 1245220617, 1, '编辑商品: 诺基亚N96', '0.0.0.0'),
+(445, 1245220821, 1, '编辑商品: 多普达Touch HD', '0.0.0.0'),
+(446, 1245221079, 1, '编辑商品: 金立 A30', '0.0.0.0'),
+(447, 1245221279, 1, '编辑商品: 三星BC01', '0.0.0.0'),
+(448, 1245221460, 1, '编辑商品: 三星SGH-F258', '0.0.0.0'),
+(449, 1245221658, 1, '编辑商品: 夏新N7', '0.0.0.0'),
+(450, 1245221889, 1, '编辑商品: 摩托罗拉A810', '0.0.0.0'),
+(451, 1245222018, 1, '编辑商品: 诺基亚5800XM', '0.0.0.0'),
+(452, 1245222169, 1, '编辑商品: 诺基亚5320 XpressMusic', '0.0.0.0'),
+(453, 1245222267, 1, '回收商品: 摩托罗拉A810', '0.0.0.0'),
+(454, 1245222409, 1, '编辑商品: 索爱C702c', '0.0.0.0'),
+(455, 1245222545, 1, '编辑商品: 诺基亚E66', '0.0.0.0'),
+(456, 1245222658, 1, '编辑商品: 飞利浦9@9v', '0.0.0.0'),
+(457, 1245222832, 1, '编辑商品: KD876', '0.0.0.0'),
+(458, 1245222978, 1, '编辑商店设置: ', '0.0.0.0'),
+(459, 1245223043, 1, '编辑商品分类: 手机类型', '0.0.0.0'),
+(460, 1245223128, 1, '编辑商品分类: GSM手机', '0.0.0.0'),
+(461, 1245223340, 1, '编辑文章: 诺基亚牵手移动 5款热门TD手机机型推荐', '0.0.0.0'),
+(462, 1245223387, 1, '编辑文章: 诺基亚牵手移动 5款热门TD手机机型推荐', '0.0.0.0'),
+(463, 1245223611, 1, '还原数据库备份: 备份时间2009-06-17 07:23:51', '0.0.0.0');
 
 --
--- 表的结构 `sessions_data`
+-- `area_region`
 --
-
-CREATE TABLE IF NOT EXISTS `sessions_data` (
-  `sesskey` varchar(32) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
-  `expiry` int(10) unsigned NOT NULL DEFAULT '0',
-  `data` longtext NOT NULL,
-  PRIMARY KEY (`sesskey`),
-  KEY `expiry` (`expiry`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
--- --------------------------------------------------------
-
---
--- 表的结构 `shipping`
---
-
-CREATE TABLE IF NOT EXISTS `shipping` (
-  `shipping_id` tinyint(3) unsigned NOT NULL AUTO_INCREMENT,
-  `shipping_code` varchar(20) NOT NULL DEFAULT '',
-  `shipping_name` varchar(120) NOT NULL DEFAULT '',
-  `shipping_desc` varchar(255) NOT NULL DEFAULT '',
-  `insure` varchar(10) NOT NULL DEFAULT '0',
-  `support_cod` tinyint(1) unsigned NOT NULL DEFAULT '0',
-  `enabled` tinyint(1) unsigned NOT NULL DEFAULT '0',
-  `shipping_print` text NOT NULL,
-  `print_bg` varchar(255) DEFAULT NULL,
-  `config_lable` text,
-  `print_model` tinyint(1) DEFAULT '0',
-  `shipping_order` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  PRIMARY KEY (`shipping_id`),
-  KEY `shipping_code` (`shipping_code`,`enabled`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=8 ;
+INSERT INTO `area_region` (`shipping_area_id`, `region_id`) VALUES
+(1, 1),
+(2, 1),
+(3, 1),
+(4, 3),
+(4, 4),
+(4, 6),
+(4, 9),
+(4, 30),
+(4, 32);
 
 --
--- 转存表中的数据 `shipping`
+-- `article`
 --
 
-INSERT INTO `shipping` (`shipping_id`, `shipping_code`, `shipping_name`, `shipping_desc`, `insure`, `support_cod`, `enabled`, `shipping_print`, `print_bg`, `config_lable`, `print_model`, `shipping_order`) VALUES
-(1, 'post_express', '邮政快递包裹', '邮政快递包裹的描述内容。', '1%', 0, 1, '', NULL, NULL, 0, 0),
-(2, 'yto', '圆通速递', '上海圆通物流（速递）有限公司经过多年的网络快速发展，在中国速递行业中一直处于领先地位。为了能更好的发展国际快件市场，加快与国际市场的接轨，强化圆通的整体实力，圆通已在东南亚、欧美、中东、北美洲、非洲等许多城市运作国际快件业务', '0', 1, 1, '', NULL, NULL, 0, 0),
-(3, 'city_express', '城际快递', '配送的运费是固定的', '0', 1, 1, '', NULL, NULL, 0, 0),
-(4, 'flat', '市内快递', '固定运费的配送方式内容', '0', 1, 1, '', NULL, NULL, 0, 0),
-(5, 'sto_express', '申通快递', '江、浙、沪地区首重为15元/KG，其他地区18元/KG， 续重均为5-6元/KG， 云南地区为8元', '0', 0, 1, '', NULL, NULL, 0, 0),
-(6, 'post_mail', '邮局平邮', '邮局平邮的描述内容。', '0', 0, 1, '', NULL, NULL, 0, 0),
-(7, 'fpd', '运费到付', '所购商品到达即付运费', '0', 0, 1, '', NULL, NULL, 0, 0);
-
--- --------------------------------------------------------
+INSERT INTO `article` (`article_id`, `cat_id`, `title`, `content`, `author`, `author_email`, `keywords`, `article_type`, `is_open`, `add_time`, `file_url`, `open_type`, `link`) VALUES
+(7, 4, '三星电子宣布将在中国发布15款3G手机', '<p>全球领先的电子产品及第二大移动通信终端制造商三星电子今天在北京宣布，为全面支持中国开展3G移动通信业务，将在3G服务正式商用之际，向中国市场推出 15款3G手机。这些产品分别支持中国三大无线运营商的各种3G服务，并已经得到运营商的合作认可。凭借在电子和通信领域的整体技术实力和对消费者的准确 把握，三星电子已经开始全面发力中国的3G移动通信市场。<br />\n<br />\n&nbsp;&nbsp;&nbsp;&nbsp;2009年1月，中国政府宣布正式启动3G移动通信服务。并根据中国的实际情况，决定由三大运营商分别采用全部三种3G网络制式，&nbsp;即以中国自主知识产权为核心的TD-SCDMA，以欧洲为主要市场的WCDMA和源自北美的CDMA2000技术。<br />\n<br />\n&nbsp;&nbsp;&nbsp;&nbsp;多 年来，三星电子秉承&ldquo;做中国人民喜爱的企业，贡献于中国社会的企业&rdquo;的企业理念，准确地把握了中国社会的发展和市场的需求，推出了一系列深受中国消费者喜 爱的电子产品。为了配合中国推进具有自主知识产权的3G移动通信标准TD-SCDMA，&nbsp;三星电子从2000年开始在中国设立了通信技术研究院，&nbsp;开始进 行TD-SCDMA技术的研究。作为最早承诺支持中国3G标准的手机制造企业，三星电子已经先后投入了上亿元的研究费用，&nbsp;组建了几百人的研发团队。推出 的TD-SCDMA制式的产品，不仅通过了各级权威部门的试验和检测，也经历了2008年北京奥运会的现场考验。此次为中国移动定制的TD-SCDMA手 机，包括了满足高端商务需求的双待产品B7702C，以及数字电视手机、多媒体手机和时尚手机。<br />\n<br />\n&nbsp;&nbsp;&nbsp;&nbsp;作为世界第二大手机制造企业，三 星电子已经在全球3G市场积累了多年的技术和市场经验。最新的统计表明，在完全采用WCDMA标准的欧洲，三星电子的市场份额已经排名第二。在为中国联通 准备的产品中，不仅包括能够支持HSDPA的高端多媒体手机S7520U，也涵盖了能够支持高速上网、在线电影、在线音乐等适合不同消费需求的各种产品。<br />\n<br />\n&nbsp;&nbsp;&nbsp;&nbsp;而 在主要采用CDMA2000技术的北美市场，三星电子也取得了市场份额的第一名。即将陆续上市的支持中国电信3G服务的EVDO产品，有高端商务手机 W709。该机能够支持EVDO/GSM的双网双待功能，含800万像素拍摄系统。其他产品还包括音乐手机M609，双模手机W239，以及时尚设计的 F539等。<br />\n<br />\n&nbsp;&nbsp;&nbsp;&nbsp;作为世界上少数能够提供支持三种3G标准的终端厂商，三星电子正利用其在通信、半导体、显示器以及数字多媒体等方面 的优势，加快产品数字融合的进程。除上述3G手机产品外，三星电子也于近期推出了用于3G网络的上网卡和网络笔记本电脑。三星电子专务、无线事业部大中华 区高级副总裁卢基学先生说，&ldquo;上述15款新品，&nbsp;只是我们二季度新产品的一部分。随着中国3G移动通信市场的不断扩大，三星还将推出更多适合中国市场的终 端产品，以满足消费者对于通信和数字产品的不同需求。三星也将积极配合运营商业务的发展计划，加快技术和应用的研发。中国3G的移动通信市场前景将是非常 明亮的。&rdquo;</p>', '', '', '', 0, 1, 1241426864, '', 0, 'http://'),
+(8, 4, '诺基亚牵手移动 5款热门TD手机机型推荐', '<table width="100%" cellspacing="0" cellpadding="4" align="center" class="tableborder">\r\n<tbody>\r\n<tr>\r\n<td width="180" valign="top" class="altbg4">&nbsp;</td>\r\n<td height="100%" valign="top" class="altbg3">\r\n<table cellspacing="0" cellpadding="0" border="0" style="padding: 5px; table-layout: fixed; width: 973px; height: 2195px;">\r\n<tbody>\r\n<tr>\r\n<td valign="top">\r\n<div class="bbs_content clearfix">随着5月17日电信日的来临，自从09年初网民对于3G方面关注越来越多，目前国内3G网络主要有中国移动TD-SCDMA，中国联通WCDMA以及 中国电信的CDMA2000这三种制式。到底是哪一种网络制式能让消费者满意，相信好多消费者都难以判断。<br />\r\n<br />\r\n而作为3G网络最主要的组 成部分-手持终端（手机） ，相信也是好多消费者关注的焦点。目前，中国移动TD-SCDMA手机机型频频爆出，其中不乏亮点产品，像联想联想 Ophone、诺基亚、多普达 Magic等，下面就让笔者与大家一起来了解TD-SCDMA网络制式下的几款强势机型吧。<br />\r\n<br />\r\n诺基亚TD-SCDMA手机　型号：待定　参考报价：尚未上市<br />\r\n<br />\r\n随着国内3G网络发展速度加快及众多手机厂商纷纷跟进，诺基亚终于推出TD-SCDMA手机，这款诺基亚的首台TD-SCDMA测试手机型号目前仍无法 得知，但从键盘及菜单设计来看，我们可以是知道其并没有采用S60操作系统，只是配备了S40系统，机身直板造型与早期热卖的6300有几分相像。<br />\r\n<br />\r\n<p><img width="450" alt="" src="http://dstatic.esqimg.com/4812278/1.jpg" style="display: block;" /></p>\r\n<br />\r\n<br />\r\n图为：诺基亚TD-SCDMA手机<br />\r\n<br />\r\n虽然没有更多的参数资料，但是从曝光的图片我们可以知道这款诺基亚TD-SCDMA手机必定配备了QVGA分辨率的屏幕以及320万像素的摄像头，而标准的MP3以及蓝牙等功能自然不会缺少，在功能方面不会比以往的S40手机逊色。<br />\r\n<br />\r\n<p><img width="450" alt="" src="http://dstatic.esqimg.com/4812279/2.jpg" style="display: block;" /></p>\r\n<br />\r\n<br />\r\n图为：诺基亚TD-SCDMA手机<br />\r\n<br />\r\n这款诺基亚的TD手机最大的卖点便是提供了对TD-HSDPA技术的支持，最大的功能特色便是该技术被看为是TD网络下一步的演进技术，能够同时适用于 WCDMA和TD-SCDMA两种不同的网络支持，能够很好的支持非对称的数据业务，也就是说这款诺基亚手机的用户即便在全球漫游都能够使用到3G网络。 而其机身前置的摄像头也更是证实了其3G手机的身份。<br />\r\n<br />\r\n<p><img width="450" alt="" src="http://dstatic.esqimg.com/4812280/3.jpg" style="display: block;" /></p>\r\n<p><br />\r\n<br />\r\n图为：诺基亚TD-SCDMA手机<br />\r\n<br />\r\n从目前曝光的测试情况来看，通过这款诺基亚TD手机连接网络，其下载速度能够稳定在1.3Mbps左右，不过根据国内有些媒体的报道，诺基亚官方已经证实将于今天下半年配合运营商中国移动对出自己的第一款TD-SCDMA制式的S60手机，大家要拭目以待了。</p>\r\n<p>&nbsp;</p>\r\n图为：诺基亚TD-SCDMA手机<br />\r\n<br />\r\n最后较为耐人寻味的便是目前有业内人士指出目前曝光的的诺基亚TD手机其实是去年夏季就出现过的 TD测试手机，但是随着诺基亚拥有部分股份的TD芯片厂商&ldquo;凯明&rdquo;的倒闭，这款机型也就被取消了。尽管对于目前这款诺基亚的TD测试手机的身份尚无官方的 消息，但是诺基亚将推出TD手机遗失毫无悬念的事情了，相信大家也希望在TD制式下能够有更多的手机可以选择。</div>\r\n</td>\r\n</tr>\r\n</tbody>\r\n</table>\r\n</td>\r\n</tr>\r\n</tbody>\r\n</table>\r\n<p>&nbsp;</p>', '', '', '', 0, 1, 1241427051, '', 0, 'http://'),
+(9, 5, '售后流程', '', '', '', '', 0, 1, 1242576700, '', 0, 'http://'),
+(10, 5, '购物流程', '', '', '', '', 0, 1, 1242576717, '', 0, 'http://'),
+(11, 5, '订购方式', '', '', '', '', 0, 1, 1242576727, '', 0, 'http://'),
+(12, 6, '如何分辨原装电池', '<p><font size="2">一般在购买时主要是依靠观察外观特征的方法来鉴别电池，而原装电池一般应具有以下一些特征：&nbsp;<br />\n<br />\n1、 电池外观整齐，外表面有一定的粗糙度且手感舒适，内表面手感光滑，灯光下能看见细密的纵向划痕&nbsp;<br />\n<br />\n2、 生产厂家字样应该轮廓清晰，且防伪标志亮度高，看上去有立体感，电池标贴 字迹清晰，有与电池类型相一致的电池件号<br />\n3、 电池标贴采用二次印刷技术，在一定光线下从斜面看，条形码部分的颜色比其他部分要黑，且用手触摸有凹凸感<br />\n<br />\n4、 原装电池电极与手机电池片宽度相等，电池电极下方标有&ldquo; + &rdquo;、&ldquo; - &rdquo;标志，电池电极片之间的隔离材料与外壳材料一致，但不是一体<br />\n<br />\n5、 原装电池装入手机时手感舒适，安装自如，电池按压部分卡位适当而且牢固<br />\n<br />\n6、 原装电池的金属触点采用优质的铜片，只有在正面看时才会有反光，而从其它角度看的话，都是比较暗淡的</font></p>', '', '', '', 1, 1, 1242576826, '', 0, 'http://'),
+(15, 7, '货到付款区域', '', '', '', '', 0, 1, 1242577023, '', 0, 'http://'),
+(16, 7, '配送支付智能查询 ', '', '', '', '', 0, 1, 1242577032, '', 0, 'http://'),
+(17, 7, '支付方式说明', '', '', '', '', 0, 1, 1242577041, '', 0, 'http://'),
+(18, 10, '资金管理', '', '', '', '', 0, 1, 1242577127, '', 0, 'user.php?act=account_log'),
+(19, 10, '我的收藏', '', '', '', '', 0, 1, 1242577178, '', 0, 'user.php?act=collection_list'),
+(20, 10, '我的订单', '', '', '', '', 0, 1, 1242577199, '', 0, 'user.php?act=order_list'),
+(21, 8, '退换货原则', '', '', '', '服务', 0, 1, 1242577293, '', 0, 'http://'),
+(22, 8, '售后服务保证 ', '', '', '', '售后', 0, 1, 1242577308, '', 0, 'http://'),
+(23, 8, '产品质量保证 ', '', '', '', '质量', 1, 1, 1242577326, '', 0, 'http://'),
+(24, 9, '网站故障报告', '', '', '', '', 0, 1, 1242577432, '', 0, 'http://'),
+(25, 9, '选机咨询 ', '', '', '', '', 0, 1, 1242577448, '', 0, 'http://'),
+(26, 9, '投诉与建议 ', '', '', '', '', 0, 1, 1242577459, '', 0, 'http://'),
+(27, 4, '800万像素超强拍照机 LG Viewty Smart再曝光', '', '', '', '', 0, 1, 1242577702, '', 0, 'http://news.imobile.com.cn/index-a-view-id-66790.html'),
+(28, 11, '飞利浦9@9促销', '<p>&nbsp;</p>\r\n<div class="boxCenterList RelaArticle" id="com_v">\r\n<p align="left">作为一款性价比极高的入门级<font size="3" color="#ff0000"><strong>商务手机</strong></font>，飞利浦<a href="mailto:9@9v">Xenium&nbsp; 9@9v</a>三围大小为105&times;44&times;15.8mm，机身重量仅为<strong><font size="3" color="#ff0000">75g</font></strong>，装配了一块低规格1.75英寸128&times;160像素65000色CSTN显示屏。身正面采用月银色功能键区与屏幕数字键区相分隔，键盘设计较为<font size="3"><strong><font color="#ff0000">别</font><font color="#ff0000">致</font></strong></font>，中部导航键区采用钛金色的&ldquo;腰带&rdquo;彰显出浓郁的商务气息。</p>\r\n<p align="left">&nbsp;</p>\r\n<p align="left">此款手机采用<strong><font size="3" color="#ff0000">触摸屏</font></strong>设计，搭配精致的手写笔，可支持手写中文和英文两个版本。增强的内置系统还能识别潦草字迹，确保在移动中和匆忙时输入文字的识别率。手写指令功能还支持特定图案的瞬间调用，独特的手写记事本功能，可以在触摸屏上随意绘制个性化的图案并进行<strong><font size="3" color="#ff0000">记事提醒</font></strong>，让商务应用更加随意。</p>\r\n<p align="left">&nbsp;</p>\r\n<p align="left">&nbsp;作为入门级为数不多支持<strong><font size="3" color="#ff0000">双卡功能</font></strong>的手机，可以同时插入两张SIM卡，通过菜单随意切换，只需开启漫游自动切换模式，<a href="mailto:9@9V">9@9V</a>在该模式下能够判断网络情况，自动切换适合的手机号。</p>\r\n<p align="left">&nbsp;</p>\r\n<p align="left">&nbsp;</p>\r\n</div>\r\n<p>&nbsp;</p>', '', '', '', 0, 1, 1242578199, '', 0, 'http://'),
+(29, 11, '诺基亚5320 促销', '<p>&nbsp;</p>\r\n<div id="com_v" class="boxCenterList RelaArticle">\r\n<p>诺基亚5320XpressMusic音乐手机采用XpressMusic系列常见的黑红、黑蓝配色方案，而材质方便则选用的是经过<strong><font size="3" color="#ff0000">抛光处理</font></strong>的工程塑料；三围/体重为，为108&times;46&times;15mm/<strong><font size="3" color="#ff0000">90g</font></strong>，手感舒适。</p>\r\n<p>&nbsp;</p>\r\n<p>诺基亚5320采用的是一块可视面积为2.0英寸的<font size="3" color="#ff0000"><strong>1600万色</strong></font>屏幕，分辨率是常见的240&times;320像素（QVGA）。虽然屏幕不是特别大，但效果非常精细，色彩还原不错。</p>\r\n<p>&nbsp;</p>\r\n<p>手机背面，诺基亚为5320XM配备一颗<strong><font size="3" color="#ff0000">200W像素</font></strong>的摄像头，并且带有<strong><font size="3" color="#ff0000">两个LED的补光灯</font></strong>，可以实现拍照、摄像功能，并能通过彩信、邮件方式发送给朋友。</p>\r\n<p>&nbsp;</p>\r\n</div>\r\n<p>&nbsp;</p>', '', '', '', 1, 1, 1242578676, '', 0, 'http://'),
+(30, 11, '促销诺基亚N96', '<p>&nbsp;</p>\r\n<div class="boxCenterList RelaArticle" id="com_v">\r\n<p>诺基亚N96采用了<strong><font size="3" color="#ff0000">双向滑盖</font></strong>设计，机身整体呈灰黑色，沉稳、大气，机身材质采用了高强度的塑料材质，手机背面采用了抛光面板的设计风格。N96三维体积103*55*20mm，重量为125g。屏幕方面，诺基亚N96配备一块<strong><font size="3" color="#ff0000">2.8英寸</font></strong>的屏幕，支持<strong><font size="3" color="#ff0000">1670万色</font></strong>显示，分辨率达到QVGA（320&times;240）水准。</p>\r\n<p>&nbsp;<img src="http://img2.zol.com.cn/product/21/896/ceN6LBMCid3X6.jpg" alt="" /></p>\r\n<p>&nbsp;</p>\r\n<p>诺基亚N96设置有专门的<strong><font size="3" color="#ff0000">音乐播放键</font></strong>和标准的3.5毫米音频插口，支持多格式音乐播放。内置了<strong><font size="3" color="#ff0000">多媒体播放器</font></strong>，支持FM调频收音机等娱乐功能。N96手机支持<strong><font size="3" color="#ff0000">N-Gage游戏平台</font></strong>，内置包括<font size="3" color="#ff0000"><strong>《PinBall》完整版</strong></font>在内的四款N-Gage游戏，除了手机本身内置的游戏，还可以从N-Gage的网站下载或者购买最新的游戏，而且可以在论坛里和其他玩家一起讨论。</p>\r\n<p>&nbsp;</p>\r\n</div>\r\n<p>&nbsp;<img src="http://img2.zol.com.cn/product/21/898/cekkw57qJjSI.jpg" alt="" /></p>', '', '', '', 1, 1, 1242578826, '', 0, 'http://'),
+(13, 6, '如何分辨水货手机 ', '<p>\n<div class="artibody">\n<p><font size="2"><strong>1、&nbsp;什么是水货？</strong><br />\n提及水货手机，按照行业内的说法，可以将水货手机分成三类：A类、B类和C类。 </font></p>\n<p><font size="2">A类水货手机是指由国外、港澳台等地区在没有经过正常海关渠道的情况下进入国内市场的产品，就是我们常说的走私货， 与行货的主要差异是在输入法上，这类手机都是英文输入法或者是港澳台地区的繁体中文输入法。这类手机其最主要的目的是为了逃避国家关税或者因为该种产品曾 经过不正当改装而不能够通过正常渠道入关，质量一般没有大的问题。但由于逃避关税本身就是违法的，所以购买这类手机的用户根本得不到任何售后保障服务； </font></p>\n<p><font size="2">B类水货手机就是走私者将手机的系统软件由英文版升级至中文版后，偷运到内地，然后贴上非法渠道购买的入网标志，作为行货手机充数。 </font></p>\n<p><font size="2">C类水货手机则是那些由其他型号机改装、更换芯片等等方法做假&ldquo;生产&rdquo;出来的，或者就是从各地购买手机的部件，自己组装然后再贴上非法购买的入网标志。 </font></p>\n<p><font size="2">水货手机虽然不排除它是原厂正货的可能，但通过市场调研发现，绝大多数水货手机都是改版的次货，而且产品基本没有受国内厂商的保修许可。</font></p>\n<p><font size="2"><strong>2、水货有哪些？</strong>水货有两种，一种俗称港行，也称作水行，这种产品原本是在香港 及周边地区销售的，但是经过非法途径进入大陆地区销售。另一种是欧版水改机，也称作欧版，水改等，此种产品以英文改版机为主，通过刷改机内软件达到英文改 中文的目的，原来这类产品是销往欧美地区的，由于和大陆地区有相当大的价格差，所以通过走私进入中国市场。</font></p>\n<p><font size="2"><strong>3、水货手机的危害</strong><br />\n1、售后服务无保障 <br />\n手机作为精密类电子产品，软件、硬件方面都有可能产生不同的问题。购买正规渠道的手机，一旦出现问题，只要将问题反映给厂商客户服务中心并静候佳音就 可以了。大多数走私手机的贩卖点规模较小，根本没有资金和技术能力建立起自己的维修网点，因此他们往往制定非常苛刻的保修条件，将国家明令的一年保修期缩 短为三个月，并加入完全对走私手机经销商有利的诸如&ldquo;认为摔打&rdquo;等概念难以界定的排除条件(众所周知，手机很有可能发生摔撞事件)，是确确实实的霸王条 款。规定时间内手机出了故障，走私手机经销商会通过曲解条款尽可能地开脱保修责任。即使他们愿意承担保修服务，也需将手机发往广州、深圳等地，委托他人维 修。一来路途漫长，二来经手人繁多，小问题&ldquo;修&rdquo;成了大问题。最终走私手机经销商会以无法维修为由劝客户自行去当地正规客服维修。至于维修费用，他们自然 也不愿意出了。<br />\n<br />\n2、产品本身质量不过关<br />\n&nbsp;&nbsp;&nbsp; 现在很多奸商为了谋取暴利，经常使用C类的翻修或者组装手机冒充A类水货手机进行销售。作为消费者来说面对和正规行货之间巨大的价格差异，他们无法分辨想要购买的手机是否象销售商说的那样质量过硬，在销售商的巧舌如簧下只能眼看自己的钱包&ldquo;减肥&rdquo;。 </font></p>\n<p><font size="2">但是这类翻修或者组装的水货手机往往为了降低成本，其采用的配件往往也是不合格产品，甚至也是伪劣产品，可以想象由这样产品组装起来的手机的质量究竟可以好到那里去。目前在经常看到手机电池爆炸伤人的事件的报道，究其原因也是消费者购买了这些组装的水货手机。</font></p>\n<p><font size="2">而且不光这类手机硬件存在问题，包括手机使用的软件。由于组装的水货硬件规格根本无法保证和原场产品一致，手机使用的软件也会造成和手机硬件的冲突。频繁死机就是家常便饭，更有甚者会造成经常性的电话本丢失，无法联系到好友。</font></p>\n<p><br />\n<font size="2"><strong>4、如何分辨行、水货手机？</strong><br />\n1、看手机上是否贴有信息产业部&ldquo;进网许可&rdquo;标志。水货与正品的入网标志稍微有一点不同：真的入网标志一般都是针式打印机打印的，数字清晰，颜色较浅，仔细看有针打的凹痕；假的入网标志一般是普通喷墨打印机打印的，数字不很清晰，颜色较深，没有凹痕。 </font></p>\n<p><font size="2">2、检查手机的配置，包括中文说明书、电池、充电器等，如果是厂家原配，一般均贴有厂家的激光防伪标志。原厂配置的 中文说明书通常印刷精美，并与其他语言的说明书及相关产品资料的印刷质量、格式、风格等保持一致。不是原厂家配置的中文说明书通常印刷质量低劣，常出现错 别字，甚至字迹模糊。正品手机的包装盒中均附带有原厂合格证、原厂条码卡、原厂保修卡，而水货则没有。 </font></p>\n<p><font size="2">3、确认经销商的保修条例是否与厂家一致，在购买手机时应索要发票和保修卡。 </font></p>\n<p><font size="2">4、电子串号是否一致也是验证是否水货手机的重要途径。首先在手机上按&ldquo;*#06#&rdquo;，一般会在手机上显示15个数 字，这就是本手机的IMEI码。然后打开手机的电池盖，在手机里有一张贴纸，上面也有一个IMEI码，这个码应该同手机上显示的IMEI码完全一致。然后 再检查手机的外包装盒上的贴纸，上面也应该有一个IMEI码，这个码也应该同手机上显示的IMEI码完全一致。如果此三个码有不一致的地方，这个手机就有 问题。</font></p>\n</div>\n<p>&nbsp;</p>\n</p>', '', '', '', 0, 1, 1242576911, '', 0, 'http://'),
+(14, 6, '如何享受全国联保', '', '', '', '', 0, 1, 1242576927, '', 0, 'http://'),
+(31, 12, '诺基亚6681手机广告欣赏', '<object>\n<param value="always" name="allowScriptAccess" />\n<param value="transparent" name="wmode" />\n<param value="http://6.cn/player.swf?flag=0&amp;vid=nZNyu3nGNWWYjmtPQDY9nQ" name="movie" /><embed width="480" height="385" src="http://6.cn/player.swf?flag=0&amp;vid=nZNyu3nGNWWYjmtPQDY9nQ" allowscriptaccess="always" wmode="transparent" type="application/x-shockwave-flash"></embed></object>', '', '', '', 0, 1, 1242579069, '', 0, 'http://'),
+(32, 12, '手机游戏下载', '<p>三星SGHU308说明书下载，点击相关链接下载</p>', '', '', '', 1, 1, 1242579189, '', 0, 'http://soft.imobile.com.cn/index-a-list_softs-cid-1.html'),
+(33, 12, '三星SGHU308说明书下载', '<p>三星SGHU308说明书下载</p>', '', '', '', 1, 1, 1242579559, 'data/article/1245043292228851198.rar', 2, 'http://'),
+(34, 12, '3G知识普及', '<p>\n<h2>3G知识普及</h2>\n<div class="t_msgfont" id="postmessage_8792145"><font color="black">3G，全称为3rd Generation，中文含义就是指第三代数字通信。<br />\n</font><br />\n<font color="black">　　1995年问世的第一代<span class="t_tag" onclick="tagshow(event)" href="http://mbbs.enet.com.cn/tag.php?name=%C4%A3%C4%E2">模拟</span>制式<span class="t_tag" onclick="tagshow(event)" href="http://mbbs.enet.com.cn/tag.php?name=%CA%D6%BB%FA">手机</span>（1G）只能进行<span class="t_tag" onclick="tagshow(event)" href="http://mbbs.enet.com.cn/tag.php?name=%D3%EF%D2%F4">语音</span>通话；<br />\n</font><br />\n<font color="black">　　1996到1997年出现的第二代GSM、TDMA等数字制式手机（2G）便增加了接收数据的功能，如接收电子邮件或网页；<br />\n</font><br />\n<font color="black">　　3G不是2009年诞生的，它是上个世纪的产物，而早在2007年国外就已经产生4G了，而<span class="t_tag" onclick="tagshow(event)" href="http://mbbs.enet.com.cn/tag.php?name=%D6%D0%B9%FA">中国</span>也于2008年成功开发出<span class="t_tag" onclick="tagshow(event)" href="http://mbbs.enet.com.cn/tag.php?name=%D6%D0%B9%FA">中国</span>4G，其网络传输的速度可达到每秒钟2G，也就相当于下一部电影只要一秒钟。在上世纪90年末的日韩电影如《我的野蛮女友》中，女主角使用的可以让对方看见自己的视频<span class="t_tag" onclick="tagshow(event)" href="http://mbbs.enet.com.cn/tag.php?name=%B5%E7%BB%B0">电话</span>，就是属于3G技术的重要运用之一。日韩等国3G的运用是上世纪末期的事。而目前国外有些地区已经试运行3.5G甚至4G网络。<br />\n</font><br />\n<font color="black">　 </font><font color="black">（以下为误导）2009年问世的第三代（3G）与 前两代的主要区别是在传输声音和数据的速度上的提升，它能够在全球范围内更好地实现无缝漫游，并处理图像、音乐、视频流等多种媒体形式，提供包括网页浏 览、电话会议、电子商务等多种信息服务，同时也要考虑与已有第二代系统的良好兼容性。为了提供这种服务，无线网络必须能够支持不同的数据传输速度，也就是 说在室内、室外和行车的环境中能够分别支持至少2Mbps（兆比特／每秒）、384kbps（千比特／每秒）以及144kbps的传输速度。（此数值根据 网络环境会发生变化)。<br />\n</font><br />\n<font color="black">　　3G标准，国际电信联盟(ITU)目前一共确定了全球四大3G标准，它们分别是WCDMA、CDMA2000和TD-SCDMA和WiMAX。</font><br />\n<br />\n<font color="black">3G标准　　国际电信联盟（ITU）在2000年5月确定W-CDMA、CDMA2000、TD-SCDMA以 及WiMAX四大主流无线接口标准，写入3G技术指导性文件《2000年国际移动通讯计划》（简称IMT&mdash;2000）。 CDMA是Code Division Multiple Access (码分多址)的缩写，是第三代移动通信系统的技术基础。第一代移动通信系统采用频分多址(FDMA)的模拟调制方式，这种系统的主要缺点是频谱利用率低， 信令干扰话音业务。第二代移动通信系统主要采用时分多址(TDMA)的数字调制方式，提高了系统容量，并采用独立信道传送信令，使系统性能大大改善，但 TDMA的系统容量仍然有限，越区切换性能仍不完善。CDMA系统以其频率规划简单、系统容量大、频率复用系数高、抗多径能力强、通信质量好、软容量、软 切换等特点显示出巨大的发展潜力。下面分别介绍一下3G的几种标准：<br />\n</font><br />\n<br />\n<font color="black">　　 </font><br />\n<font color="black">(1) W-CDMA</font><font color="black"><br />\n</font><br />\n<br />\n<font color="black">　　也称为WCDMA，全称为Wideband CDMA，也称为CDMA Direct Spread，意为宽频分码多重存取，这是基于GSM网发展出来的3G技术规范，是欧洲提出的宽带CDMA技术，它与日本提出的宽带CDMA技术基本相 同，目前正在进一步融合。W-CDMA的支持者主要是以GSM系统为主的欧洲厂商，日本公司也或多或少参与其中，包括欧美的爱立信、阿尔卡特、<span class="t_tag" onclick="tagshow(event)" href="http://mbbs.enet.com.cn/tag.php?name=%C5%B5%BB%F9%D1%C7">诺基亚</span>、 朗讯、北电，以及日本的NTT、富士通、夏普等厂商。 该标准提出了GSM(2G)-GPRS-EDGE-WCDMA(3G)的演进策略。这套系统能够架设在现有的GSM网络上，对于系统提供商而言可以较轻易 地过渡，但是GSM系统相当普及的亚洲对这套新技术的接受度预料会相当高。因此W-CDMA具有先天的市场优势。<br />\n</font><br />\n<br />\n<font color="black">　　 </font><br />\n<font color="black">(2)CDMA2000</font><font color="black"><br />\n</font><br />\n<br />\n<font color="black">　　CDMA2000是由窄带CDMA(CDMA IS95)技术发展而来的宽带CDMA技术，也称为CDMA Multi-Carrier，它是由美国高通北美公司为主导提出，<span class="t_tag" onclick="tagshow(event)" href="http://mbbs.enet.com.cn/tag.php?name=%C4%A6%CD%D0%C2%DE%C0%AD">摩托罗拉</span>、Lucent 和后来加入的韩国三星都有参与，韩国现在成为该标准的主导者。这套系统是从窄频CDMAOne数字标准衍生出来的，可以从原有的CDMAOne结构直接升 级到3G，建设成本低廉。但目前使用CDMA的地区只有日、韩和北美，所以CDMA2000的支持者不如W-CDMA多。不过CDMA2000的研发技术 却是目前各标准中进度最快的，许多3G手机已经率先面世。该标准提出了从CDMA IS95(2G)-CDMA20001x-CDMA20003x(3G)的演进策略。CDMA20001x被称为2.5代移动通信技术。 CDMA20003x与CDMA20001x的主要区别在于应用了多路载波技术，通过采用三载波使带宽提高。目前<span class="t_tag" onclick="tagshow(event)" href="http://mbbs.enet.com.cn/tag.php?name=%D6%D0%B9%FA%B5%E7%D0%C5">中国电信</span>正在采用这一方案向3G过渡，并已建成了CDMA IS95网络。<br />\n</font><br />\n<br />\n<font color="black">　　 </font><br />\n<font color="black">(3)TD-SCDMA</font><font color="black"><br />\n</font><br />\n<br />\n<font color="black">　　全称为Time Division - Synchronous CDMA(时分<span class="t_tag" onclick="tagshow(event)" href="http://mbbs.enet.com.cn/tag.php?name=%CD%AC%B2%BD">同步</span>CDMA)，该标准是由中国大陆独自制定的3G标准，1999年6月29日，中国原邮电部电信科学技术研究院（大唐电信）向ITU提出。该标准将智能无线、<span class="t_tag" onclick="tagshow(event)" href="http://mbbs.enet.com.cn/tag.php?name=%CD%AC%B2%BD">同步</span>CDMA和<span class="t_tag" onclick="tagshow(event)" href="http://mbbs.enet.com.cn/tag.php?name=%C8%ED%BC%FE">软件</span>无 线电等当今国际领先技术融于其中，在频谱利用率、对业务支持具有灵活性、频率灵活性及成本等方面的独特优势。另外，由于中国内的庞大的市场，该标准受到各 大主要电信设备厂商的重视，全球一半以上的设备厂商都宣布可以支持TD&mdash;SCDMA标准。 该标准提出不经过2.5代的中间环节，直接向3G过渡，非常适用于GSM系统向3G升级。<br />\n</font><br />\n<br />\n<font color="black">　　 </font><br />\n<font color="black">(4)WiMAX</font><font color="black"><br />\n</font><br />\n<br />\n<font color="black">　　WiMAX 的全名是微波存取全球互通(Worldwide Interoperability for Microwave Access)，又称为802&middot;16无线城域网，是又一种为企业和家庭用户提供&ldquo;最后一英里&rdquo;的宽带无线连接方案。将此技术与需要授权或免授权的微波设备 相结合之后，由于成本较低，将扩大宽带无线市场，改善企业与服务供应商的认知度。2007年10月19日，国际电信联盟在日内瓦举行的无线通信全体会议 上，经过多数国家投票通过，WiMAX正式被批准成为继WCDMA、CDMA2000和TD-SCDMA之后的第四个全球3G标准。</font></div>\n</p>', '', '', '', 0, 1, 1242580013, '', 0, 'http://'),
+(35, 4, '“沃”的世界我做主', '<p><strong>导语：<br />\n<br />\n</strong>&nbsp;&nbsp;&nbsp;&nbsp;今年5月17日，是每年一度的世界电信日。同时，也是值得中国人民高兴的日子。昨天，中国联通企业品牌下的全品牌业务&ldquo;沃&rdquo;开始试商用，这也就意味着继中国移动、中国电信之后，国内第三种3G网络将要走入我们的生活，为我们带来更加快速便捷的通信服务。<br />\n<br />\n&nbsp;&nbsp;&nbsp;&nbsp;沃，意味着此品牌将为用户提供一个丰盈的平台，为个人客户、家庭客户、集团客户和企业服务提供全面的支撑，它代表着中国联通全新的服务理念和创新的品牌精神，在3G时代，为客户提供精彩的信息化服务。<br />\n<br />\n&nbsp;&nbsp;&nbsp;&nbsp;下面小编为各位介绍几款各大手机品牌专为&ldquo;沃&rdquo;打造的定制机型，为您迎接&ldquo;沃&rdquo;的到来做好充分准备。</p>\n<p><strong>诺基亚6210si<br />\n<br />\n</strong>&nbsp;&nbsp;&nbsp;&nbsp;诺基亚6210s大家肯定不陌生，经典的滑盖导航手机。其实6210si 与6210s外观、参数、硬件配置几乎完全一样，只不过在6210s的基础上，增加了对WCDMA网络的支持，成为中国联通定制手机。6210si采用诺 基亚经典的滑盖机身设计，机身面板为钢琴烤漆材质，高贵优雅。机身背板则为磨砂外观工程塑料材质，美观的同时增加了手机与手掌间的摩擦系数，防止使用中手 机滑落。</p>\n<p><strong>摩托罗拉A3100<br />\n</strong><br />\n&nbsp;&nbsp;&nbsp;&nbsp;作为摩托罗拉旗下为中国联通定制的A3100，它有着经典的鹅卵石造型， 大气稳重。从最初的U6，到U9再到A3100，鹅卵石的辉煌依旧。A3100有着高贵的血统，钢琴烤漆黑色面板，金属拉丝机身以及 Windows&nbsp;Mobile&nbsp;6.1&nbsp;Professional操作系统，都告诉我们它绝对是一部不可多得的好手机。</p>\n<p><br />\n<strong>三星S7520U<br />\n</strong><br />\n&nbsp;&nbsp;&nbsp;&nbsp;三星S7520U外观造型时尚，镜面设计以及超薄的 98.4&times;55&times;11.6mm金属机身，更适合女性朋友使用。通观机身，最显眼的就要数这3.0英寸的超大触摸屏幕了，400x240的WQGVA级别分 辨率，能够比QVGA级别屏幕显示更为细腻，细节表现力更强。500万像素摄像头说明了该机还是一名拍照能手，捕捉精彩瞬间不在话下。</p>', '', '', '', 0, 0, 1242974613, '', 0, 'http://');
 
 --
--- 表的结构 `shipping_area`
+-- `article_cat`
 --
 
-CREATE TABLE IF NOT EXISTS `shipping_area` (
-  `shipping_area_id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
-  `shipping_area_name` varchar(150) NOT NULL DEFAULT '',
-  `shipping_id` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `configure` text NOT NULL,
-  PRIMARY KEY (`shipping_area_id`),
-  KEY `shipping_id` (`shipping_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=5 ;
+INSERT INTO `article_cat` (`cat_id`, `cat_name`, `cat_type`, `keywords`, `cat_desc`, `sort_order`, `show_in_nav`, `parent_id`) VALUES
+(4, '3G资讯', 1, '', '', 50, 0, 0),
+(5, '新手上路 ', 5, '', '', 50, 0, 3),
+(6, '手机常识 ', 5, '', '手机常识 ', 50, 0, 3),
+(7, '配送与支付 ', 5, '', '配送与支付 ', 50, 0, 3),
+(8, '服务保证 ', 5, '', '', 50, 0, 3),
+(9, '联系我们 ', 5, '', '联系我们 ', 50, 0, 3),
+(10, '会员中心', 5, '', '', 50, 0, 3),
+(11, '手机促销', 1, '', '', 50, 0, 0),
+(12, '站内快讯', 1, '', '', 50, 0, 0);
 
 --
--- 转存表中的数据 `shipping_area`
+-- `auction_log`
+--
+INSERT INTO `auction_log` (`log_id`, `act_id`, `bid_user`, `bid_price`, `bid_time`) VALUES
+(1, 4, 1, 170.00, 1242144083);
+
+--
+-- `back_order`
+--
+-- INSERT INTO `back_order` (`back_id`, `delivery_sn`, `order_sn`, `order_id`, `invoice_no`, `add_time`, `shipping_id`, `shipping_name`, `user_id`, `action_user`, `consignee`, `address`, `country`, `province`, `city`, `district`, `sign_building`, `email`, `zipcode`, `tel`, `mobile`, `best_time`, `postscript`, `how_oos`, `insure_fee`, `shipping_fee`, `update_time`, `suppliers_id`, `status`, `return_time`, `agency_id`) VALUES
+-- (1, '20090615054961769', '2009061585887', 15, '2009061585884', 1245044533, 3, '', 1, 'admin', '刘先生', '海兴大厦', 1, 2, 52, 502, '', 'ecshop@ecshop.com', '', '010-25851234', '13986765412', '', '', '等待所有商品备齐后再发', 0.00, 10.00, 1245044964, 2, 0, 1245045515, 0),
+-- (2, '20090615055104671', '2009061585887', 15, '20090615', 1245044533, 3, '', 1, 'admin', '刘先生', '海兴大厦', 1, 2, 52, 502, '', 'ecshop@ecshop.com', '', '010-25851234', '13986765412', '', '', '等待所有商品备齐后再发', 0.00, 10.00, 1245045061, 1, 0, 1245045515, 0),
+-- (3, '20090615055780744', '2009061585887', 15, '123232', 1245044533, 3, '', 1, 'admin', '刘先生', '海兴大厦', 1, 2, 52, 502, '', 'ecshop@ecshop.com', '', '010-25851234', '13986765412', '', '', '等待所有商品备齐后再发', 0.00, 10.00, 1245045443, 0, 0, 1245045515, 0),
+-- (4, '20090615064331475', '2009061503335', 17, '00906150333512', 1245047978, 3, '', 1, 'admin', '刘先生', '海兴大厦', 1, 2, 52, 502, '', 'ecshop@ecshop.com', '', '010-25851234', '13986765412', '', '', '等待所有商品备齐后再发', 0.00, 10.00, 1245048189, 0, 0, 1245048212, 0);
+
+--
+-- `bonus_type`
+--
+INSERT INTO `bonus_type` (`type_id`, `type_name`, `type_money`, `send_type`, `min_amount`, `max_amount`, `send_start_date`, `send_end_date`, `use_start_date`, `use_end_date`, `min_goods_amount`) VALUES
+(1, '用户红包', 2.00, 0, 0.00, 0.00, 1242057600, 1244736000, 1242057600, 1250006400, 500.00),
+(2, '商品红包', 10.00, 1, 0.00, 0.00, 1241971200, 1250352000, 1242057600, 1250006400, 500.00),
+(3, '订单红包', 20.00, 2, 1500.00, 0.00, 1242057600, 1309363200, 1242057600, 1257955200, 800.00),
+(4, '线下红包', 5.00, 3, 0.00, 0.00, 1242057600, 1244736000, 1242057600, 1255449600, 360.00);
+
+--
+-- `booking_goods`
+--
+INSERT INTO `booking_goods` (`rec_id`, `user_id`, `email`, `link_man`, `tel`, `goods_id`, `goods_desc`, `goods_number`, `booking_time`, `is_dispose`, `dispose_user`, `dispose_time`, `dispose_note`) VALUES
+(1, 1, 'ecshop@ecshop.com', '刘先生', '13986765412', 19, '可以补货吗？\n我想要一个', 1, 1242142762, 0, '', 0, ''),
+(2, 3, 'text@ecshop.com', '叶先生', '13588104710', 17, '什么时候有货', 1, 1242143592, 0, '', 0, '');
+
+--
+-- `brand`
+--
+INSERT INTO `brand` (`brand_id`, `brand_name`, `brand_logo`, `brand_desc`, `site_url`, `sort_order`, `is_show`)
+VALUES
+  (4,'飞利浦','1240803247838195732.gif','官方咨询电话：4008800008\n售后网点：http://www.philips.com.cn/service/mustservice/index.page ','http://www.philips.com.cn ',50,1),
+  (5,'夏新','1240803352280856940.gif','官方咨询电话：4008875777\n售后网点：http://www.amobile.com.cn/service_fwyzc.asp ','http://www.amobile.com.cn',50,1),
+  (15,'仓品','','','http://',50,1);
+
+--
+-- `card`
+--
+INSERT INTO `card` (`card_id`, `card_name`, `card_img`, `card_fee`, `free_money`, `card_desc`) VALUES
+(1, '祝福贺卡', '1242108754847457261.jpg', 5.00, 1000.00, '把您的祝福带给您身边的人');
+
+--
+-- `cart`
+--
+INSERT INTO `cart` (`rec_id`, `user_id`, `session_id`, `goods_id`, `goods_sn`, `goods_name`, `market_price`, `goods_price`, `goods_number`, `goods_attr`, `is_real`, `extension_code`, `parent_id`, `rec_type`, `is_gift`, `can_handsel`, `goods_attr_id`) VALUES
+(40, 0, 0x3530323637633931386364393039643334356463303335343962346332373138, 24, 'ECS000024', 'P806', 2400.00, 2000.00, 1, '', 1, '', 0, 0, 0, 0, 0),
+(42, 1, 0x6263626363313439326563613632336536323461613933613937386565363664, 24, 'ECS000024', 'P806', 2400.00, 100.00, 5, '', 1, '', 0, 1, 0, 0, 0);
+
+--
+--  `category`
+--
+INSERT INTO `category` (`cat_id`, `cat_name`, `keywords`, `cat_desc`, `parent_id`, `sort_order`, `template_file`, `measure_unit`, `show_in_nav`, `style`, `is_show`, `grade`, `filter_attr`)
+VALUES
+  (1,'手机类型','','',0,50,'','',0,'',1,5,'172,185,178'),
+  (26,'家用电器','','',0,1,'','',1,'',1,0,''),
+  (3,'小型手机','','',1,50,'','臺',0,'',1,4,'185,189,173,178'),
+  (4,'3G手机','','',1,50,'','',0,'',1,0,'28'),
+  (6,'手机','','',0,50,'','',0,'',1,0,''),
+  (29,'家用空调','','',27,50,'','',0,'',1,0,''),
+  (8,'耳机','','',6,50,'','',0,'',1,0,'0'),
+  (9,'电池','','',6,50,'','',0,'',1,0,'0'),
+  (27,'大家电','','',26,50,'','',0,'',1,0,''),
+  (12,'充值卡','','',0,50,'','',0,'',1,0,'0'),
+  (28,'平板电脑','','',27,50,'','',0,'',1,0,''),
+  (16,'服装','','',0,50,'','',1,'',1,0,'0'),
+  (30,'家电配件','','',27,50,'','',0,'',1,0,''),
+  (18,'智能硬件','','',0,3,'','',0,'',1,0,''),
+  (19,'配件','','',0,50,'','',0,'',1,0,''),
+  (20,'保护壳','','',19,50,'','',0,'',1,0,''),
+  (25,'数码时尚','','',0,2,'','',1,'',1,0,''),
+  (22,'移动电源','','',0,6,'','',1,'',1,0,''),
+  (24,'数码时尚','','',19,7,'','',0,'',1,0,''),
+  (31,'洗衣机','','',27,50,'','',0,'',1,0,''),
+  (32,'冰箱','','',27,50,'','',0,'',1,0,'');
+
+--
+-- `cat_recommend`
+--
+INSERT INTO `cat_recommend` (`cat_id`, `recommend_type`) VALUES
+(3, 1),
+(3, 2),
+(3, 3),
+(5, 1),
+(5, 2),
+(5, 3),
+(12, 1),
+(12, 2),
+(12, 3),
+(13, 3),
+(14, 2),
+(14, 3),
+(15, 1),
+(15, 2);
+
+--
+-- `comment`
+--
+INSERT INTO `comment` (`comment_id`, `comment_type`, `id_value`, `email`, `user_name`, `content`, `comment_rank`, `add_time`, `ip_address`, `status`, `parent_id`, `user_id`)
+VALUES
+  (4,0,60,'ecshop@ecshop.com','ecshop','商品非常好用，超级喜欢',5,1462949841,'180.169.8.10',0,0,1),
+  (5,0,59,'ecshop@ecshop.com','ecshop','非常喜欢此商品，感觉太棒了',5,1462949877,'180.169.8.10',0,0,1),
+  (6,0,59,'ecshop@ecshop.com','ecshop','样子非常不错，超级喜欢',5,1462949929,'180.169.8.10',0,0,1);
+
+--
+-- `delivery_goods`
+--
+-- INSERT INTO `delivery_goods` (`rec_id`, `delivery_id`, `goods_id`, `goods_name`, `brand_name`, `goods_sn`, `is_real`, `extension_code`, `parent_id`, `send_number`) VALUES
+-- (1, 1, 13, '诺基亚5320 XpressMusic', '诺基亚', 'ECS000013', 1, '', 0, 3),
+-- (2, 1, 14, '诺基亚5800XM', '诺基亚', 'ECS000014', 1, '', 0, 1),
+-- (3, 2, 24, 'P806', '联想', 'ECS000024', 1, '', 0, 3),
+-- (4, 2, 9, '诺基亚E66', '诺基亚', 'ECS000009', 1, '', 0, 1),
+-- (5, 3, 24, 'P806', '联想', 'ECS000024', 1, '', 0, 1),
+-- (6, 3, 8, '飞利浦9@9v', '飞利浦', 'ECS000008', 1, '', 0, 3),
+-- (7, 4, 12, '摩托罗拉A810', '摩托罗拉', 'ECS000012', 1, '', 0, 2),
+-- (8, 5, 24, 'P806', '联想', 'ECS000024', 1, '', 0, 1);
+
+--
+-- `delivery_order`
+--
+-- INSERT INTO `delivery_order` (`delivery_id`, `delivery_sn`, `order_sn`, `order_id`, `invoice_no`, `add_time`, `shipping_id`, `shipping_name`, `user_id`, `action_user`, `consignee`, `address`, `country`, `province`, `city`, `district`, `sign_building`, `email`, `zipcode`, `tel`, `mobile`, `best_time`, `postscript`, `how_oos`, `insure_fee`, `shipping_fee`, `update_time`, `suppliers_id`, `status`, `agency_id`) VALUES
+-- (1, '20090615054961769', '2009061585887', 15, '2009061585884', 1245044533, 3, '城际快递', 1, 'admin', '刘先生', '海兴大厦', 1, 2, 52, 502, '', 'ecshop@ecshop.com', '', '010-25851234', '13986765412', '', '', '等待所有商品备齐后再发', 0.00, 10.00, 1245044964, 2, 1, 0),
+-- (2, '20090615055104671', '2009061585887', 15, '20090615', 1245044533, 3, '城际快递', 1, 'admin', '刘先生', '海兴大厦', 1, 2, 52, 502, '', 'ecshop@ecshop.com', '', '010-25851234', '13986765412', '', '', '等待所有商品备齐后再发', 0.00, 10.00, 1245045061, 1, 1, 0),
+-- (3, '20090615055780744', '2009061585887', 15, '123232', 1245044533, 3, '城际快递', 1, 'admin', '刘先生', '海兴大厦', 1, 2, 52, 502, '', 'ecshop@ecshop.com', '', '010-25851234', '13986765412', '', '', '等待所有商品备齐后再发', 0.00, 10.00, 1245045443, 0, 1, 0),
+-- (4, '20090615060281017', '2009061525429', 16, '2009061525121', 1245045672, 3, '城际快递', 1, 'admin', '刘先生', '海兴大厦', 1, 2, 52, 502, '', 'ecshop@ecshop.com', '', '010-25851234', '13986765412', '', '', '等待所有商品备齐后再发', 0.00, 10.00, 1245045723, 2, 0, 0),
+-- (5, '20090615064331475', '2009061503335', 17, '00906150333512', 1245047978, 3, '城际快递', 1, 'admin', '刘先生', '海兴大厦', 1, 2, 52, 502, '', 'ecshop@ecshop.com', '', '010-25851234', '13986765412', '', '', '等待所有商品备齐后再发', 0.00, 10.00, 1245048189, 0, 1, 0);
+
+--
+-- `exchange_goods`
+--
+INSERT INTO `exchange_goods` (`goods_id`, `exchange_integral`, `is_exchange`, `is_hot`) VALUES
+(24, 17000, 1, 0),
+(19, 80000, 1, 0);
+
+--
+-- `favourable_activity`
+--
+INSERT INTO `favourable_activity` (`act_id`, `act_name`, `start_time`, `end_time`, `user_rank`, `act_range`, `act_range_ext`, `min_amount`, `max_amount`, `act_type`, `act_type_ext`, `gift`, `sort_order`) VALUES
+(1, '5.1诺基亚优惠活动', 1241107200, 1253030400, '1,2', 2, '1', 500.00, 5000.00, 2, 95.00, 'a:0:{}', 50);
+
+--
+-- `feedback`
+--
+INSERT INTO `feedback` (`msg_id`, `parent_id`, `user_id`, `user_name`, `user_email`, `msg_title`, `msg_type`, `msg_status`, `msg_content`, `msg_time`, `message_img`, `order_id`, `msg_area`) VALUES
+(1, 0, 1, 'ecshop', 'ecshop@ecshop.com', '三星SGH-F258什么时候到', 4, 0, '三星SGH-F258什么时候有货', 1242107197, '', 0, 0);
+
+--
+-- `goods`
 --
 
+INSERT INTO `goods` (`goods_id`, `cat_id`, `goods_sn`, `goods_name`, `goods_name_style`, `click_count`, `brand_id`, `provider_name`, `goods_number`, `goods_weight`, `market_price`, `virtual_sales`, `shop_price`, `promote_price`, `promote_start_date`, `promote_end_date`, `warn_number`, `keywords`, `goods_brief`, `goods_desc`, `goods_thumb`, `goods_img`, `original_img`, `is_real`, `extension_code`, `is_on_sale`, `is_alone_sale`, `is_shipping`, `integral`, `add_time`, `sort_order`, `is_delete`, `is_best`, `is_new`, `is_hot`, `is_promote`, `bonus_type_id`, `last_update`, `goods_type`, `seller_note`, `give_integral`, `rank_integral`, `suppliers_id`, `is_check`)
+VALUES
+  (1,4,'ECS000000','KD876','+',8,0,'',1,0.110,1665.60,0,1388.00,0.00,0,0,1,'LG 3g 876 支持 双模 2008年04月 灰色 GSM,850,900,1800,1900','','<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 很多朋友都已经抢先体验了3G网络的可视通话、高速上网等功能。LG KD876手机<span style=\"font-size: x-large;\"><span style=\"color: rgb(255, 0, 0);\"><strong>支持TD-SCDMA/GSM双模单待</strong></span></span>，便于测试初期GSM网络和TD网络之间的切换和共享。</p>\r\n<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; LG KD876手机整体采用银色塑料材质，<strong><span style=\"font-size: x-large;\"><span style=\"color: rgb(255, 0, 0);\">特殊的旋转屏设计是本机的亮点</span></span></strong>，而机身背部的300万像素摄像头也是首发的六款TD-SCDMA手机中配置最高的。LG KD876手机屏幕下方设置有外键盘，该键盘由左/右软键、通话/挂机键、返回键、五维摇杆组成，摇杆灵敏度很高，定位准确。KD876的内键盘由标准12个电话键和三个功能键、一个内置摄像头组成。三个功能键分别为视频通话、MP3、和菜单键，所有按键的手感都比较一般，键程适中，当由于按键排列过于紧密，快速发短信时很容易误按，用户在使用时一定要多加注意。LG KD876手机机身周边的接口设计非常简洁，手机的厚度主要来自屏幕旋转轴的长度，如果舍弃旋屏设计的话，估计<span style=\"font-size: x-large;\"><strong><span style=\"color: rgb(255, 0, 0);\">厚度可以做到10mm以下</span></strong></span>。</p>','images/200905/thumb_img/1_thumb_G_1240902890710.jpg','images/200905/goods_img/1_G_1240902890755.jpg','images/200905/source_img/1_G_1240902890895.gif',1,'',1,1,0,13,1240902890,100,0,1,1,0,0,0,1462950817,9,'',-1,-1,NULL,NULL),
+  (4,8,'ECS000004','诺基亚N85原装充电器','+',0,0,'',17,0.000,69.60,0,58.00,0.00,0,0,1,'','','','images/200905/thumb_img/4_thumb_G_1241422402467.jpg','images/200905/goods_img/4_G_1241422402722.jpg','images/200905/source_img/4_G_1241422402919.jpg',1,'',1,0,0,0,1241422402,100,0,0,0,0,0,0,1242110662,6,'',-1,-1,NULL,NULL),
+  (8,3,'ECS000008','飞利浦9@9v','+',12,4,'',0,0.075,478.79,0,399.00,385.00,1241366400,1417276800,1,'双模 2008年春 黑色 直板 中低档','','<p align=\"left\">作为一款性价比极高的入门级<font size=\"3\" color=\"#ff0000\"><strong>商务手机</strong></font>，飞利浦<a href=\"mailto:9@9v\">Xenium&nbsp; 9@9v</a>三围大小为105&times;44&times;15.8mm，机身重量仅为<strong><font size=\"3\" color=\"#ff0000\">75g</font></strong>，装配了一块低规格1.75英寸128&times;160像素65000色CSTN显示屏。身正面采用月银色功能键区与屏幕数字键区相分隔，键盘设计较为<font size=\"3\"><strong><font color=\"#ff0000\">别</font><font color=\"#ff0000\">致</font></strong></font>，中部导航键区采用钛金色的&ldquo;腰带&rdquo;彰显出浓郁的商务气息。</p>\r\n<p align=\"left\">&nbsp;</p>\r\n<p align=\"left\">此款手机采用<strong><font size=\"3\" color=\"#ff0000\">触摸屏</font></strong>设计，搭配精致的手写笔，可支持手写中文和英文两个版本。增强的内置系统还能识别潦草字迹，确保在移动中和匆忙时输入文字的识别率。手写指令功能还支持特定图案的瞬间调用，独特的手写记事本功能，可以在触摸屏上随意绘制个性化的图案并进行<strong><font size=\"3\" color=\"#ff0000\">记事提醒</font></strong>，让商务应用更加随意。</p>\r\n<p align=\"left\">&nbsp;</p>\r\n<p align=\"left\">&nbsp;作为入门级为数不多支持<strong><font size=\"3\" color=\"#ff0000\">双卡功能</font></strong>的手机，可以同时插入两张SIM卡，通过菜单随意切换，只需开启漫游自动切换模式，<a href=\"mailto:9@9V\">9@9V</a>在该模式下能够判断网络情况，自动切换适合的手机号。</p>\r\n<p align=\"left\">&nbsp;</p>\r\n<p align=\"left\">&nbsp;</p>','images/200905/thumb_img/8_thumb_G_1241425513488.jpg','images/200905/goods_img/8_G_1241425513055.jpg','images/200905/source_img/8_G_1241425513518.jpg',1,'',1,1,0,3,1241425512,100,0,1,1,0,1,0,1462950816,9,'',-1,-1,NULL,NULL),
+  (9,3,'ECS000009','诺基亚E66','+',28,0,'',2,0.121,2757.60,0,2298.00,0.00,0,0,1,'SMS EMS MMS 短消息群发 语音 阅读器 SMS,EMS,MMS,短消息群发语音合成信息阅读器 黑色 白色 滑盖','','<p>在机身材质方面，诺基亚E66大量采用金属材质，刨光的金属表面光泽动人，背面的点状效果规则却又不失变化，时尚感总是在不经意间诠释出来，并被人们所感知。E66机身尺寸为<span style=\"color: rgb(255, 0, 0);\"><span style=\"font-size: larger;\"><strong>107.5&times;49.5&times;13.6毫米，重量为121克</strong></span></span>，滑盖的造型竟然比E71还要轻一些。</p>\r\n<p>&nbsp;</p>\r\n<div>诺基亚E66机身正面是<span style=\"color: rgb(255, 0, 0);\"><span style=\"font-size: larger;\"><strong>一块2.4英寸1600万色QVGA分辨率（240&times;320像素）液晶显示屏</strong></span></span>。屏幕上方拥有光线感应元件，能够自适应周 围环境光调节屏幕亮度；屏幕下方是方向功能键区。打开滑盖，可以看到传统的数字键盘，按键的大小、手感、间隔以及键程适中，手感非常舒适。</div>\r\n<div>&nbsp;</div>\r\n<div>诺基亚为E66配备了一颗320万像素自动对焦摄像头，带有LED 闪光灯，支持多种拍照尺寸选择。</div>\r\n<p>&nbsp;</p>','images/200905/thumb_img/9_thumb_G_1241511871555.jpg','images/200905/goods_img/9_G_1241511871574.jpg','images/200905/source_img/9_G_1241511871550.jpg',1,'',1,1,0,22,1241511871,100,0,1,1,0,0,0,1462950815,9,'',-1,-1,NULL,NULL),
+  (35,19,'ECS000035','体重秤','+',0,0,'',1,0.000,16.80,0,14.00,0.00,0,0,1,'','','','images/201605/thumb_img/35_thumb_G_1462851036709.jpg','images/201605/goods_img/35_G_1462851036470.jpg','images/201605/source_img/35_G_1462851036185.jpg',1,'',1,1,0,0,1462851036,100,0,0,0,0,0,0,1462948751,0,'',-1,-1,0,NULL),
+  (69,24,'ECS000069','平衡车','+',3,15,'',1,0.000,2398.79,0,1999.00,0.00,0,0,1,'','','<p><img src=\"/images/upload/Image/3_1.jpg\" width=\"1311\" height=\"656\" alt=\"\" />&nbsp;</p>','images/201605/thumb_img/69_thumb_G_1462955300971.jpg','images/201605/goods_img/69_G_1462955300173.jpg','images/201605/source_img/69_G_1462955300153.jpg',1,'',1,1,0,19,1462955300,100,0,0,0,1,0,0,1462956299,0,'',-1,-1,0,NULL),
+  (70,24,'ECS000070','炫彩翻页保护套','+',3,15,'',1,0.000,46.80,0,39.00,0.00,0,0,1,'','','<p><img src=\"/images/upload/Image/4_1.jpg\" width=\"1226\" height=\"1068\" alt=\"\" />&nbsp;</p>','images/201605/thumb_img/70_thumb_G_1462955414561.jpg','images/201605/goods_img/70_G_1462955414630.jpg','images/201605/source_img/70_G_1462955414637.jpg',1,'',1,1,0,0,1462955414,100,0,0,0,1,0,0,1462956059,0,'',-1,-1,0,NULL),
+  (72,24,'ECS000072','智能相机','+',3,15,'',20,0.000,178.79,0,149.00,0.00,0,0,1,'','','<p>&nbsp;<img src=\"http://cbu2.test.shopex123.com/images//20160510/5984c3f800d7ef3c.jpg\" alt=\"\" /></p>','images/201605/thumb_img/72_thumb_G_1462956048008.jpg','images/201605/goods_img/72_G_1462956048145.jpg','images/201605/source_img/72_G_1462956048413.jpg',1,'',1,1,0,1,1462956048,100,0,0,0,0,0,0,1462956070,0,'',-1,-1,0,NULL),
+  (14,4,'ECS000014','诺基亚5800XM','+',7,0,'',1,0.000,3150.00,0,2625.00,0.00,0,0,1,'GSM 64和弦 2009年2月 320万摄像头 GPS 直板 工程塑料 支持 2008年10月 黑色','','','images/200905/thumb_img/14_thumb_G_1241968492116.jpg','images/200905/goods_img/14_G_1241968492932.jpg','images/200905/source_img/14_G_1241968492305.jpg',1,'',1,1,0,26,1241968492,100,0,0,0,0,0,0,1462950813,9,'',-1,-1,NULL,NULL),
+  (64,24,'ECS000064','运动相机','+',6,15,'',1,0.000,478.79,0,399.00,0.00,0,0,1,'','','<p>&nbsp;<img src=\"/images/upload/Image/7f10afef2984ad18.jpg\" width=\"1102\" height=\"463\" alt=\"\" /></p>','images/201605/thumb_img/64_thumb_G_1462952811633.jpg','images/201605/goods_img/64_G_1462952811554.jpg','images/201605/source_img/64_G_1462952811926.jpg',1,'',1,1,0,3,1462952811,100,0,0,0,1,0,0,1462956062,11,'',-1,-1,0,NULL),
+  (63,24,'ECS000063','自拍杆','+',7,15,'',0,0.000,49.00,0,49.00,0.00,0,0,1,'','','<p>&nbsp;<img src=\"http://cbu2.test.shopex123.com/images//20160510/4f04b67e7a2035bd.jpg\" alt=\"\" /></p>','images/201605/thumb_img/63_thumb_G_1462953395609.jpg','images/201605/goods_img/63_G_1462953395397.jpg','images/201605/source_img/63_G_1462953395626.jpg',1,'',1,1,0,0,1462952749,100,0,0,0,1,0,0,1462956063,12,'',-1,-1,0,NULL),
+  (61,24,'ECS000061','视频','+',4,15,'',20,0.000,24.24,0,20.20,0.00,0,0,1,'','','<p>&nbsp;<img src=\"http://cbu2.test.shopex123.com/images//20160510/f60016cd295b0206.jpg\" alt=\"\" /></p>','images/201605/thumb_img/61_thumb_G_1462952376889.jpg','images/201605/goods_img/61_G_1462952376993.jpg','images/201605/source_img/61_G_1462952376155.jpg',1,'',1,1,0,0,1462952376,100,0,0,0,0,0,0,1462952466,0,'',-1,-1,0,NULL),
+  (62,24,'ECS000062','随身风扇','+',3,15,'',20,0.000,23.88,0,19.90,0.00,0,0,1,'','','<p><img src=\"http://cbu2.test.shopex123.com/images//20160510/271725cdf1d3a7a3.jpg\" alt=\"\" /></p>','images/201605/thumb_img/62_thumb_G_1462952557730.jpg','images/201605/goods_img/62_G_1462952557657.jpg','images/201605/source_img/62_G_1462952557842.jpg',1,'',1,1,0,0,1462952557,100,0,0,0,0,0,0,1462952601,0,'',-1,-1,0,NULL),
+  (32,3,'ECS000032','诺基亚N85','+',24,0,'',4,0.000,3612.00,0,3010.00,2750.00,1243756800,1417248000,1,'2008年10月 GSM,850,900,1800,1900 黑色','','<p>诺基亚N85参数</p><div>&nbsp;</div><div><table width="100%" cellspacing="1" cellpadding="0" border="0" bgcolor="#c5d7ed"><tbody><tr><td bgcolor="#f1f7fc" colspan="2"><p><b>基本参数</b></p></td></tr><tr><td width="100" valign="center" bgcolor="#ffffff" align="left">手机昵称</td><td width="450" bgcolor="#ffffff">N85</td></tr><tr><td width="100" valign="center" bgcolor="#ffffff" align="left">上市日期</td><td width="450" bgcolor="#ffffff">2008年10月</td></tr><tr><td width="100" valign="center" bgcolor="#ffffff" align="left">手机类型</td><td width="450" bgcolor="#ffffff">3G手机；拍照手机；智能手机</td></tr><tr><td width="100" valign="center" bgcolor="#ffffff" align="left">手机制式</td><td width="450" bgcolor="#ffffff">GSM</td></tr><tr><td width="100" valign="center" bgcolor="#ffffff" align="left">支持频段</td><td width="450" bgcolor="#ffffff">GSM850/900/1800/1900MHz</td></tr><tr><td width="100" valign="center" bgcolor="#ffffff" align="left">数据传输</td><td width="450" bgcolor="#ffffff">GPRS、EDGE</td></tr><tr><td width="100" valign="center" bgcolor="#ffffff" align="left">屏幕材质</td><td width="450" bgcolor="#ffffff">AMOLED</td></tr><tr><td width="100" valign="center" bgcolor="#ffffff" align="left">屏幕色彩</td><td width="450" bgcolor="#ffffff">1600万色</td></tr><tr><td width="100" valign="center" bgcolor="#ffffff" align="left">主屏尺寸</td><td width="450" bgcolor="#ffffff">2.6英寸</td></tr><tr><td width="100" valign="center" bgcolor="#ffffff" align="left">主屏参数</td><td width="450" bgcolor="#ffffff">QVGA 320&times;240像素</td></tr><tr><td width="100" valign="center" bgcolor="#ffffff" align="left">铃音描述</td><td width="450" bgcolor="#ffffff">可选MP3、WAV、AAC或和弦Midi铃声等格式</td></tr><tr><td width="100" valign="center" bgcolor="#ffffff" align="left">操作系统</td><td width="450" bgcolor="#ffffff">Symbian OS v9.3操作系统与S60 v3.2平台的组合</td></tr><tr><td width="100" valign="center" bgcolor="#ffffff" align="left">机身内存</td><td width="450" bgcolor="#ffffff">74MB 内部动态存储空间<br />            78MB 内置NAND闪存</td></tr><tr><td width="100" valign="center" bgcolor="#ffffff" align="left">存储卡</td><td width="450" bgcolor="#ffffff">支持MicroSD(T-Flash)卡扩展最大至8GB</td></tr><tr><td width="100" valign="center" bgcolor="#ffffff" align="left">电池规格</td><td width="450" bgcolor="#ffffff">1200毫安时锂电池</td></tr><tr><td width="100" valign="center" bgcolor="#ffffff" align="left">标配</td><td width="450" bgcolor="#ffffff">诺基亚 N85<br />            诺基亚电池（BL-5K）<br />            诺基亚旅行充电器（AC-10）<br />            诺基亚视频数据线（CA-75U）<br />            诺基亚数据线（CA-101）<br />            诺基亚音乐耳机（HS-45、AD-54）<br />            诺基亚 8 GB microSD 卡（MU-43）<br />            《用户手册》<br />            《快速入门》</td></tr><tr><td width="100" valign="center" bgcolor="#ffffff" align="left">理论通话时间</td><td width="450" bgcolor="#ffffff">6.9 小时</td></tr><tr><td width="100" valign="center" bgcolor="#ffffff" align="left">理论待机时间</td><td width="450" bgcolor="#ffffff">363 小时</td></tr><tr><td bgcolor="#f1f7fc" colspan="2"><p><b>产品外形</b></p></td></tr><tr><td width="100" valign="center" bgcolor="#ffffff" align="left">外观设计</td><td width="450" bgcolor="#ffffff">双向滑盖</td></tr><tr><td width="100" valign="center" bgcolor="#ffffff" align="left">产品尺寸</td><td width="450" bgcolor="#ffffff">103&times;50&times;16mm<br />            体积：76 立方厘米</td></tr><tr><td width="100" valign="center" bgcolor="#ffffff" align="left">手机重量</td><td width="450" bgcolor="#ffffff">128克</td></tr><tr><td width="100" valign="center" bgcolor="#ffffff" align="left">产品天线</td><td width="450" bgcolor="#ffffff">内置</td></tr><tr><td bgcolor="#f1f7fc" colspan="2"><p><b>拍照功能</b></p></td></tr><tr><td width="550" valign="center" bgcolor="#ffffff" align="left" style="padding: 8px 0px;" colspan="2"><table cellspacing="1" cellpadding="0" border="0" align="left"><tbody><tr><td width="100" style="padding: 5px 0px 5px 10px;"><table width="100%" cellspacing="1" cellpadding="0" border="0" bgcolor="#c5d7ed"><tbody><tr><td width="100%" bgcolor="#f1f7fc" align="middle" style="padding: 2px; font-weight: bold;">定时器</td></tr></tbody></table></td><td width="100" style="padding: 5px 0px 5px 10px;">&nbsp;</td></tr></tbody></table></td></tr><tr><td width="100" valign="center" bgcolor="#ffffff" align="left">摄像头</td><td width="450" bgcolor="#ffffff">内置</td></tr><tr><td width="100" valign="center" bgcolor="#ffffff" align="left">摄像头像素</td><td width="450" bgcolor="#ffffff">500万像素</td></tr><tr><td width="100" valign="center" bgcolor="#ffffff" align="left">连拍功能</td><td width="450" bgcolor="#ffffff">支持</td></tr><tr><td width="100" valign="center" bgcolor="#ffffff" align="left">LED闪光灯</td><td width="450" bgcolor="#ffffff">双LED 闪光灯</td></tr><tr><td width="100" valign="center" bgcolor="#ffffff" align="left">数码变焦</td><td width="450" bgcolor="#ffffff">20 倍数码变焦</td></tr><tr><td width="100" valign="center" bgcolor="#ffffff" align="left">拍摄模式</td><td width="450" bgcolor="#ffffff">静止、连拍、自动定时器、摄像</td></tr><tr><td width="100" valign="center" bgcolor="#ffffff" align="left">照片特效</td><td width="450" bgcolor="#ffffff">正常、怀旧、黑白、负片、逼真</td></tr><tr><td width="100" valign="center" bgcolor="#ffffff" align="left">拍照描述</td><td width="450" bgcolor="#ffffff">支持最大2592&times;1944分辨率照片拍摄<br />            支持JPEG、Exif格式<br />            白平衡模式：自动、阳光、阴天、白炽灯、荧光灯<br />            感光度模式：高、中、低、自动</td></tr><tr><td width="100" valign="center" bgcolor="#ffffff" align="left">视频拍摄</td><td width="450" bgcolor="#ffffff">最高支持640 x 480 像素（VGA）、30 帧/秒</td></tr><tr><td bgcolor="#f1f7fc" colspan="2"><p><b>娱乐功能</b></p></td></tr><tr><td width="550" valign="center" bgcolor="#ffffff" align="left" style="padding: 8px 0px;" colspan="2"><table cellspacing="1" cellpadding="0" border="0" align="left"><tbody><tr><td width="100" style="padding: 5px 0px 5px 10px;"><table width="100%" cellspacing="1" cellpadding="0" border="0" bgcolor="#c5d7ed"><tbody><tr><td width="100%" bgcolor="#f1f7fc" align="middle" style="padding: 2px; font-weight: bold;">收音机</td></tr></tbody></table></td><td width="100" style="padding: 5px 0px 5px 10px;"><table width="100%" cellspacing="1" cellpadding="0" border="0" bgcolor="#c5d7ed"><tbody><tr><td width="100%" bgcolor="#f1f7fc" align="middle" style="padding: 2px; font-weight: bold;">TV-OUT</td></tr></tbody></table></td><td width="100" style="padding: 5px 0px 5px 10px;"><table width="100%" cellspacing="1" cellpadding="0" border="0" bgcolor="#c5d7ed"><tbody><tr><td width="100%" bgcolor="#f1f7fc" align="middle" style="padding: 2px; font-weight: bold;">录音功能</td></tr></tbody></table></td><td width="100" style="padding: 5px 0px 5px 10px;"><table width="100%" cellspacing="1" cellpadding="0" border="0" bgcolor="#c5d7ed"><tbody><tr><td width="100%" bgcolor="#f1f7fc" align="middle" style="padding: 2px; font-weight: bold;">电子书</td></tr></tbody></table></td><td width="100" style="padding: 5px 0px 5px 10px;">&nbsp;</td></tr></tbody></table></td></tr><tr><td width="100" valign="center" bgcolor="#ffffff" align="left">视频播放</td><td width="450" bgcolor="#ffffff">内置RealPlayer播放器, 支持MPEG4、H.264/AVC、H.263/3GP、RealVideo等视频格式全屏播放</td></tr><tr><td width="100" valign="center" bgcolor="#ffffff" align="left">音乐播放</td><td width="450" bgcolor="#ffffff">内置播放器, 支持mp3、.wma、.aac、eAAC、eAAC+格式</td></tr><tr><td width="100" valign="center" bgcolor="#ffffff" align="left">游戏</td><td width="450" bgcolor="#ffffff">内置</td></tr><tr><td width="100" valign="center" bgcolor="#ffffff" align="left">Java功能</td><td width="450" bgcolor="#ffffff">支持Java MIDP 2.0 CLDC 1.1</td></tr><tr><td width="100" valign="center" bgcolor="#ffffff" align="left">Flash功能</td><td width="450" bgcolor="#ffffff">第3.0版Flash lite播放器</td></tr><tr><td bgcolor="#f1f7fc" colspan="2"><p><b>数据功能</b></p></td></tr><tr><td width="550" valign="center" bgcolor="#ffffff" align="left" style="padding: 8px 0px;" colspan="2"><table cellspacing="1" cellpadding="0" border="0" align="left"><tbody><tr><td width="100" style="padding: 5px 0px 5px 10px;"><table width="100%" cellspacing="1" cellpadding="0" border="0" bgcolor="#c5d7ed"><tbody><tr><td width="100%" bgcolor="#f1f7fc" align="middle" style="padding: 2px; font-weight: bold;">蓝牙功能</td></tr></tbody></table></td><td width="100" style="padding: 5px 0px 5px 10px;">&nbsp;</td></tr></tbody></table></td></tr><tr><td width="100" valign="center" bgcolor="#ffffff" align="left">数据线接口</td><td width="450" bgcolor="#ffffff">USB数据线 3.5mm立体声耳机插孔</td></tr><tr><td bgcolor="#f1f7fc" colspan="2"><p><b>基本功能</b></p></td></tr><tr><td width="550" valign="center" bgcolor="#ffffff" align="left" style="padding: 8px 0px;" colspan="2"><table cellspacing="1" cellpadding="0" border="0" align="left"><tbody><tr><td width="100" style="padding: 5px 0px 5px 10px;"><table width="100%" cellspacing="1" cellpadding="0" border="0" bgcolor="#c5d7ed"><tbody><tr><td width="100%" bgcolor="#f1f7fc" align="middle" style="padding: 2px; font-weight: bold;">短信(SMS)</td></tr></tbody></table></td><td width="100" style="padding: 5px 0px 5px 10px;"><table width="100%" cellspacing="1" cellpadding="0" border="0" bgcolor="#c5d7ed"><tbody><tr><td width="100%" bgcolor="#f1f7fc" align="middle" style="padding: 2px; font-weight: bold;">彩信(MMS)</td></tr></tbody></table></td><td width="100" style="padding: 5px 0px 5px 10px;"><table width="100%" cellspacing="1" cellpadding="0" border="0" bgcolor="#c5d7ed"><tbody><tr><td width="100%" bgcolor="#f1f7fc" align="middle" style="padding: 2px; font-weight: bold;">免提通话</td></tr></tbody></table></td><td width="100" style="padding: 5px 0px 5px 10px;"><table width="100%" cellspacing="1" cellpadding="0" border="0" bgcolor="#c5d7ed"><tbody><tr><td width="100%" bgcolor="#f1f7fc" align="middle" style="padding: 2px; font-weight: bold;">情景模式</td></tr></tbody></table></td><td width="100" style="padding: 5px 0px 5px 10px;"><table width="100%" cellspacing="1" cellpadding="0" border="0" bgcolor="#c5d7ed"><tbody><tr><td width="100%" bgcolor="#f1f7fc" align="middle" style="padding: 2px; font-weight: bold;">闹钟功能</td></tr></tbody></table></td></tr><tr><td width="100" style="padding: 5px 0px 5px 10px;"><table width="100%" cellspacing="1" cellpadding="0" border="0" bgcolor="#c5d7ed"><tbody><tr><td width="100%" bgcolor="#f1f7fc" align="middle" style="padding: 2px; font-weight: bold;">日历功能</td></tr></tbody></table></td><td width="100" style="padding: 5px 0px 5px 10px;">&nbsp;</td></tr></tbody></table></td></tr><tr><td width="100" valign="center" bgcolor="#ffffff" align="left">输入方式</td><td width="450" bgcolor="#ffffff">键盘</td></tr><tr><td width="100" valign="center" bgcolor="#ffffff" align="left">通话记录</td><td width="450" bgcolor="#ffffff">未接来电+已接来电+已拨电话记录</td></tr><tr><td width="100" valign="center" bgcolor="#ffffff" align="left">通讯录</td><td width="450" bgcolor="#ffffff">S60标准化名片式通讯录</td></tr><tr><td bgcolor="#f1f7fc" colspan="2"><p><b>网络功能</b></p></td></tr><tr><td width="550" valign="center" bgcolor="#ffffff" align="left" style="padding: 8px 0px;" colspan="2"><table cellspacing="1" cellpadding="0" border="0" align="left"><tbody><tr><td width="100" style="padding: 5px 0px 5px 10px;"><table width="100%" cellspacing="1" cellpadding="0" border="0" bgcolor="#c5d7ed"><tbody><tr><td width="100%" bgcolor="#f1f7fc" align="middle" style="padding: 2px; font-weight: bold;">电子邮件</td></tr></tbody></table></td><td width="100" style="padding: 5px 0px 5px 10px;"><table width="100%" cellspacing="1" cellpadding="0" border="0" bgcolor="#c5d7ed"><tbody><tr><td width="100%" bgcolor="#f1f7fc" align="middle" style="padding: 2px; font-weight: bold;">WWW浏览器</td></tr></tbody></table></td><td width="100" style="padding: 5px 0px 5px 10px;"><table width="100%" cellspacing="1" cellpadding="0" border="0" bgcolor="#c5d7ed"><tbody><tr><td width="100%" bgcolor="#f1f7fc" align="middle" style="padding: 2px; font-weight: bold;">WAP浏览器</td></tr></tbody></table></td><td width="100" style="padding: 5px 0px 5px 10px;">&nbsp;</td></tr></tbody></table></td></tr><tr><td bgcolor="#f1f7fc" colspan="2"><p><b>商务功能</b></p></td></tr><tr><td width="550" valign="center" bgcolor="#ffffff" align="left" style="padding: 8px 0px;" colspan="2"><table cellspacing="1" cellpadding="0" border="0" align="left"><tbody><tr><td width="100" style="padding: 5px 0px 5px 10px;"><table width="100%" cellspacing="1" cellpadding="0" border="0" bgcolor="#c5d7ed"><tbody><tr><td width="100%" bgcolor="#f1f7fc" align="middle" style="padding: 2px; font-weight: bold;">飞行模式</td></tr></tbody></table></td><td width="100" style="padding: 5px 0px 5px 10px;"><table width="100%" cellspacing="1" cellpadding="0" border="0" bgcolor="#c5d7ed"><tbody><tr><td width="100%" bgcolor="#f1f7fc" align="middle" style="padding: 2px; font-weight: bold;">语音拨号</td></tr></tbody></table></td><td width="100" style="padding: 5px 0px 5px 10px;"><table width="100%" cellspacing="1" cellpadding="0" border="0" bgcolor="#c5d7ed"><tbody><tr><td width="100%" bgcolor="#f1f7fc" align="middle" style="padding: 2px; font-weight: bold;">备忘录</td></tr></tbody></table></td><td width="100" style="padding: 5px 0px 5px 10px;"><table width="100%" cellspacing="1" cellpadding="0" border="0" bgcolor="#c5d7ed"><tbody><tr><td width="100%" bgcolor="#f1f7fc" align="middle" style="padding: 2px; font-weight: bold;">日程表</td></tr></tbody></table></td><td width="100" style="padding: 5px 0px 5px 10px;"><table width="100%" cellspacing="1" cellpadding="0" border="0" bgcolor="#c5d7ed"><tbody><tr><td width="100%" bgcolor="#f1f7fc" align="middle" style="padding: 2px; font-weight: bold;">世界时间</td></tr></tbody></table></td></tr><tr><td width="100" style="padding: 5px 0px 5px 10px;">&nbsp;</td></tr></tbody></table></td></tr><tr><td bgcolor="#f1f7fc" colspan="2"><p><b>其他功能</b></p></td></tr><tr><td width="550" valign="center" bgcolor="#ffffff" align="left" style="padding: 8px 0px;" colspan="2"><table cellspacing="1" cellpadding="0" border="0" align="left"><tbody><tr><td width="100" style="padding: 5px 0px 5px 10px;"><table width="100%" cellspacing="1" cellpadding="0" border="0" bgcolor="#c5d7ed"><tbody><tr><td width="100%" bgcolor="#f1f7fc" align="middle" style="padding: 2px; font-weight: bold;">GPS功能</td></tr></tbody></table></td><td width="100" style="padding: 5px 0px 5px 10px;"><table width="100%" cellspacing="1" cellpadding="0" border="0" bgcolor="#c5d7ed"><tbody><tr><td width="100%" bgcolor="#f1f7fc" align="middle" style="padding: 2px; font-weight: bold;">电子词典</td></tr></tbody></table></td><td width="100" style="padding: 5px 0px 5px 10px;"><table width="100%" cellspacing="1" cellpadding="0" border="0" bgcolor="#c5d7ed"><tbody><tr><td width="100%" bgcolor="#f1f7fc" align="middle" style="padding: 2px; font-weight: bold;">待机图片</td></tr></tbody></table></td><td width="100" style="padding: 5px 0px 5px 10px;"><table width="100%" cellspacing="1" cellpadding="0" border="0" bgcolor="#c5d7ed"><tbody><tr><td width="100%" bgcolor="#f1f7fc" align="middle" style="padding: 2px; font-weight: bold;">计算器</td></tr></tbody></table></td><td width="100" style="padding: 5px 0px 5px 10px;"><table width="100%" cellspacing="1" cellpadding="0" border="0" bgcolor="#c5d7ed"><tbody><tr><td width="100%" bgcolor="#f1f7fc" align="middle" style="padding: 2px; font-weight: bold;">来电铃声识别</td></tr></tbody></table></td></tr><tr><td width="100" style="padding: 5px 0px 5px 10px;"><table width="100%" cellspacing="1" cellpadding="0" border="0" bgcolor="#c5d7ed"><tbody><tr><td width="100%" bgcolor="#f1f7fc" align="middle" style="padding: 2px; font-weight: bold;">来电图片识别</td></tr></tbody></table></td><td width="100" style="padding: 5px 0px 5px 10px;"><table width="100%" cellspacing="1" cellpadding="0" border="0" bgcolor="#c5d7ed"><tbody><tr><td width="100%" bgcolor="#f1f7fc" align="middle" style="padding: 2px; font-weight: bold;">来电防火墙</td></tr></tbody></table></td><td width="100" style="padding: 5px 0px 5px 10px;"><table width="100%" cellspacing="1" cellpadding="0" border="0" bgcolor="#c5d7ed"><tbody><tr><td width="100%" bgcolor="#f1f7fc" align="middle" style="padding: 2px; font-weight: bold;">动画屏保</td></tr></tbody></table></td><td width="100" style="padding: 5px 0px 5px 10px;"><table width="100%" cellspacing="1" cellpadding="0" border="0" bgcolor="#c5d7ed"><tbody><tr><td width="100%" bgcolor="#f1f7fc" align="middle" style="padding: 2px; font-weight: bold;">图形菜单</td></tr></tbody></table></td><td width="100" style="padding: 5px 0px 5px 10px;"><table width="100%" cellspacing="1" cellpadding="0" border="0" bgcolor="#c5d7ed"><tbody><tr><td width="100%" bgcolor="#f1f7fc" align="middle" style="padding: 2px; font-weight: bold;">秒表</td></tr></tbody></table></td></tr><tr><td width="100" style="padding: 5px 0px 5px 10px;"><table width="100%" cellspacing="1" cellpadding="0" border="0" bgcolor="#c5d7ed"><tbody><tr><td width="100%" bgcolor="#f1f7fc" align="middle" style="padding: 2px; font-weight: bold;">单位换算</td></tr></tbody></table></td><td width="100" style="padding: 5px 0px 5px 10px;"><table width="100%" cellspacing="1" cellpadding="0" border="0"><tbody><tr><td width="100%" align="middle" style="padding: 2px; float: none;">&nbsp;</td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table></div><p>&nbsp;</p>','images/200905/thumb_img/32_thumb_G_1242110760196.jpg','images/200905/goods_img/32_G_1242110760868.jpg','images/200905/source_img/32_G_1242110760437.jpg',1,'',1,1,0,30,1242110760,100,0,0,1,0,1,0,1462950812,9,'',-1,-1,0,NULL),
+  (68,24,'ECS000068','透明超薄软胶保护套','+',4,15,'',1,0.000,22.80,0,19.00,0.00,0,0,1,'','','<p><img src=\"/images/upload/Image/2_1.jpg\" width=\"1240\" height=\"869\" alt=\"\" />&nbsp;</p>','images/201605/thumb_img/68_thumb_G_1462955204381.jpg','images/201605/goods_img/68_G_1462955204977.jpg','images/201605/source_img/68_G_1462955204991.jpg',1,'',1,1,0,0,1462955204,100,0,0,0,1,0,0,1462956062,0,'',-1,-1,0,NULL),
+  (36,18,'ECS000036','路由器','+',0,0,'',1,0.000,178.79,0,149.00,0.00,0,0,1,'','','','images/201605/thumb_img/36_thumb_G_1462851087913.jpg','images/201605/goods_img/36_G_1462851087064.jpg','images/201605/source_img/36_G_1462851087201.jpg',1,'',1,1,0,1,1462851087,100,0,0,0,0,0,0,1462948887,0,'',-1,-1,0,NULL),
+  (37,19,'ECS000037','Note3 钢化玻璃膜(0.33mm) ','+',2,15,'',1,0.000,19.00,0,19.00,0.00,0,0,1,'','','','images/201605/thumb_img/37_thumb_G_1462852086266.jpg','images/201605/goods_img/37_G_1462852086030.jpg','images/201605/source_img/37_G_1462852086626.jpg',1,'',1,1,0,0,1462852086,100,0,0,0,0,0,0,1462948878,0,'',-1,-1,0,NULL),
+  (38,19,'ECS000038','圈铁耳机','+',2,15,'',1,0.000,118.80,0,99.00,0.00,0,0,1,'','','','images/201605/thumb_img/38_thumb_G_1462951652474.jpg','images/201605/goods_img/38_G_1462951652287.jpg','images/201605/source_img/38_G_1462951652405.jpg',1,'',1,1,0,0,1462852185,100,0,0,0,0,0,0,1462951652,0,'',-1,-1,0,NULL),
+  (39,19,'ECS000039','移动电源 10000mAh 高配版','+',1,15,'',1,0.000,178.79,0,149.00,0.00,0,0,1,'','','','images/201605/thumb_img/39_thumb_G_1462852326734.jpg','images/201605/goods_img/39_G_1462852326708.jpg','images/201605/source_img/39_G_1462852326569.jpg',1,'',1,1,0,1,1462852326,100,0,0,0,0,0,0,1462948797,0,'',-1,-1,0,NULL),
+  (40,19,'ECS000040',' 炫彩翻页保护套','+',2,15,'',1,0.000,39.00,0,39.00,0.00,0,0,1,'','','','images/201605/thumb_img/40_thumb_G_1462852478804.jpg','images/201605/goods_img/40_G_1462852478331.jpg','images/201605/source_img/40_G_1462852478647.jpg',1,'',1,1,0,0,1462852478,100,0,0,0,0,0,0,1462948859,0,'',-1,-1,0,NULL),
+  (41,19,'ECS000041','蓝牙耳机','+',1,15,'',1,0.000,94.80,0,79.00,0.00,0,0,1,'','','','images/201605/thumb_img/41_thumb_G_1462951739925.jpg','images/201605/goods_img/41_G_1462951739858.jpg','images/201605/source_img/41_G_1462951739827.jpg',1,'',1,1,0,0,1462852621,100,0,0,0,0,0,0,1462951739,0,'',-1,-1,0,NULL),
+  (42,16,'ECS000042','短袖T恤 米兔大游行','+',0,0,'',1,0.000,46.80,0,39.00,0.00,0,0,1,'','','','images/201605/thumb_img/42_thumb_G_1462852622356.jpg','images/201605/goods_img/42_G_1462852622613.jpg','images/201605/source_img/42_G_1462852622905.jpg',1,'',1,1,0,0,1462852622,100,0,0,0,0,0,0,1462948781,0,'',-1,-1,0,NULL),
+  (43,16,'ECS000043','短袖T恤 摇滚星球','+',0,0,'',1,0.000,46.80,0,39.00,0.00,0,0,1,'','','','images/201605/thumb_img/43_thumb_G_1462852740405.jpg','images/201605/goods_img/43_G_1462852740043.jpg','images/201605/source_img/43_G_1462852740973.jpg',1,'',1,1,0,0,1462852674,100,0,0,0,0,0,0,1462948773,0,'',-1,-1,0,NULL),
+  (44,16,'ECS000044','短袖POLO衫 女款','+',1,0,'',1,0.000,70.80,0,59.00,0.00,0,0,1,'','','','images/201605/thumb_img/44_thumb_G_1462854145205.jpg','images/201605/goods_img/44_G_1462854145484.jpg','images/201605/source_img/44_G_1462854145205.jpg',1,'',1,1,0,0,1462852818,100,0,0,0,0,0,0,1462948765,0,'',-1,-1,0,NULL),
+  (45,19,'ECS000045','自拍杆','+',4,15,'',1,0.000,58.80,0,49.00,0.00,0,0,1,'','','','images/201605/thumb_img/45_thumb_G_1462852876726.jpg','images/201605/goods_img/45_G_1462852876401.jpg','images/201605/source_img/45_G_1462852876959.jpg',1,'',1,1,0,0,1462852839,100,0,0,0,0,0,0,1462948758,0,'',-1,-1,0,NULL),
+  (46,16,'ECS000046','V领短袖T恤 女款','+',0,0,'',1,0.000,46.80,0,39.00,0.00,0,0,1,'','','','images/201605/thumb_img/46_thumb_G_1462852854005.jpg','images/201605/goods_img/46_G_1462852854671.jpg','images/201605/source_img/46_G_1462852854698.jpg',1,'',1,1,0,0,1462852854,100,0,0,0,0,0,0,1462948979,0,'',-1,-1,0,NULL),
+  (47,16,'ECS000047','极简都市双肩包','+',0,0,'',1,0.000,178.79,0,149.00,0.00,0,0,1,'','','','images/201605/thumb_img/47_thumb_G_1462852887996.jpg','images/201605/goods_img/47_G_1462852887140.jpg','images/201605/source_img/47_G_1462852887382.jpg',1,'',1,1,0,1,1462852887,100,0,0,0,0,0,0,1462948987,0,'',-1,-1,0,NULL),
+  (48,16,'ECS000048','学院风简约双肩包','+',1,0,'',1,0.000,70.80,0,59.00,0.00,0,0,1,'','','','images/201605/thumb_img/48_thumb_G_1462852915482.jpg','images/201605/goods_img/48_G_1462852915946.jpg','images/201605/source_img/48_G_1462852915332.jpg',1,'',1,1,0,0,1462852915,100,0,0,0,0,0,0,1462853206,0,'',-1,-1,0,NULL),
+  (49,19,'ECS000049','随身风扇','+',2,0,'',1,0.000,23.88,0,19.90,0.00,0,0,1,'','','','images/201605/thumb_img/49_thumb_G_1462852939697.jpg','images/201605/goods_img/49_G_1462852939406.jpg','images/201605/source_img/49_G_1462852939577.jpg',1,'',1,1,0,0,1462852939,100,0,0,0,0,0,0,1462953248,0,'',-1,-1,0,NULL),
+  (50,19,'ECS000050','移动电源16000mAh','+',2,15,'',1,0.000,154.79,0,129.00,0.00,0,0,1,'','','','images/201605/thumb_img/50_thumb_G_1462852961640.jpg','images/201605/goods_img/50_G_1462852961232.jpg','images/201605/source_img/50_G_1462852961568.jpg',1,'',1,1,0,1,1462852961,100,0,0,0,0,0,0,1462948940,0,'',-1,-1,0,NULL),
+  (51,19,'ECS000051','鼠标垫','+',3,0,'',1,0.000,5.88,0,4.90,0.00,0,0,1,'','','','images/201605/thumb_img/51_thumb_G_1462852967936.jpg','images/201605/goods_img/51_G_1462852967543.jpg','images/201605/source_img/51_G_1462852967694.jpg',1,'',1,1,0,0,1462852967,100,0,0,0,0,0,0,1462953228,0,'',-1,-1,0,NULL),
+  (52,8,'ECS000052','活塞耳机 三大升级 全新听歌神器','+',0,15,'',1,0.000,99.00,0,69.00,0.00,0,0,1,'','','','images/201605/thumb_img/52_thumb_G_1462951604146.jpg','images/201605/goods_img/52_G_1462951604094.jpg','images/201605/source_img/52_G_1462951604873.jpg',1,'',1,1,0,0,1462853039,100,0,0,0,0,0,0,1462952608,0,'',-1,-1,0,NULL),
+  (53,8,'ECS000053','活塞耳机 标准版','+',2,15,'',1,0.000,34.80,0,29.00,0.00,0,0,1,'','','','images/201605/thumb_img/53_thumb_G_1462951586603.jpg','images/201605/goods_img/53_G_1462951586918.jpg','images/201605/source_img/53_G_1462951586806.jpg',1,'',1,1,0,0,1462853130,100,0,0,0,0,0,0,1462951586,0,'',-1,-1,0,NULL),
+  (54,6,'ECS000054','插线板','+',0,15,'',1,0.000,58.80,0,49.00,0.00,0,0,1,'','','','images/201605/thumb_img/54_thumb_G_1462853264300.jpg','images/201605/goods_img/54_G_1462853264188.jpg','images/201605/source_img/54_G_1462853264278.jpg',1,'',1,1,0,0,1462853264,100,0,0,0,0,0,0,1462952652,0,'',-1,-1,0,NULL),
+  (55,22,'ECS000055','移动电源10000mAh','+',0,15,'',1,0.000,82.80,0,69.00,0.00,0,0,1,'','','','images/201605/thumb_img/55_thumb_G_1462853376632.jpg','images/201605/goods_img/55_G_1462853376630.jpg','images/201605/source_img/55_G_1462853376496.jpg',1,'',1,1,0,0,1462853376,100,0,0,0,0,0,0,1462956052,0,'',-1,-1,0,NULL),
+  (58,20,'ECS000058','手机3高配版 超薄钢化玻璃膜(0.22mm) ','+',7,15,'',1,0.000,34.80,0,29.00,0.00,0,0,1,'','','','images/201605/thumb_img/58_thumb_G_1462854555007.jpg','images/201605/goods_img/58_G_1462854555626.jpg','images/201605/source_img/58_G_1462854555917.jpg',1,'',1,1,0,0,1462854555,100,0,0,0,0,0,0,1462956051,0,'',-1,-1,0,NULL),
+  (59,6,'ECS000059',' 标准高透贴膜(2片装) ','+',4,15,'',1,0.000,22.80,0,19.00,0.00,0,0,1,'','','','images/201605/thumb_img/59_thumb_G_1462854683029.jpg','images/201605/goods_img/59_G_1462854683071.jpg','images/201605/source_img/59_G_1462854683549.jpg',1,'',1,1,0,0,1462854683,100,0,0,0,0,0,0,1462956051,0,'',-1,-1,0,NULL),
+  (60,6,'ECS000060','指环式防滑手机支架','+',14,15,'',1,0.000,15.00,0,12.50,0.00,0,0,1,'','','','images/201605/thumb_img/60_thumb_G_1462854857483.jpg','images/201605/goods_img/60_G_1462854857550.jpg','images/201605/source_img/60_G_1462854857625.jpg',1,'',1,1,0,0,1462854857,100,0,0,0,0,0,0,1462956050,0,'',-1,-1,0,NULL);
+
+--
+-- `goods_article`
+--
+INSERT INTO `goods_article` (`goods_id`, `article_id`, `admin_id`) VALUES
+(1, 27, 1),
+(8, 28, 0),
+(9, 8, 1),
+(13, 29, 0),
+(14, 29, 0),
+(14, 31, 0),
+(23, 8, 1),
+(23, 30, 0),
+(23, 31, 0),
+(32, 8, 1),
+(32, 30, 0);
+--
+-- `goods_attr`
+--
+INSERT INTO `goods_attr` (`goods_attr_id`, `goods_id`, `attr_id`, `attr_value`, `attr_price`)
+VALUES
+  (238,1,173,'GSM,850,900,1800,1900','0'),
+  (237,1,185,'灰色',''),
+  (236,1,191,'支持','0'),
+  (235,1,190,'支持','0'),
+  (234,1,189,'2.4英寸','0'),
+  (233,1,172,'2008年04月','0'),
+  (228,9,178,'滑盖','0'),
+  (227,9,185,'白色','0'),
+  (226,9,185,'黑色','10'),
+  (232,8,178,'直板','0'),
+  (231,8,185,'黑色',''),
+  (230,8,190,'支持','0'),
+  (229,8,189,'1.75英寸','0'),
+  (212,14,172,'2008年10月','0'),
+  (213,14,185,'黑色','0'),
+  (214,14,178,'直板','0'),
+  (152,32,172,'2008年10月','0'),
+  (153,32,180,'MicroSD','0'),
+  (154,32,181,'78MB','0'),
+  (155,32,182,'Symbian OS v9.3','0'),
+  (156,32,189,'2.6英寸','0'),
+  (157,32,210,'线控耳机','50'),
+  (158,32,210,'蓝牙耳机','100'),
+  (159,32,210,'数据线','12'),
+  (160,32,173,'GSM,850,900,1800,1900','0'),
+  (161,32,174,'6.9 小時','0'),
+  (162,32,175,'363 小時','0'),
+  (163,32,185,'黑色','1000');
+
+--
+-- `goods_cat`
+--
+INSERT INTO `goods_cat` (`goods_id`, `cat_id`)
+VALUES
+  (8,2),
+  (8,5);
+
+--
+-- `goods_gallery`
+--
+INSERT INTO `goods_gallery` (`img_id`, `goods_id`, `img_url`, `img_desc`, `thumb_url`, `img_original`) VALUES
+(1, 1, 'images/200905/goods_img/1_P_1240902890730.gif', '', 'images/200905/thumb_img/1_thumb_P_1240902890139.jpg', 'images/200905/source_img/1_P_1240902890193.gif'),
+(2, 1, 'images/200905/goods_img/1_P_1240904370445.jpg', '', 'images/200905/thumb_img/1_thumb_P_1240904370846.jpg', 'images/200905/source_img/1_P_1240904370647.jpg'),
+(3, 1, 'images/200905/goods_img/1_P_1240904371414.jpg', '', 'images/200905/thumb_img/1_thumb_P_1240904371539.jpg', 'images/200905/source_img/1_P_1240904371019.jpg'),
+(4, 1, 'images/200905/goods_img/1_P_1240904371355.jpg', '', 'images/200905/thumb_img/1_thumb_P_1240904371335.jpg', 'images/200905/source_img/1_P_1240904371118.jpg'),
+(5, 1, 'images/200905/goods_img/1_P_1240904371252.jpg', '', 'images/200905/thumb_img/1_thumb_P_1240904371430.jpg', 'images/200905/source_img/1_P_1240904371758.jpg'),
+(6, 3, 'images/200905/goods_img/3_P_1241422082461.jpg', '', 'images/200905/thumb_img/3_thumb_P_1241422082160.jpg', 'images/200905/source_img/3_P_1241422082816.jpg'),
+(7, 4, 'images/200905/goods_img/4_P_1241422402169.jpg', '', 'images/200905/thumb_img/4_thumb_P_1241422402909.jpg', 'images/200905/source_img/4_P_1241422402362.jpg'),
+(8, 5, 'images/200905/goods_img/5_P_1241422518168.jpg', '', 'images/200905/thumb_img/5_thumb_P_1241422518416.jpg', 'images/200905/source_img/5_P_1241422518314.jpg'),
+(9, 7, 'images/200905/goods_img/7_P_1241422785926.jpg', '', 'images/200905/thumb_img/7_thumb_P_1241422785889.jpg', 'images/200905/source_img/7_P_1241422785172.jpg'),
+(10, 8, 'images/200905/goods_img/8_P_1241425513388.jpg', '', 'images/200905/thumb_img/8_thumb_P_1241425513834.jpg', 'images/200905/source_img/8_P_1241425513810.jpg'),
+(11, 8, 'images/200905/goods_img/8_P_1241425891781.JPG', '正面', 'images/200905/thumb_img/8_thumb_P_1241425891460.jpg', 'images/200905/source_img/8_P_1241425891321.JPG'),
+(12, 8, 'images/200905/goods_img/8_P_1241425891193.jpg', '背面', 'images/200905/thumb_img/8_thumb_P_1241425892547.jpg', 'images/200905/source_img/8_P_1241425891588.jpg'),
+(13, 8, 'images/200905/goods_img/8_P_1241425892941.JPG', '侧面', 'images/200905/thumb_img/8_thumb_P_1241425892356.jpg', 'images/200905/source_img/8_P_1241425892999.JPG'),
+(14, 9, 'images/200905/goods_img/9_P_1241511871575.jpg', '', 'images/200905/thumb_img/9_thumb_P_1241511871787.jpg', 'images/200905/source_img/9_P_1241511871749.jpg'),
+(15, 12, 'images/200905/goods_img/12_P_1241965978060.jpg', '', 'images/200905/thumb_img/12_thumb_P_1241965978845.jpg', 'images/200905/source_img/12_P_1241965978333.jpg'),
+(16, 12, 'images/200905/goods_img/12_P_1241966218046.jpg', '', 'images/200905/thumb_img/12_thumb_P_1241966218835.jpg', 'images/200905/source_img/12_P_1241966218225.jpg'),
+(17, 12, 'images/200905/goods_img/12_P_1241966218391.jpg', '', 'images/200905/thumb_img/12_thumb_P_1241966218843.jpg', 'images/200905/source_img/12_P_1241966218859.jpg'),
+(18, 13, 'images/200905/goods_img/13_P_1241967762510.jpg', '', 'images/200905/thumb_img/13_thumb_P_1241967762510.jpg', 'images/200905/source_img/13_P_1241967762358.jpg'),
+(19, 13, 'images/200905/goods_img/13_P_1241968002659.jpg', '', 'images/200905/thumb_img/13_thumb_P_1241968002193.jpg', 'images/200905/source_img/13_P_1241968002709.jpg'),
+(20, 14, 'images/200905/goods_img/14_P_1241968492774.jpg', '', 'images/200905/thumb_img/14_thumb_P_1241968492168.jpg', 'images/200905/source_img/14_P_1241968492973.jpg'),
+(21, 14, 'images/200905/goods_img/14_P_1241968492721.jpg', '', 'images/200905/thumb_img/14_thumb_P_1241968492995.jpg', 'images/200905/source_img/14_P_1241968492307.jpg'),
+(22, 14, 'images/200905/goods_img/14_P_1241968492279.jpg', '', 'images/200905/thumb_img/14_thumb_P_1241968492674.jpg', 'images/200905/source_img/14_P_1241968492392.jpg'),
+(23, 16, 'images/200905/goods_img/16_P_1241968949498.jpg', '', 'images/200905/thumb_img/16_thumb_P_1241968949965.jpg', 'images/200905/source_img/16_P_1241968949069.jpg'),
+(24, 17, 'images/200905/goods_img/17_P_1241969394354.jpg', '', 'images/200905/thumb_img/17_thumb_P_1241969394537.jpg', 'images/200905/source_img/17_P_1241969394369.jpg'),
+(25, 19, 'images/200905/goods_img/19_P_1241970140820.jpg', '', 'images/200905/thumb_img/19_thumb_P_1241970140527.jpg', 'images/200905/source_img/19_P_1241970139925.jpg'),
+(26, 19, 'images/200905/goods_img/19_P_1241970140600.jpg', '', 'images/200905/thumb_img/19_thumb_P_1241970140229.jpg', 'images/200905/source_img/19_P_1241970140187.jpg'),
+(27, 19, 'images/200905/goods_img/19_P_1241970175007.jpg', '', 'images/200905/thumb_img/19_thumb_P_1241970175086.jpg', 'images/200905/source_img/19_P_1241970175028.jpg'),
+(28, 22, 'images/200905/goods_img/22_P_1241971076061.jpg', '', 'images/200905/thumb_img/22_thumb_P_1241971076595.jpg', 'images/200905/source_img/22_P_1241971076696.jpg'),
+(29, 23, 'images/200905/goods_img/23_P_1241971556661.jpg', '', 'images/200905/thumb_img/23_thumb_P_1241971556920.jpg', 'images/200905/source_img/23_P_1241971556122.jpg'),
+(30, 24, 'images/200905/goods_img/24_P_1241971981420.jpg', '', 'images/200905/thumb_img/24_thumb_P_1241971981834.jpg', 'images/200905/source_img/24_P_1241971981824.jpg'),
+(31, 25, 'images/200905/goods_img/25_P_1241972709888.jpg', '', 'images/200905/thumb_img/25_thumb_P_1241972709070.jpg', 'images/200905/source_img/25_P_1241972709222.jpg'),
+(32, 26, 'images/200905/goods_img/26_P_1241972789025.jpg', '', 'images/200905/thumb_img/26_thumb_P_1241972789061.jpg', 'images/200905/source_img/26_P_1241972789731.jpg'),
+(33, 27, 'images/200905/goods_img/27_P_1241972894128.jpg', '', 'images/200905/thumb_img/27_thumb_P_1241972894915.jpg', 'images/200905/source_img/27_P_1241972894886.jpg'),
+(34, 28, 'images/200905/goods_img/28_P_1241972976099.jpg', '', 'images/200905/thumb_img/28_thumb_P_1241972976277.jpg', 'images/200905/source_img/28_P_1241972976150.jpg'),
+(35, 29, 'images/200905/goods_img/29_P_1241973022876.jpg', '', 'images/200905/thumb_img/29_thumb_P_1241973022886.jpg', 'images/200905/source_img/29_P_1241973022880.jpg'),
+(36, 30, 'images/200905/goods_img/30_P_1241973114554.jpg', '', 'images/200905/thumb_img/30_thumb_P_1241973114166.jpg', 'images/200905/source_img/30_P_1241973114795.jpg'),
+(38, 20, 'images/200905/goods_img/20_P_1242106490582.jpg', '', 'images/200905/thumb_img/20_thumb_P_1242106490836.jpg', 'images/200905/source_img/20_P_1242106490796.jpg'),
+(39, 21, 'images/200905/goods_img/21_P_1242109298519.jpg', '', 'images/200905/thumb_img/21_thumb_P_1242109298525.jpg', 'images/200905/source_img/21_P_1242109298459.jpg'),
+(40, 31, 'images/200905/goods_img/31_P_1242110412503.jpg', '', 'images/200905/thumb_img/31_thumb_P_1242110412614.jpg', 'images/200905/source_img/31_P_1242110412152.jpg'),
+(41, 32, 'images/200905/goods_img/32_P_1242110760641.jpg', '', 'images/200905/thumb_img/32_thumb_P_1242110760997.jpg', 'images/200905/source_img/32_P_1242110760203.jpg'),
+(42, 15, 'images/200905/goods_img/15_P_1242973362276.jpg', '', 'images/200905/thumb_img/15_thumb_P_1242973362611.jpg', 'images/200905/source_img/15_P_1242973362172.jpg'),
+(43, 10, 'images/200905/goods_img/10_P_1242973436620.jpg', '', 'images/200905/thumb_img/10_thumb_P_1242973436219.jpg', 'images/200905/source_img/10_P_1242973436898.jpg');
+
+--
+-- `group_goods`
+--
+INSERT INTO `group_goods` (`parent_id`, `goods_id`, `goods_price`, `admin_id`) VALUES
+(9, 4, 58.00, 1),
+(9, 3, 68.00, 1),
+(9, 7, 100.00, 1),
+(14, 5, 20.00, 1),
+(14, 6, 42.00, 1),
+(14, 7, 100.00, 1);
+
+--
+-- `keywords`
+--
+INSERT INTO `keywords` (`date`, `searchengine`, `keyword`, `count`) VALUES
+('2009-04-21', 'ecshop', '诺基亚', 1),
+('2009-04-27', 'ecshop', '智能手机', 1),
+('2009-05-04', 'ecshop', '斤', 1),
+('2009-05-10', 'ecshop', '诺基亚', 1),
+('2009-05-11', 'ecshop', '智能手机', 1),
+('2009-05-11', 'ecshop', '诺基亚', 1),
+('2009-05-12', 'ecshop', '三星', 1),
+('2009-05-12', 'ecshop', '智能手机', 1),
+('2009-05-12', 'ecshop', 'p806', 1),
+('2009-05-12', 'ecshop', '诺基亚', 1),
+('2009-05-12', 'ecshop', '夏新', 1),
+('2009-05-18', 'ecshop', '52', 2),
+('2009-05-22', 'ecshop', 'p', 1);
+
+--
+-- `link_goods`
+--
+INSERT INTO `link_goods` (`goods_id`, `link_goods_id`, `is_double`, `admin_id`) VALUES
+(12, 9, 0, 1),
+(12, 10, 0, 1),
+(12, 11, 0, 1),
+(9, 13, 1, 1),
+(13, 9, 1, 1),
+(14, 9, 0, 1),
+(14, 13, 0, 1),
+(23, 9, 0, 1),
+(13, 23, 1, 1),
+(23, 13, 1, 1);
+
+--
+-- `member_price`
+--
+INSERT INTO `member_price` (`price_id`, `goods_id`, `user_rank`, `user_price`) VALUES
+(1, 23, 3, 3200.00),
+(2, 23, 2, 3300.00),
+(3, 13, 3, 1100.00),
+(4, 13, 2, 1200.00);
+
+
+
+--
+-- `order_action`
+--
+INSERT INTO `order_action` (`action_id`, `order_id`, `action_user`, `order_status`, `shipping_status`, `pay_status`, `action_place`, `action_note`, `log_time`)
+VALUES
+  (3,3,'admin',1,0,0,0,'',1462948558),
+  (4,3,'admin',1,0,2,0,'付款',1462948573),
+  (5,3,'admin',1,3,2,0,'',1462948579),
+  (6,3,'admin',5,5,2,0,'',1462948586),
+  (7,3,'admin',1,1,2,1,'',1462948609),
+  (8,4,'admin',1,0,2,0,'付款',1462948642),
+  (9,4,'admin',1,3,2,0,'',1462948652),
+  (10,4,'admin',5,5,2,0,'',1462948658),
+  (11,5,'admin',1,0,0,0,'',1462948677),
+  (12,5,'admin',1,0,2,0,'付款',1462948691),
+  (13,7,'admin',1,0,2,0,'付款',1462954287),
+  (14,7,'admin',1,3,2,0,'',1462954290),
+  (15,7,'admin',5,5,2,0,'',1462954297),
+  (16,7,'admin',1,1,2,1,'',1462954309);
+
+--
+-- `order_goods`
+--
+INSERT INTO `order_goods` (`rec_id`, `order_id`, `goods_id`, `goods_name`, `goods_sn`, `product_id`, `goods_number`, `market_price`, `goods_price`, `discount_fee`, `goods_attr`, `send_number`, `is_real`, `extension_code`, `parent_id`, `is_gift`, `goods_attr_id`)
+VALUES
+  (6,6,50,'小米移动电源16000mAh','ECS000050',0,1,154.79,122.55,0.00,'',0,1,'',0,0,''),
+  (5,5,37,'红米Note3 钢化玻璃膜(0.33mm) ','ECS000037',0,1,19.00,18.05,0.00,'',0,1,'',0,0,''),
+  (4,4,60,'指环式防滑手机支架','ECS000060',0,1,15.00,11.88,0.00,'',1,1,'',0,0,''),
+  (7,7,63,'自拍杆','ECS000063',0,1,49.00,46.55,0.00,'',1,1,'',0,0,'');
+
+--
+-- `order_info`
+--
+
+INSERT INTO `order_info` (`order_id`, `order_sn`, `user_id`, `order_status`, `shipping_status`, `pay_status`, `consignee`, `country`, `province`, `city`, `district`, `address`, `zipcode`, `tel`, `mobile`, `email`, `best_time`, `sign_building`, `postscript`, `shipping_id`, `shipping_name`, `pay_id`, `pay_name`, `how_oos`, `how_surplus`, `pack_name`, `card_name`, `card_message`, `inv_payee`, `inv_content`, `goods_amount`, `shipping_fee`, `insure_fee`, `pay_fee`, `pack_fee`, `card_fee`, `goods_discount_fee`, `money_paid`, `surplus`, `integral`, `integral_money`, `bonus`, `order_amount`, `from_ad`, `referer`, `add_time`, `confirm_time`, `pay_time`, `shipping_time`, `pack_id`, `card_id`, `bonus_id`, `invoice_no`, `extension_code`, `extension_id`, `to_buyer`, `pay_note`, `agency_id`, `inv_type`, `tax`, `is_separate`, `parent_id`, `discount`, `callback_status`, `lastmodify`)
+VALUES
+  (6,'2016051124036',1,0,0,0,'刘先生',1,2,52,502,'海兴大厦','','010-25851234','13986765412','ecshop@ecshop.com','','','',5,'申通快递',4,'天工收银','等待所有商品备齐后再发','','','','','','',122.55,15.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0,0.00,0.00,137.55,8,'本站',1462948570,0,0,0,0,0,0,'','',0,'','',0,'',0.00,0,0,0.00,'true',1462948570),
+  (5,'2016051166250',1,1,0,2,'刘先生',1,2,52,502,'海兴大厦','','010-25851234','13986765412','ecshop@ecshop.com','','','',5,'申通快递',4,'天工收银','等待所有商品备齐后再发','','','','','','',18.05,15.00,0.00,0.00,0.00,0.00,0.00,33.05,0.00,0,0.00,0.00,0.00,0,'本站',1462948550,1462948677,1462948691,0,0,0,0,'','',0,'','',0,'',0.00,0,0,0.00,'true',1462948691),
+  (4,'2016051107173',1,5,5,2,'刘先生',1,2,52,502,'海兴大厦','','010-25851234','13986765412','ecshop@ecshop.com','','','',5,'申通快递',4,'天工收银','等待所有商品备齐后再发','','','','','','',11.88,15.00,0.00,0.00,0.00,0.00,0.00,26.88,0.00,0,0.00,0.00,0.00,0,'本站',1462948528,1462948642,1462948642,0,0,0,0,'','',0,'','',0,'',0.00,0,0,0.00,'true',1462948658),
+  (7,'2016051183359',1,5,1,2,'刘先生',1,2,52,502,'海兴大厦','','010-25851234','13986765412','ecshop@ecshop.com','','','',5,'申通快递',2,'银行汇款/转帐','等待所有商品备齐后再发','','','','','','',46.55,15.00,0.00,0.00,0.00,0.00,0.00,61.55,0.00,0,0.00,0.00,0.00,0,'本站',1462954269,1462954287,1462954287,1462954309,0,0,0,'600075869','',0,'','',0,'',0.00,0,0,0.00,'true',1462954309);
+
+--
+-- `pack`
+--
+INSERT INTO `pack` (`pack_id`, `pack_name`, `pack_img`, `pack_fee`, `free_money`, `pack_desc`) VALUES
+(1, '精品包装', '1242108360911825791.jpg', 5, 800, '精品包装，尽心为您设计一份不一样的礼物');
+
+--
+-- `package_goods`
+--
+INSERT INTO `package_goods` (`package_id`, `goods_id`, `goods_number`, `admin_id`) VALUES
+(5, 6, 1, 1),
+(5, 5, 1, 1),
+(6, 4, 1, 1),
+(6, 7, 1, 1),
+(6, 32, 1, 1),
+(5, 31, 1, 1);
+
+--
+-- `payment`
+--
+INSERT INTO `payment` (`pay_id`, `pay_code`, `pay_name`, `pay_fee`, `pay_desc`, `pay_order`, `pay_config`, `enabled`, `is_cod`, `is_online`) VALUES
+(1, 'balance', '余额支付', '0', '使用帐户余额支付。只有会员才能使用，通过设置信用额度，可以透支。', 0, 'a:0:{}', 1, 0, 1),
+(2, 'bank', '银行汇款/转帐', '0', '银行名称\n收款人信息：全称 ××× ；帐号或地址 ××× ；开户行 ×××。\n注意事项：办理电汇时，请在电汇单“汇款用途”一栏处注明您的订单号。', 0, 'a:0:{}', 1, 0, 0),
+(3, 'cod', '货到付款', '0', '开通城市：×××\n货到付款区域：×××', 0, 'a:0:{}', 1, 1, 0);
+
+--
+-- `pay_log`
+--
+INSERT INTO `pay_log` (`log_id`, `order_id`, `order_amount`, `order_type`, `is_paid`) VALUES
+(1, 1, 0.00, 0, 0),
+(2, 2, 0.00, 0, 0),
+(3, 3, 0.00, 0, 0),
+(4, 4, 0.00, 0, 0),
+(5, 5, 0.00, 0, 0),
+(6, 6, 35.00, 0, 0),
+(7, 7, 2198.10, 0, 0),
+(8, 8, 638.00, 0, 0),
+(9, 9, 2015.00, 0, 0),
+(10, 10, 0.00, 0, 0),
+(11, 11, 3810.00, 0, 0),
+(12, 12, 253.00, 0, 0),
+(13, 13, 975.00, 0, 0),
+(14, 14, 0.00, 0, 0),
+(15, 15, 17054.00, 0, 0),
+(16, 16, 0.00, 0, 0),
+(17, 17, 0.00, 0, 0),
+(18, 18, 0.00, 0, 0);
+
+--
+-- `shipping`
+--
+INSERT INTO `shipping` (`shipping_id`, `shipping_code`, `shipping_name`, `shipping_desc`, `insure`, `support_cod`, `enabled`, `shipping_print`) VALUES
+(1, 'post_express', '邮政快递包裹', '邮政快递包裹的描述内容。', '1%', 0, 1, ''),
+(2, 'yto', '圆通速递', '上海圆通物流（速递）有限公司经过多年的网络快速发展，在中国速递行业中一直处于领先地位。为了能更好的发展国际快件市场，加快与国际市场的接轨，强化圆通的整体实力，圆通已在东南亚、欧美、中东、北美洲、非洲等许多城市运作国际快件业务', '0', 1, 1, ''),
+(3, 'city_express', '城际快递', '配送的运费是固定的', '0', 1, 1, ''),
+(4, 'flat', '市内快递', '固定运费的配送方式内容', '0', 1, 1, ''),
+(5, 'sto_express', '申通快递', '江、浙、沪地区首重为15元/KG，其他地区18元/KG， 续重均为5-6元/KG， 云南地区为8元', '0', 0, 1, ''),
+(6, 'post_mail', '邮局平邮', '邮局平邮的描述内容。', '0', 0, 1, ''),
+(7, 'fpd', '运费到付', '所购商品到达即付运费', '0', 0, 1, '');
+
+--
+-- `shipping_area`
+--
 INSERT INTO `shipping_area` (`shipping_area_id`, `shipping_area_name`, `shipping_id`, `configure`) VALUES
 (1, '申通', 5, 'a:5:{i:0;a:2:{s:4:"name";s:8:"item_fee";s:5:"value";s:2:"15";}i:1;a:2:{s:4:"name";s:8:"base_fee";s:5:"value";s:2:"15";}i:2;a:2:{s:4:"name";s:8:"step_fee";s:5:"value";s:1:"5";}i:3;a:2:{s:4:"name";s:10:"free_money";s:5:"value";s:1:"0";}i:4;a:2:{s:4:"name";s:16:"fee_compute_mode";s:5:"value";s:9:"by_weight";}}'),
 (2, '1', 3, 'a:4:{i:0;a:2:{s:4:"name";s:8:"base_fee";s:5:"value";s:2:"10";}i:1;a:2:{s:4:"name";s:10:"free_money";s:5:"value";s:6:"100000";}i:2;a:2:{s:4:"name";s:16:"fee_compute_mode";s:5:"value";N;}i:3;a:2:{s:4:"name";s:7:"pay_fee";s:5:"value";s:1:"5";}}'),
 (3, '邮局', 6, 'a:7:{i:0;a:2:{s:4:"name";s:8:"item_fee";s:5:"value";s:1:"4";}i:1;a:2:{s:4:"name";s:8:"base_fee";s:5:"value";s:3:"3.5";}i:2;a:2:{s:4:"name";s:8:"step_fee";s:5:"value";s:3:"2.5";}i:3;a:2:{s:4:"name";s:9:"step_fee1";s:5:"value";N;}i:4;a:2:{s:4:"name";s:8:"pack_fee";s:5:"value";s:1:"0";}i:5;a:2:{s:4:"name";s:10:"free_money";s:5:"value";s:5:"50000";}i:6;a:2:{s:4:"name";s:16:"fee_compute_mode";s:5:"value";s:9:"by_weight";}}'),
 (4, '运费到付', 7, 'a:2:{i:0;a:2:{s:4:"name";s:10:"free_money";s:5:"value";s:5:"50000";}i:1;a:2:{s:4:"name";s:16:"fee_compute_mode";s:5:"value";N;}}');
 
--- --------------------------------------------------------
-
 --
--- 表的结构 `shop_bind`
+-- `snatch_log`
 --
-
-CREATE TABLE IF NOT EXISTS `shop_bind` (
-  `shop_id` int(8) unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) DEFAULT NULL COMMENT '名称',
-  `node_id` varchar(32) DEFAULT NULL COMMENT '节点',
-  `node_type` varchar(128) DEFAULT NULL COMMENT '节点类型',
-  `status` enum('bind','unbind') DEFAULT NULL COMMENT '状态',
-  `app_url` varchar(200) DEFAULT NULL,
-  PRIMARY KEY (`shop_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
-
--- --------------------------------------------------------
-
---
--- 表的结构 `shop_config`
---
-
-CREATE TABLE IF NOT EXISTS `shop_config` (
-  `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
-  `parent_id` smallint(5) unsigned NOT NULL DEFAULT '0',
-  `code` varchar(30) NOT NULL DEFAULT '',
-  `type` varchar(10) NOT NULL DEFAULT '',
-  `store_range` varchar(255) NOT NULL DEFAULT '',
-  `store_dir` varchar(255) NOT NULL DEFAULT '',
-  `value` text NOT NULL,
-  `sort_order` tinyint(3) unsigned NOT NULL DEFAULT '1',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `code` (`code`),
-  KEY `parent_id` (`parent_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=905 ;
-
---
--- 转存表中的数据 `shop_config`
---
-
-INSERT INTO `shop_config` (`id`, `parent_id`, `code`, `type`, `store_range`, `store_dir`, `value`, `sort_order`) VALUES
-(1, 0, 'shop_info', 'group', '', '', '', 1),
-(2, 0, 'basic', 'group', '', '', '', 1),
-(3, 0, 'display', 'group', '', '', '', 1),
-(4, 0, 'shopping_flow', 'group', '', '', '', 1),
-(5, 0, 'smtp', 'group', '', '', '', 1),
-(6, 0, 'hidden', 'hidden', '', '', '', 1),
-(7, 0, 'goods', 'group', '', '', '', 1),
-(8, 0, 'sms', 'group', '', '', '', 1),
-(101, 1, 'shop_name', 'text', '', '', 'ECSHOP', 1),
-(102, 1, 'shop_title', 'text', '', '', 'ECSHOP演示站', 1),
-(103, 1, 'shop_desc', 'text', '', '', 'ECSHOP演示站', 1),
-(104, 1, 'shop_keywords', 'text', '', '', 'ECSHOP演示站', 1),
-(105, 1, 'shop_country', 'manual', '', '', '1', 1),
-(106, 1, 'shop_province', 'manual', '', '', '2', 1),
-(107, 1, 'shop_city', 'manual', '', '', '52', 1),
-(108, 1, 'shop_address', 'text', '', '', '', 1),
-(109, 1, 'qq', 'text', '', '', '', 1),
-(110, 1, 'ww', 'text', '', '', '', 1),
-(111, 1, 'skype', 'text', '', '', '', 1),
-(112, 1, 'ym', 'text', '', '', '', 1),
-(113, 1, 'msn', 'text', '', '', '', 1),
-(114, 1, 'service_email', 'text', '', '', '', 1),
-(115, 1, 'service_phone', 'text', '', '', '', 1),
-(116, 1, 'shop_closed', 'select', '0,1', '', '0', 1),
-(117, 1, 'close_comment', 'textarea', '', '', '', 1),
-(118, 1, 'shop_logo', 'file', '', '../themes/{$template}/images/', '', 1),
-(119, 1, 'licensed', 'select', '0,1', '', '1', 1),
-(120, 1, 'user_notice', 'textarea', '', '', '用户中心公告！', 1),
-(121, 1, 'shop_notice', 'textarea', '', '', '欢迎光临手机网,我们的宗旨：诚信经营、服务客户！\r\n<MARQUEE onmouseover=this.stop() onmouseout=this.start() \r\nscrollAmount=3><U><FONT color=red>\r\n<P>咨询电话010-10124444  010-21252454 8465544</P></FONT></U></MARQUEE>', 1),
-(122, 1, 'shop_reg_closed', 'select', '1,0', '', '0', 1),
-(201, 2, 'lang', 'manual', '', '', 'zh_cn', 1),
-(202, 2, 'icp_number', 'text', '', '', '', 1),
-(203, 2, 'icp_file', 'file', '', '../cert/', '', 1),
-(204, 2, 'watermark', 'file', '', '../images/', '', 1),
-(205, 2, 'watermark_place', 'select', '0,1,2,3,4,5', '', '1', 1),
-(206, 2, 'watermark_alpha', 'text', '', '', '65', 1),
-(207, 2, 'use_storage', 'select', '1,0', '', '1', 1),
-(208, 2, 'market_price_rate', 'text', '', '', '1.2', 1),
-(209, 2, 'rewrite', 'select', '0,1,2', '', '0', 1),
-(210, 2, 'integral_name', 'text', '', '', '积分', 1),
-(211, 2, 'integral_scale', 'text', '', '', '1', 1),
-(212, 2, 'integral_percent', 'text', '', '', '1', 1),
-(213, 2, 'sn_prefix', 'text', '', '', 'ECS', 1),
-(214, 2, 'comment_check', 'select', '0,1', '', '1', 1),
-(215, 2, 'no_picture', 'file', '', '../images/', '', 1),
-(218, 2, 'stats_code', 'textarea', '', '', '', 1),
-(219, 2, 'cache_time', 'text', '', '', '3600', 1),
-(220, 2, 'register_points', 'text', '', '', '0', 1),
-(221, 2, 'enable_gzip', 'select', '0,1', '', '0', 1),
-(222, 2, 'top10_time', 'select', '0,1,2,3,4', '', '0', 1),
-(223, 2, 'timezone', 'options', '-12,-11,-10,-9,-8,-7,-6,-5,-4,-3.5,-3,-2,-1,0,1,2,3,3.5,4,4.5,5,5.5,5.75,6,6.5,7,8,9,9.5,10,11,12', '', '8', 1),
-(224, 2, 'upload_size_limit', 'options', '-1,0,64,128,256,512,1024,2048,4096', '', '64', 1),
-(226, 2, 'cron_method', 'select', '0,1', '', '0', 1),
-(227, 2, 'comment_factor', 'select', '0,1,2,3', '', '0', 1),
-(228, 2, 'enable_order_check', 'select', '0,1', '', '1', 1),
-(229, 2, 'default_storage', 'text', '', '', '1', 1),
-(230, 2, 'bgcolor', 'text', '', '', '#FFFFFF', 1),
-(231, 2, 'visit_stats', 'select', 'on,off', '', 'on', 1),
-(232, 2, 'send_mail_on', 'select', 'on,off', '', 'off', 1),
-(233, 2, 'auto_generate_gallery', 'select', '1,0', '', '1', 1),
-(234, 2, 'retain_original_img', 'select', '1,0', '', '1', 1),
-(235, 2, 'member_email_validate', 'select', '1,0', '', '1', 1),
-(236, 2, 'message_board', 'select', '1,0', '', '1', 1),
-(239, 2, 'certificate_id', 'hidden', '', '', '', 1),
-(240, 2, 'token', 'hidden', '', '', '', 1),
-(241, 2, 'certi', 'hidden', '', '', 'http://service.shopex.cn/openapi/api.php', 1),
-(242, 2, 'send_verify_email', 'select', '1,0', '', '0', 1),
-(243, 2, 'ent_id', 'hidden', '', '', '', 1),
-(244, 2, 'ent_ac', 'hidden', '', '', '', 1),
-(245, 2, 'ent_sign', 'hidden', '', '', '', 1),
-(246, 2, 'ent_email', 'hidden', '', '', '', 1),
-(247, 2, 'logistics_trace', 'select', '1,0', '', '0', 1),
-(301, 3, 'date_format', 'hidden', '', '', 'Y-m-d', 1),
-(302, 3, 'time_format', 'text', '', '', 'Y-m-d H:i:s', 1),
-(303, 3, 'currency_format', 'text', '', '', '￥%s元', 1),
-(304, 3, 'thumb_width', 'text', '', '', '100', 1),
-(305, 3, 'thumb_height', 'text', '', '', '100', 1),
-(306, 3, 'image_width', 'text', '', '', '230', 1),
-(307, 3, 'image_height', 'text', '', '', '230', 1),
-(312, 3, 'top_number', 'text', '', '', '10', 1),
-(313, 3, 'history_number', 'text', '', '', '5', 1),
-(314, 3, 'comments_number', 'text', '', '', '5', 1),
-(315, 3, 'bought_goods', 'text', '', '', '3', 1),
-(316, 3, 'article_number', 'text', '', '', '8', 1),
-(317, 3, 'goods_name_length', 'text', '', '', '7', 1),
-(318, 3, 'price_format', 'select', '0,1,2,3,4,5', '', '5', 1),
-(319, 3, 'page_size', 'text', '', '', '10', 1),
-(320, 3, 'sort_order_type', 'select', '0,1,2', '', '0', 1),
-(321, 3, 'sort_order_method', 'select', '0,1', '', '0', 1),
-(322, 3, 'show_order_type', 'select', '0,1,2', '', '1', 1),
-(323, 3, 'attr_related_number', 'text', '', '', '5', 1),
-(324, 3, 'goods_gallery_number', 'text', '', '', '5', 1),
-(325, 3, 'article_title_length', 'text', '', '', '16', 1),
-(326, 3, 'name_of_region_1', 'text', '', '', '国家', 1),
-(327, 3, 'name_of_region_2', 'text', '', '', '省', 1),
-(328, 3, 'name_of_region_3', 'text', '', '', '市', 1),
-(329, 3, 'name_of_region_4', 'text', '', '', '区', 1),
-(330, 3, 'search_keywords', 'text', '', '', '', 0),
-(332, 3, 'related_goods_number', 'text', '', '', '4', 1),
-(333, 3, 'help_open', 'select', '0,1', '', '1', 1),
-(334, 3, 'article_page_size', 'text', '', '', '10', 1),
-(335, 3, 'page_style', 'select', '0,1', '', '1', 1),
-(336, 3, 'recommend_order', 'select', '0,1', '', '0', 1),
-(337, 3, 'index_ad', 'hidden', '', '', 'sys', 1),
-(401, 4, 'can_invoice', 'select', '1,0', '', '1', 1),
-(402, 4, 'use_integral', 'select', '1,0', '', '1', 1),
-(403, 4, 'use_bonus', 'select', '1,0', '', '1', 1),
-(404, 4, 'use_surplus', 'select', '1,0', '', '1', 1),
-(405, 4, 'use_how_oos', 'select', '1,0', '', '1', 1),
-(406, 4, 'send_confirm_email', 'select', '1,0', '', '0', 1),
-(407, 4, 'send_ship_email', 'select', '1,0', '', '0', 1),
-(408, 4, 'send_cancel_email', 'select', '1,0', '', '0', 1),
-(409, 4, 'send_invalid_email', 'select', '1,0', '', '0', 1),
-(410, 4, 'order_pay_note', 'select', '1,0', '', '1', 1),
-(411, 4, 'order_unpay_note', 'select', '1,0', '', '1', 1),
-(412, 4, 'order_ship_note', 'select', '1,0', '', '1', 1),
-(413, 4, 'order_receive_note', 'select', '1,0', '', '1', 1),
-(414, 4, 'order_unship_note', 'select', '1,0', '', '1', 1),
-(415, 4, 'order_return_note', 'select', '1,0', '', '1', 1),
-(416, 4, 'order_invalid_note', 'select', '1,0', '', '1', 1),
-(417, 4, 'order_cancel_note', 'select', '1,0', '', '1', 1),
-(418, 4, 'invoice_content', 'textarea', '', '', '', 1),
-(419, 4, 'anonymous_buy', 'select', '1,0', '', '1', 1),
-(420, 4, 'min_goods_amount', 'text', '', '', '0', 1),
-(421, 4, 'one_step_buy', 'select', '1,0', '', '0', 1),
-(422, 4, 'invoice_type', 'manual', '', '', 'a:2:{s:4:"type";a:3:{i:0;s:1:"1";i:1;s:1:"2";i:2;s:0:"";}s:4:"rate";a:3:{i:0;d:1;i:1;d:1.5;i:2;d:0;}}', 1),
-(423, 4, 'stock_dec_time', 'select', '1,0', '', '0', 1),
-(424, 4, 'cart_confirm', 'options', '1,2,3,4', '', '3', 0),
-(425, 4, 'send_service_email', 'select', '1,0', '', '0', 1),
-(426, 4, 'show_goods_in_cart', 'select', '1,2,3', '', '3', 1),
-(427, 4, 'show_attr_in_cart', 'select', '1,0', '', '1', 1),
-(501, 5, 'smtp_host', 'text', '', '', 'localhost', 1),
-(502, 5, 'smtp_port', 'text', '', '', '25', 1),
-(503, 5, 'smtp_user', 'text', '', '', '', 1),
-(504, 5, 'smtp_pass', 'password', '', '', '', 1),
-(505, 5, 'smtp_mail', 'text', '', '', '', 1),
-(506, 5, 'mail_charset', 'select', 'UTF8,GB2312,BIG5', '', 'UTF8', 1),
-(507, 5, 'mail_service', 'select', '0,1', '', '0', 0),
-(508, 5, 'smtp_ssl', 'select', '0,1', '', '0', 0),
-(601, 6, 'integrate_code', 'hidden', '', '', 'ecshop', 1),
-(602, 6, 'integrate_config', 'hidden', '', '', '', 1),
-(603, 6, 'hash_code', 'hidden', '', '', 'b24665020e9ed6e64a811cef393b3baa', 1),
-(604, 6, 'template', 'hidden', '', '', 'default', 1),
-(605, 6, 'install_date', 'hidden', '', '', '1464520343', 1),
-(606, 6, 'ecs_version', 'hidden', '', '', 'v3.0.0', 1),
-(607, 6, 'sms_user_name', 'hidden', '', '', '', 1),
-(608, 6, 'sms_password', 'hidden', '', '', '', 1),
-(609, 6, 'sms_auth_str', 'hidden', '', '', '', 1),
-(610, 6, 'sms_domain', 'hidden', '', '', '', 1),
-(611, 6, 'sms_count', 'hidden', '', '', '', 1),
-(612, 6, 'sms_total_money', 'hidden', '', '', '', 1),
-(613, 6, 'sms_balance', 'hidden', '', '', '', 1),
-(614, 6, 'sms_last_request', 'hidden', '', '', '', 1),
-(616, 6, 'affiliate', 'hidden', '', '', 'a:3:{s:6:"config";a:7:{s:6:"expire";d:24;s:11:"expire_unit";s:4:"hour";s:11:"separate_by";i:0;s:15:"level_point_all";s:2:"5%";s:15:"level_money_all";s:2:"1%";s:18:"level_register_all";i:2;s:17:"level_register_up";i:60;}s:4:"item";a:4:{i:0;a:2:{s:11:"level_point";s:3:"60%";s:11:"level_money";s:3:"60%";}i:1;a:2:{s:11:"level_point";s:3:"30%";s:11:"level_money";s:3:"30%";}i:2;a:2:{s:11:"level_point";s:2:"7%";s:11:"level_money";s:2:"7%";}i:3;a:2:{s:11:"level_point";s:2:"3%";s:11:"level_money";s:2:"3%";}}s:2:"on";i:1;}', 1),
-(617, 6, 'captcha', 'hidden', '', '', '12', 1),
-(618, 6, 'captcha_width', 'hidden', '', '', '100', 1),
-(619, 6, 'captcha_height', 'hidden', '', '', '20', 1),
-(620, 6, 'sitemap', 'hidden', '', '', 'a:6:{s:19:"homepage_changefreq";s:6:"hourly";s:17:"homepage_priority";s:3:"0.9";s:19:"category_changefreq";s:6:"hourly";s:17:"category_priority";s:3:"0.8";s:18:"content_changefreq";s:6:"weekly";s:16:"content_priority";s:3:"0.7";}', 0),
-(621, 6, 'points_rule', 'hidden', '', '', '', 0),
-(622, 6, 'flash_theme', 'hidden', '', '', 'dynfocus', 1),
-(623, 6, 'stylename', 'hidden', '', '', '', 1),
-(701, 7, 'show_goodssn', 'select', '1,0', '', '1', 1),
-(702, 7, 'show_brand', 'select', '1,0', '', '1', 1),
-(703, 7, 'show_goodsweight', 'select', '1,0', '', '1', 1),
-(704, 7, 'show_goodsnumber', 'select', '1,0', '', '1', 1),
-(705, 7, 'show_addtime', 'select', '1,0', '', '1', 1),
-(706, 7, 'goodsattr_style', 'select', '1,0', '', '1', 1),
-(707, 7, 'show_marketprice', 'select', '1,0', '', '1', 1),
-(801, 8, 'sms_shop_mobile', 'text', '', '', '', 1),
-(802, 8, 'sms_order_placed', 'select', '1,0', '', '0', 1),
-(803, 8, 'sms_order_payed', 'select', '1,0', '', '0', 1),
-(804, 8, 'sms_order_payed_to_customer', 'select', '1,0', '', '0', 1),
-(805, 8, 'sms_order_shipped', 'select', '1,0', '', '0', 1),
-(806, 2, 'snlist_code', 'hidden', '', '', '{"erp":"goods_1109","fy":"goods_1137","taodali":"goods_1103","HDT":"goods_1500"}', 1),
-(903, 2, 'message_check', 'select', '1,0', '', '1', 1),
-(904, 0, 'showerpPanel', 'hidden', '', '', '1', 1);
-
--- --------------------------------------------------------
-
---
--- 表的结构 `snatch_log`
---
-
-CREATE TABLE IF NOT EXISTS `snatch_log` (
-  `log_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
-  `snatch_id` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `user_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `bid_price` decimal(10,2) NOT NULL DEFAULT '0.00',
-  `bid_time` int(10) unsigned NOT NULL DEFAULT '0',
-  PRIMARY KEY (`log_id`),
-  KEY `snatch_id` (`snatch_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=3 ;
-
---
--- 转存表中的数据 `snatch_log`
---
-
 INSERT INTO `snatch_log` (`log_id`, `snatch_id`, `user_id`, `bid_price`, `bid_time`) VALUES
 (1, 2, 1, 17.00, 1242142910),
 (2, 1, 1, 50.00, 1242142935);
 
--- --------------------------------------------------------
-
 --
--- 表的结构 `stats`
+-- `stats`
 --
-
-CREATE TABLE IF NOT EXISTS `stats` (
-  `access_time` int(10) unsigned NOT NULL DEFAULT '0',
-  `ip_address` varchar(15) NOT NULL DEFAULT '',
-  `visit_times` smallint(5) unsigned NOT NULL DEFAULT '1',
-  `browser` varchar(60) NOT NULL DEFAULT '',
-  `system` varchar(20) NOT NULL DEFAULT '',
-  `language` varchar(20) NOT NULL DEFAULT '',
-  `area` varchar(30) NOT NULL DEFAULT '',
-  `referer_domain` varchar(100) NOT NULL DEFAULT '',
-  `referer_path` varchar(200) NOT NULL DEFAULT '',
-  `access_url` varchar(255) NOT NULL DEFAULT '',
-  KEY `access_time` (`access_time`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
---
--- 转存表中的数据 `stats`
---
-
 INSERT INTO `stats` (`access_time`, `ip_address`, `visit_times`, `browser`, `system`, `language`, `area`, `referer_domain`, `referer_path`, `access_url`) VALUES
 (1240294063, '0.0.0.0', 196, 'FireFox 3.0.8', 'Windows XP', 'zh-cn', 'IANA', 'http://localhost:8080', '/shoujitiyan/admin/index.php?act=top', '/shoujitiyan/index.php'),
 (1240298833, '0.0.0.0', 198, 'FireFox 3.0.8', 'Windows XP', 'zh-cn', 'IANA', 'http://localhost:8080', '/shoujitiyan/admin/index.php?act=top', '/shoujitiyan/index.php'),
@@ -7370,48 +7384,16 @@ INSERT INTO `stats` (`access_time`, `ip_address`, `visit_times`, `browser`, `sys
 (1245219380, '0.0.0.0', 499, 'FireFox 3.0.11', 'Windows XP', 'zh-cn', 'IANA', 'http://localhost:8080', '/shouji/admin/index.php?act=top', '/shouji/index.php'),
 (1245222219, '0.0.0.0', 500, 'FireFox 3.0.11', 'Windows XP', 'zh-cn', 'IANA', 'http://localhost:8080', '/shouji/admin/goods.php?act=list', '/shouji/goods.php');
 
--- --------------------------------------------------------
+--
+-- `suppliers`
+--
+INSERT INTO `suppliers` (`suppliers_id`, `suppliers_name`, `suppliers_desc`) VALUES
+(1, '北京供货商', '北京供货商'),
+(2, '上海供货商', '上海供货商');
 
 --
--- 表的结构 `suppliers`
+-- `tag`
 --
-
-CREATE TABLE IF NOT EXISTS `suppliers` (
-  `suppliers_id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
-  `suppliers_name` varchar(255) DEFAULT NULL,
-  `suppliers_desc` mediumtext,
-  `is_check` tinyint(1) unsigned NOT NULL DEFAULT '1',
-  PRIMARY KEY (`suppliers_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=3 ;
-
---
--- 转存表中的数据 `suppliers`
---
-
-INSERT INTO `suppliers` (`suppliers_id`, `suppliers_name`, `suppliers_desc`, `is_check`) VALUES
-(1, '北京供货商', '北京供货商', 1),
-(2, '上海供货商', '上海供货商', 1);
-
--- --------------------------------------------------------
-
---
--- 表的结构 `tag`
---
-
-CREATE TABLE IF NOT EXISTS `tag` (
-  `tag_id` mediumint(8) NOT NULL AUTO_INCREMENT,
-  `user_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `goods_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `tag_words` varchar(255) NOT NULL DEFAULT '',
-  PRIMARY KEY (`tag_id`),
-  KEY `user_id` (`user_id`),
-  KEY `goods_id` (`goods_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=8 ;
-
---
--- 转存表中的数据 `tag`
---
-
 INSERT INTO `tag` (`tag_id`, `user_id`, `goods_id`, `tag_words`) VALUES
 (1, 0, 13, '音乐手机'),
 (2, 0, 14, '音乐手机'),
@@ -7421,232 +7403,29 @@ INSERT INTO `tag` (`tag_id`, `user_id`, `goods_id`, `tag_words`) VALUES
 (6, 0, 22, '智能手机'),
 (7, 0, 31, '音乐手机');
 
--- --------------------------------------------------------
+--
+-- `topic`
+--
+INSERT INTO `topic` (`topic_id`, `title`, `intro`, `start_time`, `end_time`, `data`, `template`, `css`) VALUES
+(1, '夏新优惠大酬宾', '<p>夏新产品优惠开始了</p>', 1241107200, 1246291200, 'O:8:"stdClass":1:{s:7:"default";a:1:{i:0;s:11:"夏新N7|17";}}', '', '');
 
 --
--- 表的结构 `template`
+-- `users`
 --
-
-CREATE TABLE IF NOT EXISTS `template` (
-  `filename` varchar(30) NOT NULL DEFAULT '',
-  `region` varchar(40) NOT NULL DEFAULT '',
-  `library` varchar(40) NOT NULL DEFAULT '',
-  `sort_order` tinyint(1) unsigned NOT NULL DEFAULT '0',
-  `id` smallint(5) unsigned NOT NULL DEFAULT '0',
-  `number` tinyint(1) unsigned NOT NULL DEFAULT '5',
-  `type` tinyint(1) unsigned NOT NULL DEFAULT '0',
-  `theme` varchar(60) NOT NULL DEFAULT '',
-  `remarks` varchar(30) NOT NULL DEFAULT '',
-  KEY `filename` (`filename`,`region`),
-  KEY `theme` (`theme`),
-  KEY `remarks` (`remarks`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
+INSERT INTO `users` (`user_id`, `email`, `user_name`, `password`, `question`, `answer`, `sex`, `birthday`, `user_money`, `frozen_money`, `pay_points`, `rank_points`, `address_id`, `reg_time`, `last_login`, `last_time`, `last_ip`, `visit_count`, `user_rank`, `is_special`, `ec_salt`, `salt`, `parent_id`, `flag`, `alias`, `msn`, `qq`, `office_phone`, `home_phone`, `mobile_phone`, `is_validated`, `credit_line`, `passwd_question`, `passwd_answer`)
+VALUES
+  (1,'ecshop@ecshop.com','ecshop','6526fa13f6c5804fc8aaefa25395aba3','','',0,'1960-03-03',0.00,0.00,0,0,1,0,1462949764,'0000-00-00 00:00:00','180.169.8.10',15,0,0,'1619','0',0,0,'','','','','','',0,0.00,NULL,NULL),
+  (2,'vip@ecshop.com','vip','232059cb5361a9336ccf1b8c2ba7657a','','',0,'1949-01-01',0.00,0.00,0,0,0,0,0,'0000-00-00 00:00:00','',0,0,0,NULL,'0',0,0,'','','','','','',0,0.00,NULL,NULL);
 --
--- 转存表中的数据 `template`
+-- `user_address`
 --
-
-INSERT INTO `template` (`filename`, `region`, `library`, `sort_order`, `id`, `number`, `type`, `theme`, `remarks`) VALUES
-('index', '左边区域', '/library/vote_list.lbi', 8, 0, 0, 0, 'default', ''),
-('index', '左边区域', '/library/email_list.lbi', 9, 0, 0, 0, 'default', ''),
-('index', '左边区域', '/library/order_query.lbi', 6, 0, 0, 0, 'default', ''),
-('index', '左边区域', '/library/cart.lbi', 0, 0, 0, 0, 'default', ''),
-('index', '左边区域', '/library/promotion_info.lbi', 3, 0, 0, 0, 'default', ''),
-('index', '左边区域', '/library/auction.lbi', 4, 0, 3, 0, 'default', ''),
-('index', '左边区域', '/library/group_buy.lbi', 5, 0, 3, 0, 'default', ''),
-('index', '', '/library/recommend_promotion.lbi', 0, 0, 4, 0, 'default', ''),
-('index', '右边主区域', '/library/recommend_hot.lbi', 2, 0, 10, 0, 'default', ''),
-('index', '右边主区域', '/library/recommend_new.lbi', 1, 0, 10, 0, 'default', ''),
-('index', '右边主区域', '/library/recommend_best.lbi', 0, 0, 10, 0, 'default', ''),
-('index', '左边区域', '/library/invoice_query.lbi', 7, 0, 0, 0, 'default', ''),
-('index', '左边区域', '/library/top10.lbi', 2, 0, 0, 0, 'default', ''),
-('index', '左边区域', '/library/category_tree.lbi', 1, 0, 0, 0, 'default', ''),
-('index', '', '/library/brands.lbi', 0, 0, 11, 0, 'default', ''),
-('category', '左边区域', '/library/category_tree.lbi', 1, 0, 0, 0, 'default', ''),
-('category', '右边区域', '/library/recommend_best.lbi', 0, 0, 5, 0, 'default', ''),
-('category', '右边区域', '/library/goods_list.lbi', 1, 0, 0, 0, 'default', ''),
-('category', '右边区域', '/library/pages.lbi', 2, 0, 0, 0, 'default', ''),
-('category', '左边区域', '/library/cart.lbi', 0, 0, 0, 0, 'default', ''),
-('category', '左边区域', '/library/price_grade.lbi', 3, 0, 0, 0, 'default', ''),
-('category', '左边区域', '/library/filter_attr.lbi', 2, 0, 0, 0, 'default', ''),
-('index', '团购广告230x206', '/library/ad_position.lbi', 0, 4, 1, 4, 'default', ''),
-('index', '3层产品', '/library/cat_goods.lbi', 0, 24, 8, 1, 'default', ''),
-('index', '2层产品', '/library/cat_goods.lbi', 0, 24, 8, 1, 'default', ''),
-('index', '1层产品', '/library/cat_goods.lbi', 0, 24, 8, 1, 'default', ''),
-('index', '', '/library/brands.lbi', 0, 0, 3, 0, 'default', ''),
-('index', '', '/library/auction.lbi', 0, 0, 3, 0, 'default', ''),
-('index', '', '/library/group_buy.lbi', 0, 0, 3, 0, 'default', ''),
-('index', '', '/library/recommend_promotion.lbi', 0, 0, 4, 0, 'default', ''),
-('index', '热门商品推荐', '/library/recommend_hot.lbi', 0, 0, 5, 0, 'default', ''),
-('index', '', '/library/recommend_new.lbi', 0, 0, 3, 0, 'default', ''),
-('index', '', '/library/recommend_best.lbi', 0, 0, 3, 0, 'default', '');
-
--- --------------------------------------------------------
-
---
--- 表的结构 `topic`
---
-
-CREATE TABLE IF NOT EXISTS `topic` (
-  `topic_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `title` varchar(255) NOT NULL DEFAULT '''''',
-  `intro` text NOT NULL,
-  `start_time` int(11) NOT NULL DEFAULT '0',
-  `end_time` int(10) NOT NULL DEFAULT '0',
-  `data` text NOT NULL,
-  `template` varchar(255) NOT NULL DEFAULT '''''',
-  `css` text NOT NULL,
-  `topic_img` varchar(255) DEFAULT NULL,
-  `title_pic` varchar(255) DEFAULT NULL,
-  `base_style` char(6) DEFAULT NULL,
-  `htmls` mediumtext,
-  `keywords` varchar(255) DEFAULT NULL,
-  `description` varchar(255) DEFAULT NULL,
-  KEY `topic_id` (`topic_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
-
---
--- 转存表中的数据 `topic`
---
-
-INSERT INTO `topic` (`topic_id`, `title`, `intro`, `start_time`, `end_time`, `data`, `template`, `css`, `topic_img`, `title_pic`, `base_style`, `htmls`, `keywords`, `description`) VALUES
-(1, '夏新优惠大酬宾', '<p>夏新产品优惠开始了</p>', 1241107200, 1246291200, 'O:8:"stdClass":1:{s:7:"default";a:1:{i:0;s:11:"夏新N7|17";}}', '', '', NULL, NULL, NULL, NULL, NULL, NULL);
-
--- --------------------------------------------------------
-
---
--- 表的结构 `users`
---
-
-CREATE TABLE IF NOT EXISTS `users` (
-  `user_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
-  `email` varchar(60) NOT NULL DEFAULT '',
-  `user_name` varchar(60) NOT NULL DEFAULT '',
-  `password` varchar(32) NOT NULL DEFAULT '',
-  `question` varchar(255) NOT NULL DEFAULT '',
-  `answer` varchar(255) NOT NULL DEFAULT '',
-  `sex` tinyint(1) unsigned NOT NULL DEFAULT '0',
-  `birthday` date NOT NULL DEFAULT '0000-00-00',
-  `user_money` decimal(10,2) NOT NULL DEFAULT '0.00',
-  `frozen_money` decimal(10,2) NOT NULL DEFAULT '0.00',
-  `pay_points` int(10) unsigned NOT NULL DEFAULT '0',
-  `rank_points` int(10) unsigned NOT NULL DEFAULT '0',
-  `address_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `reg_time` int(10) unsigned NOT NULL DEFAULT '0',
-  `last_login` int(11) unsigned NOT NULL DEFAULT '0',
-  `last_time` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `last_ip` varchar(15) NOT NULL DEFAULT '',
-  `visit_count` smallint(5) unsigned NOT NULL DEFAULT '0',
-  `user_rank` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `is_special` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `ec_salt` varchar(10) DEFAULT NULL,
-  `salt` varchar(10) NOT NULL DEFAULT '0',
-  `parent_id` mediumint(9) NOT NULL DEFAULT '0',
-  `flag` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `alias` varchar(60) NOT NULL,
-  `msn` varchar(60) NOT NULL,
-  `qq` varchar(20) NOT NULL,
-  `office_phone` varchar(20) NOT NULL,
-  `home_phone` varchar(20) NOT NULL,
-  `mobile_phone` varchar(20) NOT NULL,
-  `is_validated` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `credit_line` decimal(10,2) unsigned NOT NULL,
-  `passwd_question` varchar(50) DEFAULT NULL,
-  `passwd_answer` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`user_id`),
-  UNIQUE KEY `user_name` (`user_name`),
-  KEY `email` (`email`),
-  KEY `parent_id` (`parent_id`),
-  KEY `flag` (`flag`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=3 ;
-
---
--- 转存表中的数据 `users`
---
-
-INSERT INTO `users` (`user_id`, `email`, `user_name`, `password`, `question`, `answer`, `sex`, `birthday`, `user_money`, `frozen_money`, `pay_points`, `rank_points`, `address_id`, `reg_time`, `last_login`, `last_time`, `last_ip`, `visit_count`, `user_rank`, `is_special`, `ec_salt`, `salt`, `parent_id`, `flag`, `alias`, `msn`, `qq`, `office_phone`, `home_phone`, `mobile_phone`, `is_validated`, `credit_line`, `passwd_question`, `passwd_answer`) VALUES
-(1, 'ecshop@ecshop.com', 'ecshop', '6526fa13f6c5804fc8aaefa25395aba3', '', '', 0, '1960-03-03', 0.00, 0.00, 0, 0, 1, 0, 1462949764, '0000-00-00 00:00:00', '180.169.8.10', 15, 0, 0, '1619', '0', 0, 0, '', '', '', '', '', '', 0, 0.00, NULL, NULL),
-(2, 'vip@ecshop.com', 'vip', '232059cb5361a9336ccf1b8c2ba7657a', '', '', 0, '1949-01-01', 0.00, 0.00, 0, 0, 0, 0, 0, '0000-00-00 00:00:00', '', 0, 0, 0, NULL, '0', 0, 0, '', '', '', '', '', '', 0, 0.00, NULL, NULL);
-
--- --------------------------------------------------------
-
---
--- 表的结构 `user_account`
---
-
-CREATE TABLE IF NOT EXISTS `user_account` (
-  `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
-  `user_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `admin_user` varchar(255) NOT NULL,
-  `amount` decimal(10,2) NOT NULL,
-  `add_time` int(10) NOT NULL DEFAULT '0',
-  `paid_time` int(10) NOT NULL DEFAULT '0',
-  `admin_note` varchar(255) NOT NULL,
-  `user_note` varchar(255) NOT NULL,
-  `process_type` tinyint(1) NOT NULL DEFAULT '0',
-  `payment` varchar(90) NOT NULL,
-  `is_paid` tinyint(1) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`),
-  KEY `user_id` (`user_id`),
-  KEY `is_paid` (`is_paid`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
-
--- --------------------------------------------------------
-
---
--- 表的结构 `user_address`
---
-
-CREATE TABLE IF NOT EXISTS `user_address` (
-  `address_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
-  `address_name` varchar(50) NOT NULL DEFAULT '',
-  `user_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `consignee` varchar(60) NOT NULL DEFAULT '',
-  `email` varchar(60) NOT NULL DEFAULT '',
-  `country` smallint(5) NOT NULL DEFAULT '0',
-  `province` smallint(5) NOT NULL DEFAULT '0',
-  `city` smallint(5) NOT NULL DEFAULT '0',
-  `district` smallint(5) NOT NULL DEFAULT '0',
-  `address` varchar(120) NOT NULL DEFAULT '',
-  `zipcode` varchar(60) NOT NULL DEFAULT '',
-  `tel` varchar(60) NOT NULL DEFAULT '',
-  `mobile` varchar(60) NOT NULL DEFAULT '',
-  `sign_building` varchar(120) NOT NULL DEFAULT '',
-  `best_time` varchar(120) NOT NULL DEFAULT '',
-  PRIMARY KEY (`address_id`),
-  KEY `user_id` (`user_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=3 ;
-
---
--- 转存表中的数据 `user_address`
---
-
 INSERT INTO `user_address` (`address_id`, `address_name`, `user_id`, `consignee`, `email`, `country`, `province`, `city`, `district`, `address`, `zipcode`, `tel`, `mobile`, `sign_building`, `best_time`) VALUES
 (1, '', 1, '刘先生', 'ecshop@ecshop.com', 1, 2, 52, 502, '海兴大厦', '', '010-25851234', '13986765412', '', ''),
 (2, '', 3, '叶先生', 'text@ecshop.com', 1, 2, 52, 510, '通州区旗舰凯旋小区', '', '13588104710', '', '', '');
 
--- --------------------------------------------------------
-
 --
--- 表的结构 `user_bonus`
+-- `user_bonus`
 --
-
-CREATE TABLE IF NOT EXISTS `user_bonus` (
-  `bonus_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
-  `bonus_type_id` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `bonus_sn` bigint(20) unsigned NOT NULL DEFAULT '0',
-  `user_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `used_time` int(10) unsigned NOT NULL DEFAULT '0',
-  `order_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `emailed` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  PRIMARY KEY (`bonus_id`),
-  KEY `user_id` (`user_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=32 ;
-
---
--- 转存表中的数据 `user_bonus`
---
-
 INSERT INTO `user_bonus` (`bonus_id`, `bonus_type_id`, `bonus_sn`, `user_id`, `used_time`, `order_id`, `emailed`) VALUES
 (1, 3, 0, 1, 1242142681, 4, 0),
 (2, 4, 1000003379, 1, 1242976699, 14, 0),
@@ -7668,109 +7447,37 @@ INSERT INTO `user_bonus` (`bonus_id`, `bonus_type_id`, `bonus_sn`, `user_id`, `u
 (30, 3, 0, 1, 0, 0, 0),
 (31, 3, 0, 1, 0, 0, 0);
 
--- --------------------------------------------------------
-
 --
--- 表的结构 `user_feed`
---
-
-CREATE TABLE IF NOT EXISTS `user_feed` (
-  `feed_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
-  `user_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `value_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `goods_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `feed_type` tinyint(1) unsigned NOT NULL DEFAULT '0',
-  `is_feed` tinyint(1) unsigned NOT NULL DEFAULT '0',
-  PRIMARY KEY (`feed_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
-
--- --------------------------------------------------------
-
---
--- 表的结构 `user_rank`
---
-
-CREATE TABLE IF NOT EXISTS `user_rank` (
-  `rank_id` tinyint(3) unsigned NOT NULL AUTO_INCREMENT,
-  `rank_name` varchar(30) NOT NULL DEFAULT '',
-  `min_points` int(10) unsigned NOT NULL DEFAULT '0',
-  `max_points` int(10) unsigned NOT NULL DEFAULT '0',
-  `discount` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `show_price` tinyint(1) unsigned NOT NULL DEFAULT '1',
-  `special_rank` tinyint(1) unsigned NOT NULL DEFAULT '0',
-  PRIMARY KEY (`rank_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=4 ;
-
---
--- 转存表中的数据 `user_rank`
+-- `user_rank`
 --
 
 INSERT INTO `user_rank` (`rank_id`, `rank_name`, `min_points`, `max_points`, `discount`, `show_price`, `special_rank`) VALUES
-(1, '注册用户', 0, 10000, 100, 1, 0),
 (2, 'vip', 10000, 10000000, 95, 1, 0),
 (3, '代销用户', 0, 0, 90, 0, 1);
 
--- --------------------------------------------------------
-
 --
--- 表的结构 `virtual_card`
+-- `virtual_card`
 --
-
-CREATE TABLE IF NOT EXISTS `virtual_card` (
-  `card_id` mediumint(8) NOT NULL AUTO_INCREMENT,
-  `goods_id` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `card_sn` varchar(60) NOT NULL DEFAULT '',
-  `card_password` varchar(60) NOT NULL DEFAULT '',
-  `add_date` int(11) NOT NULL DEFAULT '0',
-  `end_date` int(11) NOT NULL DEFAULT '0',
-  `is_saled` tinyint(1) NOT NULL DEFAULT '0',
-  `order_sn` varchar(20) NOT NULL DEFAULT '',
-  `crc32` varchar(12) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`card_id`),
-  KEY `goods_id` (`goods_id`),
-  KEY `car_sn` (`card_sn`),
-  KEY `is_saled` (`is_saled`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=16 ;
-
---
--- 转存表中的数据 `virtual_card`
---
-
 INSERT INTO `virtual_card` (`card_id`, `goods_id`, `card_sn`, `card_password`, `add_date`, `end_date`, `is_saled`, `order_sn`, `crc32`) VALUES
-(1, 25, 'RVlYQhFY', 'RVlYQhFYQg', 1241972716, 1273449600, 0, '', '-1958172277'),
-(2, 25, 'RVlYQhFYQhFQEg', 'RVlYQhFYQhFQEg', 1241972726, 1273449600, 0, '', '-1958172277'),
-(3, 26, 'RVlYQhFYQg', 'RVlYQhFYQg', 1241972801, 1273449600, 0, '', '-1958172277'),
-(4, 26, 'RVlYQhFYQhFQEVo', 'RVlYQhFYQhFQEVo', 1241972811, 1273449600, 0, '', '-1958172277'),
-(5, 27, 'RlpbQRI', 'RlpbQRJbQQ', 1241972903, 1273449600, 0, '', '-1958172277'),
-(6, 27, 'RlpbQRJbQg', 'RVpbQBJaQRE', 1241972911, 1273449600, 0, '', '-1958172277'),
-(7, 30, 'RVtbQBJYQBJQE1lU', 'R1pYRxJaQhRTEVhXSEdaWA', 1241973121, 1273449600, 0, '', '-1958172277'),
-(8, 30, 'R1pYRxJYRxNTFV9S', 'TF5cQBVdQA', 1241973127, 1273449600, 0, '', '-1958172277'),
-(9, 30, 'Q15cSxZeRhhWFg', 'TV9fSxdfSxdXGFxTQUI', 1241973134, 1273449600, 0, '', '-1958172277'),
-(10, 30, 'QVxaRhRaRhRSF11d', 'TFBeRRheRRhWFlJdSU1Q', 1241973146, 1273449600, 0, '', '-1958172277'),
-(11, 30, 'R1xaRxNcRw', 'QF1dRRVdRBY', 1241973157, 1273449600, 0, '', '-1958172277'),
-(12, 30, 'RlpbQRNdQBJU', 'R1xaQRRaQRVSEg', 1241973164, 1273449600, 0, '', '-1958172277'),
-(13, 30, 'RltdQBRaQQ', 'Rl1dRRheRRhYF10', 1241973170, 1273449600, 0, '', '-1958172277'),
-(14, 30, 'RltdQBVeRhg', 'RlxaQRZeRhVV', 1241973178, 1273449600, 0, '', '-1958172277'),
-(15, 30, 'QFtbRhRaQRZVEw', 'Rl1aQRRaQRZUElg', 1241973185, 1273449600, 0, '', '-1958172277');
-
--- --------------------------------------------------------
+(1, 25, 'RVlYQhFY', 'RVlYQhFYQg', 1241972716, 1273449600, 0, '', -1958172277),
+(2, 25, 'RVlYQhFYQhFQEg', 'RVlYQhFYQhFQEg', 1241972726, 1273449600, 0, '', -1958172277),
+(3, 26, 'RVlYQhFYQg', 'RVlYQhFYQg', 1241972801, 1273449600, 0, '', -1958172277),
+(4, 26, 'RVlYQhFYQhFQEVo', 'RVlYQhFYQhFQEVo', 1241972811, 1273449600, 0, '', -1958172277),
+(5, 27, 'RlpbQRI', 'RlpbQRJbQQ', 1241972903, 1273449600, 0, '', -1958172277),
+(6, 27, 'RlpbQRJbQg', 'RVpbQBJaQRE', 1241972911, 1273449600, 0, '', -1958172277),
+(7, 30, 'RVtbQBJYQBJQE1lU', 'R1pYRxJaQhRTEVhXSEdaWA', 1241973121, 1273449600, 0, '', -1958172277),
+(8, 30, 'R1pYRxJYRxNTFV9S', 'TF5cQBVdQA', 1241973127, 1273449600, 0, '', -1958172277),
+(9, 30, 'Q15cSxZeRhhWFg', 'TV9fSxdfSxdXGFxTQUI', 1241973134, 1273449600, 0, '', -1958172277),
+(10, 30, 'QVxaRhRaRhRSF11d', 'TFBeRRheRRhWFlJdSU1Q', 1241973146, 1273449600, 0, '', -1958172277),
+(11, 30, 'R1xaRxNcRw', 'QF1dRRVdRBY', 1241973157, 1273449600, 0, '', -1958172277),
+(12, 30, 'RlpbQRNdQBJU', 'R1xaQRRaQRVSEg', 1241973164, 1273449600, 0, '', -1958172277),
+(13, 30, 'RltdQBRaQQ', 'Rl1dRRheRRhYF10', 1241973170, 1273449600, 0, '', -1958172277),
+(14, 30, 'RltdQBVeRhg', 'RlxaQRZeRhVV', 1241973178, 1273449600, 0, '', -1958172277),
+(15, 30, 'QFtbRhRaQRZVEw', 'Rl1aQRRaQRZUElg', 1241973185, 1273449600, 0, '', -1958172277);
 
 --
--- 表的结构 `volume_price`
+-- `volume_price`
 --
-
-CREATE TABLE IF NOT EXISTS `volume_price` (
-  `price_type` tinyint(1) unsigned NOT NULL,
-  `goods_id` mediumint(8) unsigned NOT NULL,
-  `volume_number` smallint(5) unsigned NOT NULL DEFAULT '0',
-  `volume_price` decimal(10,2) NOT NULL DEFAULT '0.00',
-  PRIMARY KEY (`price_type`,`goods_id`,`volume_number`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
---
--- 转存表中的数据 `volume_price`
---
-
 INSERT INTO `volume_price` (`price_type`, `goods_id`, `volume_number`, `volume_price`) VALUES
 (1, 1, 5, 1366.00),
 (1, 9, 3, 2200.00),
@@ -7778,93 +7485,144 @@ INSERT INTO `volume_price` (`price_type`, `goods_id`, `volume_number`, `volume_p
 (1, 13, 5, 1150.00),
 (1, 13, 3, 1200.00);
 
--- --------------------------------------------------------
-
 --
--- 表的结构 `vote`
+-- `vote`
 --
-
-CREATE TABLE IF NOT EXISTS `vote` (
-  `vote_id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
-  `vote_name` varchar(250) NOT NULL DEFAULT '',
-  `start_time` int(11) unsigned NOT NULL DEFAULT '0',
-  `end_time` int(11) unsigned NOT NULL DEFAULT '0',
-  `can_multi` tinyint(1) unsigned NOT NULL DEFAULT '0',
-  `vote_count` int(10) unsigned NOT NULL DEFAULT '0',
-  PRIMARY KEY (`vote_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
-
---
--- 转存表中的数据 `vote`
---
-
 INSERT INTO `vote` (`vote_id`, `vote_name`, `start_time`, `end_time`, `can_multi`, `vote_count`) VALUES
 (1, '您从哪里知道我们的网站', 1213200000, 1274803200, 0, 0);
 
--- --------------------------------------------------------
+--
+-- `vote_option`
+--
+INSERT INTO `vote_option` (`option_id`, `vote_id`, `option_name`, `option_count`) VALUES
+(1, 1, '论坛', 0),
+(2, 1, '朋友', 0),
+(3, 1, '友情链接', 0);
 
 --
--- 表的结构 `vote_log`
+-- `wholesale`
 --
-
-CREATE TABLE IF NOT EXISTS `vote_log` (
-  `log_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
-  `vote_id` smallint(5) unsigned NOT NULL DEFAULT '0',
-  `ip_address` varchar(15) NOT NULL DEFAULT '',
-  `vote_time` int(10) unsigned NOT NULL DEFAULT '0',
-  PRIMARY KEY (`log_id`),
-  KEY `vote_id` (`vote_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
-
--- --------------------------------------------------------
-
---
--- 表的结构 `vote_option`
---
-
-CREATE TABLE IF NOT EXISTS `vote_option` (
-  `option_id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
-  `vote_id` smallint(5) unsigned NOT NULL DEFAULT '0',
-  `option_name` varchar(250) NOT NULL DEFAULT '',
-  `option_count` int(8) unsigned NOT NULL DEFAULT '0',
-  `option_order` tinyint(3) unsigned NOT NULL DEFAULT '100',
-  PRIMARY KEY (`option_id`),
-  KEY `vote_id` (`vote_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=4 ;
-
---
--- 转存表中的数据 `vote_option`
---
-
-INSERT INTO `vote_option` (`option_id`, `vote_id`, `option_name`, `option_count`, `option_order`) VALUES
-(1, 1, '论坛', 0, 100),
-(2, 1, '朋友', 0, 100),
-(3, 1, '友情链接', 0, 100);
-
--- --------------------------------------------------------
-
---
--- 表的结构 `wholesale`
---
-
-CREATE TABLE IF NOT EXISTS `wholesale` (
-  `act_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
-  `goods_id` mediumint(8) unsigned NOT NULL,
-  `goods_name` varchar(255) NOT NULL,
-  `rank_ids` varchar(255) NOT NULL,
-  `prices` text NOT NULL,
-  `enabled` tinyint(3) unsigned NOT NULL,
-  PRIMARY KEY (`act_id`),
-  KEY `goods_id` (`goods_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
-
---
--- 转存表中的数据 `wholesale`
---
-
 INSERT INTO `wholesale` (`act_id`, `goods_id`, `goods_name`, `rank_ids`, `prices`, `enabled`) VALUES
 (1, 21, '金立 A30', '1,2', 'a:1:{i:0;a:2:{s:4:"attr";a:1:{i:120;s:1:"0";}s:7:"qp_list";a:2:{i:0;a:2:{s:8:"quantity";i:50;s:5:"price";d:1700;}i:1;a:2:{s:8:"quantity";i:100;s:5:"price";d:1680;}}}}', 1);
 
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+--
+-- `nav`
+--
+INSERT INTO `nav` (`id`, `ctype`, `cid`, `name`, `ifshow`, `vieworder`, `opennew`, `url`, `type`)
+VALUES
+  (27,'c',6,'手机',0,15,0,'category.php?id=6','middle'),
+  (28,'c',16,'服装',1,102,0,'category.php?id=16','middle'),
+  (30,'c',0,'移动电源',1,106,0,'category.php?id=22','middle'),
+  (31,'c',0,'数码时尚',1,108,0,'category.php?id=25','middle'),
+  (32,'c',26,'家用电器',1,110,0,'category.php?id=26','middle'),
+  (33,'c',27,'大家电',0,112,0,'category.php?id=27','middle'),
+  (34,'c',30,'家电配件',0,114,0,'category.php?id=30','middle'),
+  (35,'c',31,'洗衣机',0,116,0,'category.php?id=31','middle'),
+  (36,'c',28,'平板电脑',0,118,0,'category.php?id=28','middle'),
+  (37,'c',32,'冰箱',0,120,0,'category.php?id=32','middle'),
+  (38,'c',29,'家用空调',0,122,0,'category.php?id=29','middle'),
+  (39,'c',25,'数码时尚',1,124,0,'category.php?id=25','middle');
+
+--
+-- `admin_user`
+--
+
+INSERT INTO `admin_user` (`user_id`, `user_name`, `email`, `password`, `add_time`, `last_login`, `last_ip`, `action_list`, `nav_list`, `lang_type`, `agency_id`, `suppliers_id`, `todolist`) VALUES
+(2, 'bjgonghuo1', 'bj@163.com', 'd0c015b6eb9a280f318a4c0510581e7e', 1245044099, 0, '', '', '商品列表|goods.php?act=list,订单列表|order.php?act=list,用户评论|comment_manage.php?act=list,会员列表|users.php?act=list,商店设置|shop_config.php?act=list_edit', '', 0, 1, ''),
+(3, 'shhaigonghuo1', 'shanghai@163.com', '4146fecce77907d264f6bd873f4ea27b', 1245044202, 0, '', '', '商品列表|goods.php?act=list,订单列表|order.php?act=list,用户评论|comment_manage.php?act=list,会员列表|users.php?act=list,商店设置|shop_config.php?act=list_edit', '', 0, 2, '');
+
+--
+-- `shop_config`
+--
+
+UPDATE `shop_config` SET value='欢迎光临手机网,我们的宗旨：诚信经营、服务客户！\r\n<MARQUEE onmouseover=this.stop() onmouseout=this.start() \r\nscrollAmount=3><U><FONT color=red>\r\n<P>咨询电话010-10124444  010-21252454 8465544</P></FONT></U></MARQUEE>' WHERE id=121;
+
+-- `products`
+--
+--
+
+INSERT INTO `products` (`product_id`, `goods_id`, `goods_attr`, `product_sn`, `product_number`) VALUES
+(1, 32, '163', '', 100),
+(2, 24, '167', '', 100),
+(3, 23, '175', '', 100),
+(4, 21, '188', '', 20),
+(5, 20, '194', '', 13),
+(6, 17, '201', '', 1),
+(7, 14, '213', '', 4),
+(8, 13, '217', '', 8),
+(9, 10, '239', '', 6),
+(10, 10, '240', '', 12),
+(11, 9, '227', '', 12),
+(12, 9, '226', '', 3),
+(13, 8, '231', '', 17),
+(14, 1, '237', '', 1);
+
+-- `template`
+--
+--
+
+INSERT INTO `template` (`filename`, `region`, `library`, `sort_order`, `id`, `number`, `type`, `theme`, `remarks`)
+VALUES
+  ('index','团购广告230x206','/library/ad_position.lbi',0,4,1,4,'default',''),
+  ('index','3层产品','/library/cat_goods.lbi',0,24,8,1,'default',''),
+  ('index','2层产品','/library/cat_goods.lbi',0,24,8,1,'default',''),
+  ('index','1层产品','/library/cat_goods.lbi',0,24,8,1,'default',''),
+  ('index','','/library/brands.lbi',0,0,3,0,'default',''),
+  ('index','','/library/auction.lbi',0,0,3,0,'default',''),
+  ('index','','/library/group_buy.lbi',0,0,3,0,'default',''),
+  ('index','','/library/recommend_promotion.lbi',0,0,4,0,'default',''),
+  ('index','热门商品推荐','/library/recommend_hot.lbi',0,0,5,0,'default',''),
+  ('index','','/library/recommend_new.lbi',0,0,3,0,'default',''),
+  ('index','','/library/recommend_best.lbi',0,0,3,0,'default','');
+
+
+-- `ad_position`
+--
+--
+
+INSERT INTO `ad_position` (`position_id`, `position_name`, `ad_width`, `ad_height`, `position_desc`, `position_style`)
+VALUES
+  (1,'banner1',970,460,'','<table cellpadding=\"0\" cellspacing=\"0\">\r\n{foreach from=$ads item=ad}\r\n<tr><td>{$ad}</td></tr>\r\n{/foreach}\r\n</table>'),
+  (2,'banner2',970,460,'','<table cellpadding=\"0\" cellspacing=\"0\">\r\n{foreach from=$ads item=ad}\r\n<tr><td>{$ad}</td></tr>\r\n{/foreach}\r\n</table>'),
+  (3,'banner3',970,460,'','<table cellpadding=\"0\" cellspacing=\"0\">\r\n{foreach from=$ads item=ad}\r\n<tr><td>{$ad}</td></tr>\r\n{/foreach}\r\n</table>'),
+  (4,'团购广告位',230,206,'','<table cellpadding=\"0\" cellspacing=\"0\">\r\n{foreach from=$ads item=ad}\r\n<tr><td>{$ad}</td></tr>\r\n{/foreach}\r\n</table>'),
+  (5,'首页广告1',210,206,'','<table cellpadding=\"0\" cellspacing=\"0\">\r\n{foreach from=$ads item=ad}\r\n<tr><td>{$ad}</td></tr>\r\n{/foreach}\r\n</table>'),
+  (6,'首页广告2',210,206,'','<table cellpadding=\"0\" cellspacing=\"0\">\r\n{foreach from=$ads item=ad}\r\n<tr><td>{$ad}</td></tr>\r\n{/foreach}\r\n</table>'),
+  (7,'首页广告3',210,206,'','<table cellpadding=\"0\" cellspacing=\"0\">\r\n{foreach from=$ads item=ad}\r\n<tr><td>{$ad}</td></tr>\r\n{/foreach}\r\n</table>'),
+  (8,'首页广告4',210,206,'','<table cellpadding=\"0\" cellspacing=\"0\">\r\n{foreach from=$ads item=ad}\r\n<tr><td>{$ad}</td></tr>\r\n{/foreach}\r\n</table>'),
+  (9,'1层左侧广告1',230,270,'','<table cellpadding=\"0\" cellspacing=\"0\">\r\n{foreach from=$ads item=ad}\r\n<tr><td>{$ad}</td></tr>\r\n{/foreach}\r\n</table>'),
+  (10,'1层左侧广告2',230,95,'','<table cellpadding=\"0\" cellspacing=\"0\">\r\n{foreach from=$ads item=ad}\r\n<tr><td>{$ad}</td></tr>\r\n{/foreach}\r\n</table>'),
+  (11,'1层左侧广告3',230,95,'','<table cellpadding=\"0\" cellspacing=\"0\">\r\n{foreach from=$ads item=ad}\r\n<tr><td>{$ad}</td></tr>\r\n{/foreach}\r\n</table>'),
+  (12,'1层左侧广告4',230,95,'','<table cellpadding=\"0\" cellspacing=\"0\">\r\n{foreach from=$ads item=ad}\r\n<tr><td>{$ad}</td></tr>\r\n{/foreach}\r\n</table>'),
+  (13,'2层左侧广告1',230,270,'','<table cellpadding=\"0\" cellspacing=\"0\">\r\n{foreach from=$ads item=ad}\r\n<tr><td>{$ad}</td></tr>\r\n{/foreach}\r\n</table>'),
+  (14,'2层左侧广告2',230,270,'','<table cellpadding=\"0\" cellspacing=\"0\">\r\n{foreach from=$ads item=ad}\r\n<tr><td>{$ad}</td></tr>\r\n{/foreach}\r\n</table>'),
+  (15,'3层左侧广告',230,555,'','<table cellpadding=\"0\" cellspacing=\"0\">\r\n{foreach from=$ads item=ad}\r\n<tr><td>{$ad}</td></tr>\r\n{/foreach}\r\n</table>');
+
+
+-- `ad`
+--
+--
+
+INSERT INTO `ad` (`ad_id`, `position_id`, `media_type`, `ad_name`, `ad_link`, `ad_code`, `start_time`, `end_time`, `link_man`, `link_email`, `link_phone`, `click_count`, `enabled`)
+VALUES
+  (1,1,0,'测试广告','','1462958213922967180.jpg',1462003200,1527667200,'','','',4,1),
+  (2,2,0,'测试广告2','','1462958236149500402.jpg',1462608000,1496736000,'','','',6,1),
+  (3,3,0,'测试广告3','','1462958248231413208.jpg',1462608000,1465200000,'','','',2,1),
+  (4,5,0,'首页广告1','#','1462847593436706583.jpg',1462780800,1465372800,'','','',1,1),
+  (5,6,0,'首页广告2','','1462847610270410022.jpg',1462780800,1465372800,'','','',1,1),
+  (6,7,0,'首页广告3','','1462847623202947787.jpg',1462780800,1465372800,'','','',0,1),
+  (7,8,0,'首页广告4','','1462847641920447649.jpg',1462780800,1465372800,'','','',0,1),
+  (8,4,0,'团购广告','','1462847712105834896.jpg',1462780800,1465372800,'','','',2,1),
+  (9,9,0,'1层左侧广告1','','1462847928058332752.jpg',1462780800,1465372800,'','','',1,1),
+  (10,10,0,'1层左侧广告2','','1462847949795308026.jpg',1462780800,1465372800,'','','',0,1),
+  (11,11,0,'1层左侧广告3','','1462848017200363691.jpg',1462694400,1465286400,'','','',0,1),
+  (12,12,0,'1层左侧广告4','','1462847997830622897.jpg',1462694400,1465286400,'','','',0,1),
+  (13,13,0,'2层左侧广告1','','1462850262891884765.jpg',1462694400,1465286400,'','','',0,1),
+  (14,14,0,'2层左侧广告2','','1462850292418967275.jpg',1462694400,1465286400,'','','',0,1),
+  (15,15,0,'3层左侧广告','','1462848133177102814.jpg',1462780800,1465372800,'','','',0,1);
+
+
+INSERT INTO `admin_user`
+(user_name, email, password, add_time, action_list, nav_list)
+VALUES
+('admin', '', md5('admin0328'), unix_timestamp(), 'all', '商品列表|goods.php?act=list,订单列表|order.php?act=list,用户评论|comment_manage.php?act=list,会员列表|users.php?act=list,商店设置|shop_config.php?act=list_edit,移动版|lead.php?act=list,服务市场|service_market.php');
