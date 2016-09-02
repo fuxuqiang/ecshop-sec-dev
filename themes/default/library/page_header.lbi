@@ -47,7 +47,7 @@ var process_request = "{$lang.process_request}";
       </div>
     </div>
     <div class="serach-box">
-      <form id="searchForm" name="searchForm" method="get" action="search.php" onSubmit="return checkSearchForm()" class="f_r">
+      <form id="searchForm" name="searchForm" method="get" action="search.php" class="f_r">
         <table width="100%" border="0" cellspacing="0" cellpadding="0">
           <tr>
             <td width="135"><input name="keywords" type="text" id="keyword" value="{$search_keywords|escape}" class="B_input"  /></td>
