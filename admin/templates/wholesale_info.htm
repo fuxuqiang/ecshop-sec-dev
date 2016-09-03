@@ -190,14 +190,11 @@ function getGoodsInfoResponse(result)
       html += attr.attr_name + ' <select name="attr_' + attr.attr_id + '[' + key + ']">';
       for (var goodsAttrId in attr.goods_attr_list)
       {
-        if (goodsAttrId != 'toJSONString')
-        {
-					// 去掉 goodsAttrId 中的字符 c
-					re = /c/g;
-					_goodsAttrId = goodsAttrId.replace(re, "");
+				// 去掉 goodsAttrId 中的字符 c
+				re = /c/g;
+				_goodsAttrId = goodsAttrId.replace(re, "");
 
-          html += ' <option value="' + _goodsAttrId + '"> ' + attr.goods_attr_list[goodsAttrId] + '  </option> ';
-        }
+        html += ' <option value="' + _goodsAttrId + '"> ' + attr.goods_attr_list[goodsAttrId] + '  </option> ';
       }
       html += ' </select> ';
 	}

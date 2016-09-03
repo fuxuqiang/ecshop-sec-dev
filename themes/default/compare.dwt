@@ -17,11 +17,9 @@ function remove(id, url)
 {
   if (document.getCookie("compareItems") != null)
   {
-    var obj = document.getCookie("compareItems").parseJSON();
+    var obj = JSON.parse(document.getCookie("compareItems"));
     delete obj[id];
-    var date = new Date();
-    date.setTime(date.getTime() + 99999999);
-    document.setCookie("compareItems", obj.toJSONString());
+    document.setCookie("compareItems", JSON.stringify(obj));
   }
 }
 

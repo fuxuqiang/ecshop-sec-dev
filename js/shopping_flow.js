@@ -525,13 +525,6 @@ function checkOrderForm(frm)
     if (error)
     {
       return false;
-      try
-      {
-        document.getElementById("ECS_INTEGRAL_NOTICE").innerHTML = error;
-      }
-      catch (ex)
-      {
-      }
     }
   }
   frm.action = frm.action + '?step=done';
