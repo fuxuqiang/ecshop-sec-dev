@@ -108,18 +108,21 @@ if (window.parent != window) {
 
  //三次密码输入错误,出现验证码(火狐触发不了,不过影响不大)
  (function(win,doc){
-   if(!doc.getCookie('loginNum')){
-     doc.setCookie('loginNum','1',1);
-   }else{
-     doc.setCookie('loginNum',doc.getCookie('loginNum')*1+1,1);
-   }
-   if(doc.getCookie('loginNum')>3){
-     var oInput=doc.getElementsByClassName('capital')[0];
-     var oT=doc.getElementsByClassName('third')[0];
-     oT.classList.add('active');
-     oT.previousElementSibling.classList.add('active');
-     oInput.name='captcha';
-   }
+  var oT=doc.getElementsByClassName('third')[0];
+  if (oT) {
+    if(!doc.getCookie('loginNum')){
+      doc.setCookie('loginNum','1',1);
+    }else{
+      doc.setCookie('loginNum',doc.getCookie('loginNum')*1+1,1);
+    }
+    if(doc.getCookie('loginNum')>3){
+      var oInput=doc.getElementsByClassName('capital')[0];
+      // var oT=doc.getElementsByClassName('third')[0];
+      oT.classList.add('active');
+      oT.previousElementSibling.classList.add('active');
+      oInput.name='captcha';
+    }
+  }
  })(window,document);
 
 
