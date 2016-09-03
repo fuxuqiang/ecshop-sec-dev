@@ -100,7 +100,7 @@ class cls_mysql
 
         $sqlcache_config_file = $this->root_path . $this->cache_data_dir . 'sqlcache_config_file_' . $this->dbhash . '.php';
 
-        @include($sqlcache_config_file);
+        is_file($sqlcache_config_file) && include($sqlcache_config_file);
 
         $this->starttime = time();
 
@@ -148,7 +148,7 @@ class cls_mysql
                        '$this->timezone = ' . $this->timezone . ";\r\n" .
                        '$this->platform = ' . "'" . $this->platform . "';\r\n?" . '>';
 
-            @file_put_contents($sqlcache_config_file, $content);
+            file_put_contents($sqlcache_config_file, $content);
         }
     }
 

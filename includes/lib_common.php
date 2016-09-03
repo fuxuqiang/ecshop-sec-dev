@@ -1330,18 +1330,12 @@ function clear_tpl_files($is_cache = true, $ext = '')
 
                     if ($ext_str == $ext)
                     {
-                        if (@unlink($dir . $file))
-                        {
-                            $count++;
-                        }
+                        unlink($dir.$file) && $count++;
                     }
                 }
-                else
+                elseif ($pos)
                 {
-                    if (@unlink($dir . $file))
-                    {
-                        $count++;
-                    }
+                    unlink($dir.$file) && $count++;
                 }
             }
         }
