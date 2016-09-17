@@ -150,6 +150,28 @@ class cls_mysql
 
             file_put_contents($sqlcache_config_file, $content);
         }
+
+        /* 选择数据库 */
+        if ($dbname)
+        {
+            if (mysqli_select_db($this->link_id, $dbname) === false )
+            {
+                if (!$quiet)
+                {
+                    $this->ErrorMsg("Can't select MySQL database($dbname)!");
+                }
+
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+        else
+        {
+            return true;
+        }
     }
 
 	// 设置字符集
