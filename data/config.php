@@ -20,6 +20,8 @@ $cookie_path    = "/";
 
 $cookie_domain    = "";
 
+$cookie_secure = '';
+
 $session = "1440";
 
 define('DEBUG_MODE', 1);
