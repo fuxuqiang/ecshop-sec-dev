@@ -46,27 +46,15 @@ class cls_session
         {
             $this->session_cookie_path = $GLOBALS['cookie_path'];
         }
-        else
-        {
-            $this->session_cookie_path = '/';
-        }
 
         if (!empty($GLOBALS['cookie_domain']))
         {
             $this->session_cookie_domain = $GLOBALS['cookie_domain'];
         }
-        else
-        {
-            $this->session_cookie_domain = '';
-        }
 
         if (!empty($GLOBALS['cookie_secure']))
         {
             $this->session_cookie_secure = $GLOBALS['cookie_secure'];
-        }
-        else
-        {
-            $this->session_cookie_secure = false;
         }
 
         $this->session_name       = $session_name;
