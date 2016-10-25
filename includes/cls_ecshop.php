@@ -51,7 +51,7 @@ class cls_ecshop
      */
     function table($str)
     {
-        return '`' . $this->db_name . '`.`' . $this->prefix . $str . '`';
+        return '`' . $this->prefix . $str . '`';
     }
 
     /**
