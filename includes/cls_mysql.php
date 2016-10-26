@@ -517,47 +517,53 @@ class cls_mysql
         return $arr;
     }
 
-    function autoExecute($table, $field_values, $mode = 'INSERT', $where = '', $querymode = '')
+    /**
+     * 
+     */
+    private function getSetSQL($table, $field_values)
     {
-        $field_names = $this->getCol('DESC ' . $table);
+        $field_names = $this->getCol('DESC '.$table);
 
-        $sql = '';
-        if ($mode == 'INSERT')
+        $sets = array();
+        foreach ($field_names AS $value)
         {
-            $fields = $values = array();
-            foreach ($field_names AS $value)
+            if (array_key_exists($value, $field_values) == true)
             {
-                if (array_key_exists($value, $field_values) == true)
-                {
-                    $fields[] = $value;
-                    $values[] = "'" . $field_values[$value] . "'";
-                }
+                $sets[] = '`'.$value.'`'."='".$field_values[$value]."'";
             }
-
-            if (!empty($fields))
-            {
-                $sql = 'INSERT INTO ' . $table . ' (' . implode(', ', $fields) . ') VALUES (' . implode(', ', $values) . ')';
-            }
+        }
+        if (!empty($sets))
+        {
+            return $table.' SET '.implode(',', $sets);
         }
         else
         {
-            $sets = array();
-            foreach ($field_names AS $value)
-            {
-                if (array_key_exists($value, $field_values) == true)
-                {
-                    $sets[] = $value . " = '" . $field_values[$value] . "'";
-                }
-            }
-
-            if (!empty($sets))
-            {
-                $sql = 'UPDATE ' . $table . ' SET ' . implode(', ', $sets) . ' WHERE ' . $where;
-            }
+            return false;
         }
+    }
 
-        if ($sql)
+    /**
+     * 
+     */
+    function autoExecute($table, $field_values, $mode='INSERT', $where='', $querymode='')
+    {
+        $set_sql = $this->getSetSQL($table, $field_values);
+
+        if ($set_sql)
         {
+            if ($mode == 'INSERT')
+            {
+                $sql = 'INSERT ';
+                $where = '';
+            }
+            else
+            {
+                $sql = 'UPDATE ';
+                $where = ' WHERE '.$where;
+            }
+
+            $sql .= $set_sql.$where;
+
             return $this->query($sql, $querymode);
         }
         else
@@ -566,68 +572,38 @@ class cls_mysql
         }
     }
 
-    function autoReplace($table, $field_values, $update_values, $where = '', $querymode = '')
+    /**
+     * 
+     */
+    function autoReplace($table, $field_values, $update_values, $querymode='')
     {
-        $field_descs = $this->getAll('DESC ' . $table);
+        $set_sql = $this->getSetSQL($table, $field_values);
 
-        $primary_keys = array();
-        foreach ($field_descs AS $value)
+        if ($set_sql)
         {
-            $field_names[] = $value['Field'];
-            if ($value['Key'] == 'PRI')
-            {
-                $primary_keys[] = $value['Field'];
-            }
-        }
+            $sql = 'INSERT '.$set_sql;
 
-        $fields = $values = array();
-        foreach ($field_names AS $value)
-        {
-            if (array_key_exists($value, $field_values) == true)
+            $sets = array();
+            foreach ($update_values AS $key => $value)
             {
-                $fields[] = $value;
-                $values[] = "'" . $field_values[$value] . "'";
-            }
-        }
-
-        $sets = array();
-        foreach ($update_values AS $key => $value)
-        {
-            if (array_key_exists($key, $field_values) == true)
-            {
-                if (is_int($value) || is_float($value))
+                if (array_key_exists($key, $field_values) == true)
                 {
-                    $sets[] = $key . ' = ' . $key . ' + ' . $value;
-                }
-                else
-                {
-                    $sets[] = $key . " = '" . $value . "'";
+                    $key = '`'.$key.'`';
+                    if (is_int($value) || is_float($value))
+                    {
+                        $sets[] = $key.'='.$key.'+'.$value;
+                    }
+                    else
+                    {
+                        $sets[] = $key."='".$value."'";
+                    }
                 }
             }
-        }
-
-        $sql = '';
-        if (empty($primary_keys))
-        {
-            if (!empty($fields))
+            if (!empty($sets))
             {
-                $sql = 'INSERT INTO ' . $table . ' (' . implode(', ', $fields) . ') VALUES (' . implode(', ', $values) . ')';
+                $sql .= 'ON DUPLICATE KEY UPDATE '.implode(',', $sets);
             }
-        }
-        else
-        {
-            if (!empty($fields))
-            {
-                $sql = 'INSERT INTO ' . $table . ' (' . implode(', ', $fields) . ') VALUES (' . implode(', ', $values) . ')';
-                if (!empty($sets))
-                {
-                    $sql .=  'ON DUPLICATE KEY UPDATE ' . implode(', ', $sets);
-                }
-            }
-        }
 
-        if ($sql)
-        {
             return $this->query($sql, $querymode);
         }
         else

@@ -38,7 +38,7 @@ class cls_session
     var $_ip   = '';
     var $_time = 0;
 
-    function __construct(&$db, $session_table, $session_data_table, $session_name = 'ECS_ID', $session_id = '')
+    function __construct(&$db, $session_table, $session_data_table, $session_name = 'ECS_ID')
     {
         $GLOBALS['_SESSION'] = array();
 
@@ -64,13 +64,9 @@ class cls_session
         $this->db  = $db;
         $this->_ip = real_ip();
 
-        if ($session_id == '' && !empty($_COOKIE[$this->session_name]))
+        if (!empty($_COOKIE[$this->session_name]))
         {
             $this->session_id = $_COOKIE[$this->session_name];
-        }
-        else
-        {
-            $this->session_id = $session_id;
         }
 
         if ($this->session_id)
@@ -123,7 +119,16 @@ class cls_session
 
     function insert_session()
     {
-        return $this->db->query('INSERT INTO ' . $this->session_table . " (sesskey, expiry, ip, data) VALUES ('" . $this->session_id . "', '". $this->_time ."', '". $this->_ip ."', 'a:0:{}')");
+        return $this->db->autoExecute(
+            $this->session_table,
+            array(
+                'sesskey'=>$this->session_id, 
+                'expiry'=>$this->_time, 
+                'ip'=>$this->_ip, 
+                'data'=>'a:0:{}'
+            ),
+            'INSERT'
+        );
     }
 
     function load_session()
