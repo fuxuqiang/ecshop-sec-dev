@@ -122,12 +122,11 @@ class cls_session
         return $this->db->autoExecute(
             $this->session_table,
             array(
-                'sesskey'=>$this->session_id, 
-                'expiry'=>$this->_time, 
-                'ip'=>$this->_ip, 
-                'data'=>'a:0:{}'
-            ),
-            'INSERT'
+                'sesskey' => $this->session_id, 
+                'expiry' => $this->_time, 
+                'ip' => $this->_ip, 
+                'data' => 'a:0:{}'
+            )
         );
     }
 
