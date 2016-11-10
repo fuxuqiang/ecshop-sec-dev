@@ -40,7 +40,7 @@ class cls_session
 
     function __construct(&$db, $session_table, $session_data_table, $session_name = 'ECS_ID')
     {
-        $GLOBALS['_SESSION'] = array();
+        $_SESSION = array();
 
         if (!empty($GLOBALS['cookie_path']))
         {
@@ -139,7 +139,7 @@ class cls_session
 
             $this->session_expiry = 0;
             $this->session_md5    = '40cd750bba9870f18aada2478b24840a';
-            $GLOBALS['_SESSION']  = array();
+            $_SESSION  = array();
         }
         else
         {
@@ -147,13 +147,13 @@ class cls_session
             {
                 $this->session_expiry = $session['expiry'];
                 $this->session_md5    = md5($session['data']);
-                $GLOBALS['_SESSION']  = unserialize($session['data']);
-                $GLOBALS['_SESSION']['user_id'] = $session['userid'];
-                $GLOBALS['_SESSION']['admin_id'] = $session['adminid'];
-                $GLOBALS['_SESSION']['user_name'] = $session['user_name'];
-                $GLOBALS['_SESSION']['user_rank'] = $session['user_rank'];
-                $GLOBALS['_SESSION']['discount'] = $session['discount'];
-                $GLOBALS['_SESSION']['email'] = $session['email'];
+                $_SESSION  = unserialize($session['data']);
+                $_SESSION['user_id'] = $session['userid'];
+                $_SESSION['admin_id'] = $session['adminid'];
+                $_SESSION['user_name'] = $session['user_name'];
+                $_SESSION['user_rank'] = $session['user_rank'];
+                $_SESSION['discount'] = $session['discount'];
+                $_SESSION['email'] = $session['email'];
             }
             else
             {
@@ -162,19 +162,19 @@ class cls_session
                 {
                     $this->session_expiry = $session_data['expiry'];
                     $this->session_md5    = md5($session_data['data']);
-                    $GLOBALS['_SESSION']  = unserialize($session_data['data']);
-                    $GLOBALS['_SESSION']['user_id'] = $session['userid'];
-                    $GLOBALS['_SESSION']['admin_id'] = $session['adminid'];
-                    $GLOBALS['_SESSION']['user_name'] = $session['user_name'];
-                    $GLOBALS['_SESSION']['user_rank'] = $session['user_rank'];
-                    $GLOBALS['_SESSION']['discount'] = $session['discount'];
-                    $GLOBALS['_SESSION']['email'] = $session['email'];
+                    $_SESSION  = unserialize($session_data['data']);
+                    $_SESSION['user_id'] = $session['userid'];
+                    $_SESSION['admin_id'] = $session['adminid'];
+                    $_SESSION['user_name'] = $session['user_name'];
+                    $_SESSION['user_rank'] = $session['user_rank'];
+                    $_SESSION['discount'] = $session['discount'];
+                    $_SESSION['email'] = $session['email'];
                 }
                 else
                 {
                     $this->session_expiry = 0;
                     $this->session_md5    = '40cd750bba9870f18aada2478b24840a';
-                    $GLOBALS['_SESSION']  = array();
+                    $_SESSION  = array();
                 }
             }
         }
@@ -182,20 +182,20 @@ class cls_session
 
     function update_session()
     {
-        $adminid = !empty($GLOBALS['_SESSION']['admin_id']) ? intval($GLOBALS['_SESSION']['admin_id']) : 0;
-        $userid  = !empty($GLOBALS['_SESSION']['user_id'])  ? intval($GLOBALS['_SESSION']['user_id'])  : 0;
-        $user_name  = !empty($GLOBALS['_SESSION']['user_name'])  ? trim($GLOBALS['_SESSION']['user_name'])  : 0;
-        $user_rank  = !empty($GLOBALS['_SESSION']['user_rank'])  ? intval($GLOBALS['_SESSION']['user_rank'])  : 0;
-        $discount  = !empty($GLOBALS['_SESSION']['discount'])  ? round($GLOBALS['_SESSION']['discount'], 2)  : 0;
-        $email  = !empty($GLOBALS['_SESSION']['email'])  ? trim($GLOBALS['_SESSION']['email'])  : 0;
-        unset($GLOBALS['_SESSION']['admin_id']);
-        unset($GLOBALS['_SESSION']['user_id']);
-        unset($GLOBALS['_SESSION']['user_name']);
-        unset($GLOBALS['_SESSION']['user_rank']);
-        unset($GLOBALS['_SESSION']['discount']);
-        unset($GLOBALS['_SESSION']['email']);
+        $adminid = !empty($_SESSION['admin_id']) ? intval($_SESSION['admin_id']) : 0;
+        $userid  = !empty($_SESSION['user_id'])  ? intval($_SESSION['user_id'])  : 0;
+        $user_name  = !empty($_SESSION['user_name'])  ? trim($_SESSION['user_name'])  : 0;
+        $user_rank  = !empty($_SESSION['user_rank'])  ? intval($_SESSION['user_rank'])  : 0;
+        $discount  = !empty($_SESSION['discount'])  ? round($_SESSION['discount'], 2)  : 0;
+        $email  = !empty($_SESSION['email'])  ? trim($_SESSION['email'])  : 0;
+        unset($_SESSION['admin_id']);
+        unset($_SESSION['user_id']);
+        unset($_SESSION['user_name']);
+        unset($_SESSION['user_rank']);
+        unset($_SESSION['discount']);
+        unset($_SESSION['email']);
 
-        $data        = serialize($GLOBALS['_SESSION']);
+        $data        = serialize($_SESSION);
         $this->_time = time();
 
         if ($this->session_md5 == md5($data) && $this->_time < $this->session_expiry + 10)
@@ -235,7 +235,7 @@ class cls_session
 
     function delete_spec_admin_session($adminid)
     {
-        if (!empty($GLOBALS['_SESSION']['admin_id']) && $adminid)
+        if (!empty($_SESSION['admin_id']) && $adminid)
         {
             return $this->db->query('DELETE FROM ' . $this->session_table . " WHERE adminid = '$adminid'");
         }
@@ -247,7 +247,7 @@ class cls_session
 
     function destroy_session()
     {
-        $GLOBALS['_SESSION'] = array();
+        $_SESSION = array();
 
         setcookie($this->session_name, $this->session_id, 1, $this->session_cookie_path, $this->session_cookie_domain, $this->session_cookie_secure);
 

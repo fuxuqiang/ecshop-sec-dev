@@ -85,8 +85,8 @@ if (!get_magic_quotes_gpc())
 
 /* 创建 ECSHOP 对象 */
 $ecs = new cls_ecshop($db_name, $prefix);
-define('DATA_DIR', $ecs->data_dir());
-define('IMAGE_DIR', $ecs->image_dir());
+define('DATA_DIR', 'data');
+define('IMAGE_DIR', 'images');
 
 /* 初始化数据库类 */
 $db = new cls_mysql($db_host, $db_user, $db_pass, $db_name);
