@@ -39,7 +39,6 @@ class cls_mysql
     private $dbhash         = '';
     private $starttime      = 0;
     private $timeline       = 0;
-    private $timezone       = 0;
 
     private $mysql_config_cache_file_time = 0;
 
@@ -96,7 +95,10 @@ class cls_mysql
 
         /* 对字符集进行初始化 */
         $this->set_mysql_charset($charset);
-        mysqli_query($this->link_id, "SET sql_mode=''");
+
+        if (!DEBUG_MODE) {
+            mysqli_query($this->link_id, "SET sql_mode=''");
+        }
 
         $sqlcache_config_file = $this->root_path . $this->cache_data_dir . 'sqlcache_config_file_' . $this->dbhash . '.php';
 
@@ -125,27 +127,20 @@ class cls_mysql
             }
 
             if ($this->platform == 'OTHER' &&
-                ($dbhost != '.' && strtolower($dbhost) != 'localhost:3306' && $dbhost != '127.0.0.1:3306') ||
-                (PHP_VERSION >= '5.1' && date_default_timezone_get() == 'UTC'))
+                ($dbhost != '.' && strtolower($dbhost) != 'localhost:3306' && $dbhost != '127.0.0.1:3306'))
             {
-                $result = mysqli_query($this->link_id, "SELECT UNIX_TIMESTAMP() AS timeline, UNIX_TIMESTAMP('" . date('Y-m-d H:i:s', $this->starttime) . "') AS timezone");
+                $result = mysqli_query($this->link_id, "SELECT UNIX_TIMESTAMP() AS timeline");
                 $row    = mysqli_fetch_assoc($result);
 
                 if ($dbhost != '.' && strtolower($dbhost) != 'localhost:3306' && $dbhost != '127.0.0.1:3306')
                 {
                     $this->timeline = $this->starttime - $row['timeline'];
                 }
-
-                if (PHP_VERSION >= '5.1' && date_default_timezone_get() == 'UTC')
-                {
-                    $this->timezone = $this->starttime - $row['timezone'];
-                }
             }
 
             $content = '<' . "?php\r\n" .
                        '$this->mysql_config_cache_file_time = ' . $this->starttime . ";\r\n" .
                        '$this->timeline = ' . $this->timeline . ";\r\n" .
-                       '$this->timezone = ' . $this->timezone . ";\r\n" .
                        '$this->platform = ' . "'" . $this->platform . "';\r\n?" . '>';
 
             file_put_contents($sqlcache_config_file, $content);
@@ -687,7 +682,7 @@ class cls_mysql
                 $lastupdatetime = $row['Update_time'];
             }
         }
-        $lastupdatetime = strtotime($lastupdatetime) - $this->timezone + $this->timeline;
+        $lastupdatetime = strtotime($lastupdatetime) + $this->timeline;
 
         return $lastupdatetime;
     }
