@@ -127,15 +127,12 @@ class cls_mysql
             }
 
             if ($this->platform == 'OTHER' &&
-                ($dbhost != '.' && strtolower($dbhost) != 'localhost:3306' && $dbhost != '127.0.0.1:3306'))
+                ($dbhost != '.' && strpos(strtolower($dbhost), 'localhost')===false  && strpos($dbhost, '127.0.0.1')===false))
             {
                 $result = mysqli_query($this->link_id, "SELECT UNIX_TIMESTAMP() AS timeline");
                 $row    = mysqli_fetch_assoc($result);
 
-                if ($dbhost != '.' && strtolower($dbhost) != 'localhost:3306' && $dbhost != '127.0.0.1:3306')
-                {
-                    $this->timeline = $this->starttime - $row['timeline'];
-                }
+                $this->timeline = $this->starttime - $row['timeline'];
             }
 
             $content = '<' . "?php\r\n" .
