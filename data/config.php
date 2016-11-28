@@ -1,28 +1,28 @@
 <?php
 // database host
-$db_host   = "localhost";
+$db_host   = 'localhost';
 
 // database name
-$db_name   = "ecshop";
+$db_name   = 'ecshop';
 
 // database username
-$db_user   = "root";
+$db_user   = 'root';
 
 // database password
-$db_pass   = "0328";
+$db_pass   = 'eb';
 
 // table prefix
-$prefix    = "";
+$prefix    = '';
 
-$timezone    = "PRC";
+$timezone    = 'PRC';
 
-$cookie_path    = "/";
+$cookie_path    = '/';
 
-$cookie_domain    = "";
+$cookie_domain    = '';
 
 $cookie_secure = '';
 
-$session = "1440";
+$session = '1440';
 
 define('DEBUG_MODE', 1);
 
