@@ -1763,23 +1763,6 @@ h1 .btn-quick-goods a:hover{
   width: 300px;
   height: 200px;
 }
-/*.ban-area{
-  width: 100%;
-  height: 300px;
-  overflow: hidden;
-  margin-bottom: 20px;
-  border: 1px solid #7FBDCA;
-}
-.ban-area .inn{
-  width: 950px;
-  margin: 0 auto;
-}
-.ban-area iframe{
-  float: left;
-}
-.ban-area iframe.first{
-  margin-right: 50px;
-}*/
 /*遮罩*/
 .mask-black{
   display: none;
