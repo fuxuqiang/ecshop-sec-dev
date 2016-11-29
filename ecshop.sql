@@ -7414,8 +7414,8 @@ INSERT INTO `topic` (`topic_id`, `title`, `intro`, `start_time`, `end_time`, `da
 --
 INSERT INTO `users` (`user_id`, `email`, `user_name`, `password`, `question`, `answer`, `sex`, `birthday`, `user_money`, `frozen_money`, `pay_points`, `rank_points`, `address_id`, `reg_time`, `last_login`, `last_time`, `last_ip`, `visit_count`, `user_rank`, `is_special`, `ec_salt`, `salt`, `parent_id`, `flag`, `alias`, `msn`, `qq`, `office_phone`, `home_phone`, `mobile_phone`, `is_validated`, `credit_line`, `passwd_question`, `passwd_answer`)
 VALUES
-  (1,'ecshop@ecshop.com','ecshop','6526fa13f6c5804fc8aaefa25395aba3','','',0,'1960-03-03',0.00,0.00,0,0,1,0,1462949764,'0000-00-00 00:00:00','180.169.8.10',15,0,0,'1619','0',0,0,'','','','','','',0,0.00,NULL,NULL),
-  (2,'vip@ecshop.com','vip','232059cb5361a9336ccf1b8c2ba7657a','','',0,'1949-01-01',0.00,0.00,0,0,0,0,0,'0000-00-00 00:00:00','',0,0,0,NULL,'0',0,0,'','','','','','',0,0.00,NULL,NULL);
+  (1,'ecshop@ecshop.com','ecshop','6526fa13f6c5804fc8aaefa25395aba3','','',0,'1960-03-03',0.00,0.00,0,0,1,0,1462949764,'1000-01-01 00:00:00','180.169.8.10',15,0,0,'1619','0',0,0,'','','','','','',0,0.00,NULL,NULL),
+  (2,'vip@ecshop.com','vip','232059cb5361a9336ccf1b8c2ba7657a','','',0,'1949-01-01',0.00,0.00,0,0,0,0,0,'1000-01-01 00:01:01','',0,0,0,NULL,'0',0,0,'','','','','','',0,0.00,NULL,NULL);
 --
 -- `user_address`
 --
