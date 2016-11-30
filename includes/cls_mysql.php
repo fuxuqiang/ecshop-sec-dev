@@ -289,13 +289,11 @@ class cls_mysql
         if ($message)
         {
             echo "<b>ECSHOP info</b>: $message\n\n<br /><br />";
-            //print('<a href="http://faq.comsenz.com/?type=mysql&dberrno=2003&dberror=Can%27t%20connect%20to%20MySQL%20server%20on" target="_blank">http://faq.comsenz.com/</a>');
         }
         else
         {
             echo "<b>MySQL server error report:";
-            print_r($this->error_message);
-            //echo "<br /><br /><a href='http://faq.comsenz.com/?type=mysql&dberrno=" . $this->error_message[3]['errno'] . "&dberror=" . urlencode($this->error_message[2]['error']) . "' target='_blank'>http://faq.comsenz.com/</a>";
+            var_dump($this->error_message);
         }
 
         exit;
