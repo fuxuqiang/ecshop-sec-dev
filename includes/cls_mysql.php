@@ -292,7 +292,7 @@ class cls_mysql
         }
         else
         {
-            echo "<b>MySQL server error report:";
+            echo "MySQL server error report:";
             var_dump($this->error_message);
         }
 
