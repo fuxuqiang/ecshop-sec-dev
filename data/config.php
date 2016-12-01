@@ -14,21 +14,19 @@ $db_pass   = 'eb';
 // table prefix
 $prefix    = '';
 
-$timezone    = 'PRC';
+$timezone    = 'Asia/Shanghai';
 
-$cookie_path    = '/';
+$cookie_path = '/';
 
-$cookie_domain    = '';
+$cookie_domain = '';
 
-$cookie_secure = '';
-
-$session = '1440';
+$cookie_secure = false;
 
 define('DEBUG_MODE', 1);
 
-define('EC_CHARSET','utf-8');
+define('EC_CHARSET', 'utf-8');
 
-define('ADMIN_PATH','admin');
+define('ADMIN_PATH', 'admin');
 
 define('AUTH_KEY', 'this is a key');
 
