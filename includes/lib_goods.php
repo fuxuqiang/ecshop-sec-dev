@@ -502,7 +502,7 @@ function get_goods_info($goods_id)
     $time = gmtime();
     $sql = 'SELECT g.*, c.measure_unit, b.brand_id, b.brand_name AS goods_brand, m.type_money AS bonus_money, ' .
                 'IFNULL(AVG(r.comment_rank), 0) AS comment_rank, ' .
-                "IFNULL(mp.user_price, g.shop_price * '$_SESSION[discount]') AS rank_price " .
+                "(g.shop_price * '$_SESSION[discount]') AS rank_price " .
             'FROM ' . $GLOBALS['ecs']->table('goods') . ' AS g ' .
             'LEFT JOIN ' . $GLOBALS['ecs']->table('category') . ' AS c ON g.cat_id = c.cat_id ' .
             'LEFT JOIN ' . $GLOBALS['ecs']->table('brand') . ' AS b ON g.brand_id = b.brand_id ' .
@@ -512,11 +512,10 @@ function get_goods_info($goods_id)
                 "ON g.bonus_type_id = m.type_id AND m.send_start_date <= '$time' AND m.send_end_date >= '$time'" .
             " LEFT JOIN " . $GLOBALS['ecs']->table('member_price') . " AS mp ".
                     "ON mp.goods_id = g.goods_id AND mp.user_rank = '$_SESSION[user_rank]' ".
-            "WHERE g.goods_id = '$goods_id' AND g.is_delete = 0 " .
-            "GROUP BY g.goods_id";
+            "WHERE g.goods_id = '$goods_id' AND g.is_delete = 0";
     $row = $GLOBALS['db']->getRow($sql);
 
-    if ($row !== false)
+    if ($row['goods_id'])
     {
         /* 用户评论级别取整 */
         $row['comment_rank']  = ceil($row['comment_rank']) == 0 ? 5 : ceil($row['comment_rank']);

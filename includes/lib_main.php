@@ -1294,7 +1294,7 @@ function get_tags($goods_id = 0, $user_id = 0)
         $where = ' WHERE' . $where;
     }
 
-    $sql = 'SELECT tag_id, user_id, tag_words, COUNT(tag_id) AS tag_count' .
+    $sql = 'SELECT tag_words, COUNT(tag_id) AS tag_count' .
             ' FROM ' . $GLOBALS['ecs']->table('tag') .
             "$where GROUP BY tag_words";
     $arr = $GLOBALS['db']->getAll($sql);
