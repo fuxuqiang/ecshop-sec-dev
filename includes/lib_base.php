@@ -659,7 +659,7 @@ function gzip_enabled()
 
     if ($enabled_gzip === NULL)
     {
-        $enabled_gzip = ($GLOBALS['_CFG']['enable_gzip'] && function_exists('ob_gzhandler'));
+        $enabled_gzip = ($GLOBALS['_CFG']['enable_gzip']);
     }
 
     return $enabled_gzip;
